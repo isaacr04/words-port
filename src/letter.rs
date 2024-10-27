@@ -17,7 +17,7 @@ pub enum Format {
 pub struct Letter {
     pub value: String,
     pub format: Format,
-    pub width: u8,
+    pub width: usize,
 }
 
 #[derive(Debug)]
@@ -37,8 +37,8 @@ impl Position<GridPosition, DynamicIndex> for Letter {
         let x = index % self.width as usize;
         let y = index / self.width as usize;
         GridPosition {
-            column: y as i32,
-            row: x as i32,
+            column: x as i32,
+            row: y as i32,
             width: 1,
             height: 1,
         }
@@ -47,7 +47,7 @@ impl Position<GridPosition, DynamicIndex> for Letter {
 
 #[relm4::factory(pub)]
 impl FactoryComponent for Letter {
-    type Init = u8;
+    type Init = usize;
     type Input = LetterMsgIn;
     type Output = LetterMsgOut;
     type CommandOutput = ();
@@ -55,7 +55,7 @@ impl FactoryComponent for Letter {
 
     view! {
         root = gtk::Button {
-            set_margin_all: 10,
+            set_margin_all: 1,
             set_has_frame: true,
             set_label: &self.value,
             connect_clicked[sender, index] => move |_| {

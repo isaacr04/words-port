@@ -1,20 +1,23 @@
+use std::usize;
+
 use gtk::prelude::{
-    ApplicationExt, ApplicationWindowExt, GtkWindowExt, OrientableExt, SettingsExt, WidgetExt,
+    ApplicationExt, ApplicationWindowExt, ButtonExt, GtkWindowExt, OrientableExt, SettingsExt,
+    WidgetExt,
 };
 use gtk::{gio, glib};
-use relm4::gtk::prelude::GridExt;
 use relm4::{
     actions::{RelmAction, RelmActionGroup},
     adw,
     factory::FactoryVecDeque,
-    gtk, main_application,
+    gtk::{self, prelude::GridExt},
+    main_application,
     prelude::DynamicIndex,
     Component, ComponentController, ComponentParts, ComponentSender, Controller, SimpleComponent,
 };
 
 use crate::{
     config::{APP_ID, PROFILE},
-    letter::{self, LetterMsgOut},
+    letter::LetterMsgOut,
 };
 use crate::{letter::Letter, modals::about::AboutDialog};
 
@@ -26,6 +29,7 @@ pub(super) struct App {
 #[derive(Debug)]
 pub(super) enum AppMsg {
     SelectLetter(DynamicIndex),
+    CreateNewField((usize, usize)),
     Quit,
 }
 
@@ -80,6 +84,10 @@ impl SimpleComponent for App {
                 set_orientation: gtk::Orientation::Vertical,
 
                 adw::HeaderBar {
+                    pack_start = &gtk::Button {
+                        set_label: "Start",
+                        connect_clicked => AppMsg::CreateNewField((5,6)),
+                    },
                     pack_end = &gtk::MenuButton {
                         set_icon_name: "open-menu-symbolic",
                         set_menu_model: Some(&primary_menu),
@@ -89,8 +97,8 @@ impl SimpleComponent for App {
                 #[local_ref]
                 letter_grid -> gtk::Grid {
                     set_orientation: gtk::Orientation::Horizontal,
-                    set_column_spacing: 15,
-                    set_row_spacing: 15,
+                    set_column_spacing: 0,
+                    set_row_spacing: 0,
                 }
             }
 
@@ -151,6 +159,14 @@ impl SimpleComponent for App {
         match message {
             AppMsg::Quit => main_application().quit(),
             AppMsg::SelectLetter(index) => println!("Letter {} selected", index.current_index()),
+            AppMsg::CreateNewField((width, height)) => {
+                let mut letters_guard = self.letters.guard();
+
+                letters_guard.clear();
+                for _ in 0..width * height {
+                    letters_guard.push_back(width);
+                }
+            }
         }
     }
 
