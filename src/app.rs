@@ -25,6 +25,7 @@ use crate::{letter::Letter, modals::about::AboutDialog};
 pub(super) struct App {
     letters: FactoryVecDeque<Letter>,
     about_dialog: Controller<AboutDialog>,
+    selected_letter: Option<usize>,
 }
 
 #[derive(Debug)]
@@ -126,6 +127,7 @@ impl SimpleComponent for App {
         let model = Self {
             about_dialog,
             letters,
+            selected_letter: None,
         };
 
         let letter_grid = model.letters.widget();
@@ -162,10 +164,11 @@ impl SimpleComponent for App {
         match message {
             AppMsg::Quit => main_application().quit(),
             AppMsg::SelectLetter(index) => {
-                letters_guard.send(
-                    index.current_index(),
-                    LetterMsgIn::SetFormat(Format::ExactMatch),
-                );
+                if let Some(selected_letter) = self.selected_letter {
+                    letters_guard.send(selected_letter, LetterMsgIn::SetSelected(false));
+                }
+                letters_guard.send(index.current_index(), LetterMsgIn::SetSelected(true));
+                self.selected_letter = Some(index.current_index());
             }
             AppMsg::CreateNewField((width, height)) => {
                 letters_guard.clear();

@@ -18,6 +18,7 @@ pub struct Letter {
     pub value: String,
     pub format: Format,
     pub width: usize,
+    pub selected: bool,
 }
 
 #[derive(Debug)]
@@ -29,6 +30,7 @@ pub enum LetterMsgOut {
 pub enum LetterMsgIn {
     SetContent(Option<char>),
     SetFormat(Format),
+    SetSelected(bool),
 }
 
 impl Position<GridPosition, DynamicIndex> for Letter {
@@ -67,6 +69,10 @@ impl FactoryComponent for Letter {
                 Format::Match  => Some("exact"),
                 Format::ExactMatch => Some("exact"),
             }},
+            #[watch]
+            remove_css_class?: { if !self.selected { Some("selected") } else { None }},
+            #[watch]
+            add_css_class?: { if self.selected { Some("selected") } else { None }},
             connect_clicked[sender, index] => move |_| {
                 sender.output(LetterMsgOut::Selected(index.clone())).unwrap();
             }
@@ -78,6 +84,7 @@ impl FactoryComponent for Letter {
             format: Format::Entered,
             value: "A".to_string(), //String::new(),
             width: value,
+            selected: false,
         }
     }
 
@@ -91,6 +98,7 @@ impl FactoryComponent for Letter {
                 }
             }
             LetterMsgIn::SetFormat(f) => self.format = f,
+            LetterMsgIn::SetSelected(v) => self.selected = v,
         }
     }
 }

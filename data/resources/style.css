@@ -5,15 +5,16 @@
 
 .exact {
   background-color: @green_4;
-  font-weight: bold;
 }
 
 .match {
   background-color: @yellow_4;
-  font-weight: bold;
 }
 
 .no_match {
   background-color: @dark_3;
-  font-weight: bold;
+}
+
+.selected {
+  border: 2px solid @accent-color;
 }
