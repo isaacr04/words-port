@@ -15,6 +15,7 @@ use relm4::{
     Component, ComponentController, ComponentParts, ComponentSender, Controller, SimpleComponent,
 };
 
+use crate::letter::{Format, LetterMsgIn};
 use crate::{
     config::{APP_ID, PROFILE},
     letter::LetterMsgOut,
@@ -156,12 +157,17 @@ impl SimpleComponent for App {
     }
 
     fn update(&mut self, message: Self::Input, _sender: ComponentSender<Self>) {
+        let mut letters_guard = self.letters.guard();
+
         match message {
             AppMsg::Quit => main_application().quit(),
-            AppMsg::SelectLetter(index) => println!("Letter {} selected", index.current_index()),
+            AppMsg::SelectLetter(index) => {
+                letters_guard.send(
+                    index.current_index(),
+                    LetterMsgIn::SetFormat(Format::ExactMatch),
+                );
+            }
             AppMsg::CreateNewField((width, height)) => {
-                let mut letters_guard = self.letters.guard();
-
                 letters_guard.clear();
                 for _ in 0..width * height {
                     letters_guard.push_back(width);

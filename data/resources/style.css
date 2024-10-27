@@ -1,4 +1,19 @@
-.title-header{
+.title-header {
   font-size: 36px;
+  font-weight: bold;
+}
+
+.exact {
+  background-color: @green_4;
+  font-weight: bold;
+}
+
+.match {
+  background-color: @yellow_4;
+  font-weight: bold;
+}
+
+.no_match {
+  background-color: @dark_3;
   font-weight: bold;
 }

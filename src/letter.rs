@@ -1,6 +1,6 @@
 use relm4::{
     factory::{positions::GridPosition, Position},
-    gtk::{self, prelude::ButtonExt},
+    gtk::{self, prelude::ButtonExt, prelude::WidgetExt},
     prelude::{DynamicIndex, FactoryComponent},
     FactorySender, RelmWidgetExt,
 };
@@ -57,7 +57,16 @@ impl FactoryComponent for Letter {
         root = gtk::Button {
             set_margin_all: 1,
             set_has_frame: true,
+            #[watch]
             set_label: &self.value,
+            add_css_class: "title-1",
+            #[watch]
+            add_css_class?: { match &self.format {
+                Format::Entered => None,
+                Format::NoMatch  => Some("no_match"),
+                Format::Match  => Some("exact"),
+                Format::ExactMatch => Some("exact"),
+            }},
             connect_clicked[sender, index] => move |_| {
                 sender.output(LetterMsgOut::Selected(index.clone())).unwrap();
             }
