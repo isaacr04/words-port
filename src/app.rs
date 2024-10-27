@@ -1,23 +1,31 @@
-use relm4::{
-    actions::{RelmAction, RelmActionGroup},
-    adw, gtk, main_application, Component, ComponentController, ComponentParts, ComponentSender,
-    Controller, SimpleComponent,
-};
-
 use gtk::prelude::{
     ApplicationExt, ApplicationWindowExt, GtkWindowExt, OrientableExt, SettingsExt, WidgetExt,
 };
 use gtk::{gio, glib};
+use relm4::gtk::prelude::GridExt;
+use relm4::{
+    actions::{RelmAction, RelmActionGroup},
+    adw,
+    factory::FactoryVecDeque,
+    gtk, main_application,
+    prelude::DynamicIndex,
+    Component, ComponentController, ComponentParts, ComponentSender, Controller, SimpleComponent,
+};
 
-use crate::config::{APP_ID, PROFILE};
-use crate::modals::about::AboutDialog;
+use crate::{
+    config::{APP_ID, PROFILE},
+    letter::{self, LetterMsgOut},
+};
+use crate::{letter::Letter, modals::about::AboutDialog};
 
 pub(super) struct App {
+    letters: FactoryVecDeque<Letter>,
     about_dialog: Controller<AboutDialog>,
 }
 
 #[derive(Debug)]
 pub(super) enum AppMsg {
+    SelectLetter(DynamicIndex),
     Quit,
 }
 
@@ -78,10 +86,11 @@ impl SimpleComponent for App {
                     }
                 },
 
-                gtk::Label {
-                    set_label: "Hello world!",
-                    add_css_class: "title-header",
-                    set_vexpand: true,
+                #[local_ref]
+                letter_grid -> gtk::Grid {
+                    set_orientation: gtk::Orientation::Horizontal,
+                    set_column_spacing: 15,
+                    set_row_spacing: 15,
                 }
             }
 
@@ -98,8 +107,19 @@ impl SimpleComponent for App {
             .launch(())
             .detach();
 
-        let model = Self { about_dialog };
+        let letters =
+            FactoryVecDeque::builder()
+                .launch_default()
+                .forward(sender.input_sender(), |msg| match msg {
+                    LetterMsgOut::Selected(index) => AppMsg::SelectLetter(index),
+                });
 
+        let model = Self {
+            about_dialog,
+            letters,
+        };
+
+        let letter_grid = model.letters.widget();
         let widgets = view_output!();
 
         let mut actions = RelmActionGroup::<WindowActionGroup>::new();
@@ -130,6 +150,7 @@ impl SimpleComponent for App {
     fn update(&mut self, message: Self::Input, _sender: ComponentSender<Self>) {
         match message {
             AppMsg::Quit => main_application().quit(),
+            AppMsg::SelectLetter(index) => println!("Letter {} selected", index.current_index()),
         }
     }
 

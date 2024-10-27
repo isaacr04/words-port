@@ -22,9 +22,9 @@ impl SimpleComponent for AboutDialog {
             // Insert your Issues page
             // .issue_url("https://gitlab.gnome.org/World/Rust/wordle/-/issues")
             // Insert your application name here
-            .application_name("Relm4-template")
+            .application_name("Wordle")
             .version(VERSION)
-            .translator_credits("translator-credits")
+            // .translator_credits("translator-credits")
             .copyright("© 2023 Peter Sonntag")
             .developers(vec!["Peter Sonntag"])
             .designers(vec!["Peter Sonntag"])

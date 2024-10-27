@@ -1,12 +1,14 @@
 #[rustfmt::skip]
 mod config;
 mod app;
+mod letter;
 mod modals;
 
 use config::{APP_ID, GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
 use gettextrs::{gettext, LocaleCategory};
 use gtk::prelude::ApplicationExt;
 use gtk::{gio, glib};
+use relm4::set_global_css;
 use relm4::{
     actions::{AccelsPlus, RelmAction, RelmActionGroup},
     gtk, main_application, RelmApp,
@@ -62,6 +64,7 @@ fn main() {
             gio::ResourceLookupFlags::NONE,
         )
         .unwrap();
-    app.set_global_css(&glib::GString::from_utf8_checked(data.to_vec()).unwrap());
+    set_global_css(&glib::GString::from_utf8_checked(data.to_vec()).unwrap());
+
     app.visible_on_activate(false).run::<App>(());
 }
