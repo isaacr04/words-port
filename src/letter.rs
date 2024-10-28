@@ -16,7 +16,7 @@ pub enum Format {
 
 #[derive(Debug)]
 pub struct Letter {
-    value: String,
+    pub value: String,
     format: Format,
     width: usize,
     selected: bool,
@@ -84,7 +84,7 @@ impl FactoryComponent for Letter {
     fn init_model(value: Self::Init, index: &DynamicIndex, _sender: FactorySender<Self>) -> Self {
         Self {
             format: value.1,
-            value: " ".to_string(), //String::new(),
+            value: String::new(),
             width: value.0,
             selected: if index.current_index() == 0 {
                 true

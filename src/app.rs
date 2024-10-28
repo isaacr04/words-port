@@ -149,7 +149,6 @@ impl SimpleComponent for App {
         // Connect to the key-pressed signal to handle key presses
         controller.connect_key_pressed(move |_, keyval, _, _| {
             if let Some(c) = keyval.to_unicode() {
-                println!("Unicode: {}", u32::from(c));
                 match c {
                     '\u{d}' => s.input(AppMsg::Enter),
                     '\u{8}' => s.input(AppMsg::Backspace),
@@ -189,7 +188,7 @@ impl SimpleComponent for App {
         ComponentParts { model, widgets }
     }
 
-    fn update(&mut self, message: Self::Input, _sender: ComponentSender<Self>) {
+    fn update(&mut self, message: Self::Input, sender: ComponentSender<Self>) {
         let mut letters_guard = self.letters.guard();
 
         let selected = self.selected_letter;
@@ -229,11 +228,21 @@ impl SimpleComponent for App {
                     select_field(new_selected_letter);
                 }
             }
-            AppMsg::Delete => {
-                println!("clear");
-                letters_guard.send(selected, LetterMsgIn::SetContent(None))
+            AppMsg::Delete => letters_guard.send(selected, LetterMsgIn::SetContent(None)),
+            AppMsg::Backspace => {
+                let width = self.word.chars().count();
+                if selected == (self.attempts + 1) * width - 1 {
+                    if !letters_guard.get(selected).unwrap().value.is_empty() {
+                        sender.input(AppMsg::Delete);
+                        return;
+                    }
+                }
+                if selected > (self.attempts * width) {
+                    let new_selected_letter = selected - 1;
+                    select_field(new_selected_letter);
+                    letters_guard.send(new_selected_letter, LetterMsgIn::SetContent(None))
+                }
             }
-            AppMsg::Backspace => println!("Backspace"),
             AppMsg::Enter => println!("Enter"),
         }
     }
