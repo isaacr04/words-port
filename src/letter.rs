@@ -62,13 +62,12 @@ impl FactoryComponent for Letter {
             set_has_frame: true,
             #[watch]
             set_label: &self.value,
-            add_css_class: "title-1",
             #[watch]
             set_css_classes: { match &self.format {
-                Format::NotUsed | Format::Editable => &[],
-                Format::NoMatch  => &["no_match"],
-                Format::Match  => &["exact"],
-                Format::ExactMatch => &["exact"],
+                Format::NotUsed | Format::Editable => &["title-1"],
+                Format::NoMatch  => &["title-1", "no_match"],
+                Format::Match  => &["title-1", "match"],
+                Format::ExactMatch => &["title-1", "exact"],
             }},
             // #[watch]
             // remove_css_class?: { if !self.selected { Some("selected") } else { None }},
