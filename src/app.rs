@@ -1,10 +1,18 @@
-use std::usize;
+use std::{char, usize};
 
+use crate::letter::{Format, LetterMsgIn};
+use crate::{
+    config::{APP_ID, PROFILE},
+    letter::LetterMsgOut,
+};
+use crate::{letter::Letter, modals::about::AboutDialog};
 use gtk::prelude::{
     ApplicationExt, ApplicationWindowExt, ButtonExt, GtkWindowExt, OrientableExt, SettingsExt,
     WidgetExt,
 };
 use gtk::{gio, glib};
+use relm4::gtk::glib::Propagation;
+use relm4::gtk::EventControllerKey;
 use relm4::{
     actions::{RelmAction, RelmActionGroup},
     adw,
@@ -15,27 +23,21 @@ use relm4::{
     Component, ComponentController, ComponentParts, ComponentSender, Controller, SimpleComponent,
 };
 
-use crate::letter::{Format, LetterMsgIn};
-use crate::{
-    config::{APP_ID, PROFILE},
-    letter::LetterMsgOut,
-};
-use crate::{letter::Letter, modals::about::AboutDialog};
-
 static TRIES: usize = 6;
 
 pub(super) struct App {
     letters: FactoryVecDeque<Letter>,
     about_dialog: Controller<AboutDialog>,
-    selected_letter: Option<usize>,
-    word: Option<String>,
+    selected_letter: usize,
+    word: String,
     attempts: usize,
 }
 
 #[derive(Debug)]
 pub(super) enum AppMsg {
-    SelectLetter(DynamicIndex),
+    SelectField(DynamicIndex),
     StartNewGame(String),
+    EnterLetter(char),
     Quit,
 }
 
@@ -125,16 +127,29 @@ impl SimpleComponent for App {
             FactoryVecDeque::builder()
                 .launch_default()
                 .forward(sender.input_sender(), |msg| match msg {
-                    LetterMsgOut::Selected(index) => AppMsg::SelectLetter(index),
+                    LetterMsgOut::Selected(index) => AppMsg::SelectField(index),
                 });
 
         let model = Self {
             about_dialog,
             letters,
-            selected_letter: None,
-            word: None,
+            selected_letter: 0,
+            word: String::new(),
             attempts: 0,
         };
+
+        let controller = EventControllerKey::new();
+
+        let s = sender.clone();
+
+        // Connect to the key-pressed signal to handle key presses
+        controller.connect_key_pressed(move |_, keyval, _, _| {
+            if let Some(c) = keyval.to_unicode() {
+                s.input(AppMsg::EnterLetter(c));
+            }
+            Propagation::Proceed
+        });
+        root.add_controller(controller);
 
         let letter_grid = model.letters.widget();
         let widgets = view_output!();
@@ -167,18 +182,21 @@ impl SimpleComponent for App {
     fn update(&mut self, message: Self::Input, _sender: ComponentSender<Self>) {
         let mut letters_guard = self.letters.guard();
 
+        let selected = self.selected_letter;
+
+        let mut select_field = |index: usize| {
+            letters_guard.send(self.selected_letter, LetterMsgIn::SetSelected(false));
+
+            letters_guard.send(index, LetterMsgIn::SetSelected(true));
+            self.selected_letter = index;
+        };
+
         match message {
             AppMsg::Quit => main_application().quit(),
-            AppMsg::SelectLetter(index) => {
-                if let Some(selected_letter) = self.selected_letter {
-                    letters_guard.send(selected_letter, LetterMsgIn::SetSelected(false));
-                }
-                letters_guard.send(index.current_index(), LetterMsgIn::SetSelected(true));
-                self.selected_letter = Some(index.current_index());
-            }
+            AppMsg::SelectField(index) => select_field(index.current_index()),
             AppMsg::StartNewGame(word) => {
                 let width = word.chars().count();
-                self.word = Some(word);
+                self.word = word;
                 self.attempts = 0;
 
                 letters_guard.clear();
@@ -188,6 +206,17 @@ impl SimpleComponent for App {
                     } else {
                         letters_guard.push_back((width, Format::NoMatch));
                     }
+                }
+            }
+            AppMsg::EnterLetter(c) => {
+                letters_guard.send(
+                    selected,
+                    LetterMsgIn::SetContent(Some(c.to_uppercase().to_string())),
+                );
+
+                if selected < ((self.attempts + 1) * self.word.chars().count()) - 1 {
+                    let new_selected_letter = selected + 1;
+                    select_field(new_selected_letter);
                 }
             }
         }

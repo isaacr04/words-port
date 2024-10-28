@@ -29,7 +29,7 @@ pub enum LetterMsgOut {
 
 #[derive(Debug)]
 pub enum LetterMsgIn {
-    SetContent(Option<char>),
+    SetContent(Option<String>),
     SetFormat(Format),
     SetSelected(bool),
 }
@@ -82,12 +82,16 @@ impl FactoryComponent for Letter {
         }
     }
 
-    fn init_model(value: Self::Init, _index: &DynamicIndex, _sender: FactorySender<Self>) -> Self {
+    fn init_model(value: Self::Init, index: &DynamicIndex, _sender: FactorySender<Self>) -> Self {
         Self {
             format: value.1,
             value: " ".to_string(), //String::new(),
             width: value.0,
-            selected: false,
+            selected: if index.current_index() == 0 {
+                true
+            } else {
+                false
+            },
         }
     }
 
