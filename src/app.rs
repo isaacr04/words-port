@@ -11,8 +11,7 @@ use gtk::prelude::{
     WidgetExt,
 };
 use gtk::{gio, glib};
-use relm4::gtk::glib::{Char, Propagation};
-use relm4::gtk::prelude::ToValue;
+use relm4::gtk::glib::Propagation;
 use relm4::gtk::EventControllerKey;
 use relm4::{
     actions::{RelmAction, RelmActionGroup},
@@ -155,8 +154,10 @@ impl SimpleComponent for App {
                     '\u{7f}' => s.input(AppMsg::Delete),
                     c => s.input(AppMsg::EnterLetter(c)),
                 }
+                Propagation::Stop
+            } else {
+                Propagation::Proceed
             }
-            Propagation::Proceed
         });
         root.add_controller(controller);
 
@@ -216,6 +217,7 @@ impl SimpleComponent for App {
                         letters_guard.push_back((width, Format::NoMatch));
                     }
                 }
+                self.selected_letter = 0;
             }
             AppMsg::EnterLetter(c) => {
                 letters_guard.send(
@@ -243,7 +245,38 @@ impl SimpleComponent for App {
                     letters_guard.send(new_selected_letter, LetterMsgIn::SetContent(None))
                 }
             }
-            AppMsg::Enter => println!("Enter"),
+            AppMsg::Enter => {
+                let width = self.word.chars().count();
+                for (i, _) in self.word.chars().enumerate() {
+                    let c_u = &letters_guard.get(self.attempts * width + i).unwrap().value;
+                    if self.word.chars().nth(i).unwrap().to_string() == *c_u {
+                        letters_guard.send(
+                            // TODO: Don't consider green matches for the yellow
+                            self.attempts * width + i,
+                            LetterMsgIn::SetFormat(Format::ExactMatch),
+                        )
+                    } else if self.word.contains(c_u) {
+                        letters_guard.send(
+                            self.attempts * width + i,
+                            LetterMsgIn::SetFormat(Format::Match),
+                        )
+                    } else {
+                        letters_guard.send(
+                            self.attempts * width + i,
+                            LetterMsgIn::SetFormat(Format::NoMatch),
+                        )
+                    }
+                }
+                self.attempts += 1;
+
+                for i in 0..width {
+                    letters_guard.send(
+                        self.attempts * width + i,
+                        LetterMsgIn::SetFormat(Format::Editable),
+                    )
+                }
+                self.selected_letter = self.attempts * width;
+            }
         }
     }
 
