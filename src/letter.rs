@@ -5,9 +5,10 @@ use relm4::{
     FactorySender, RelmWidgetExt,
 };
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Format {
-    Entered,
+    Editable,
+    NotUsed,
     NoMatch,
     Match,
     ExactMatch,
@@ -15,10 +16,10 @@ pub enum Format {
 
 #[derive(Debug)]
 pub struct Letter {
-    pub value: String,
-    pub format: Format,
-    pub width: usize,
-    pub selected: bool,
+    value: String,
+    format: Format,
+    width: usize,
+    selected: bool,
 }
 
 #[derive(Debug)]
@@ -49,7 +50,7 @@ impl Position<GridPosition, DynamicIndex> for Letter {
 
 #[relm4::factory(pub)]
 impl FactoryComponent for Letter {
-    type Init = usize;
+    type Init = (usize, Format);
     type Input = LetterMsgIn;
     type Output = LetterMsgOut;
     type CommandOutput = ();
@@ -63,27 +64,29 @@ impl FactoryComponent for Letter {
             set_label: &self.value,
             add_css_class: "title-1",
             #[watch]
-            add_css_class?: { match &self.format {
-                Format::Entered => None,
-                Format::NoMatch  => Some("no_match"),
-                Format::Match  => Some("exact"),
-                Format::ExactMatch => Some("exact"),
+            set_css_classes: { match &self.format {
+                Format::NotUsed | Format::Editable => &[],
+                Format::NoMatch  => &["no_match"],
+                Format::Match  => &["exact"],
+                Format::ExactMatch => &["exact"],
             }},
-            #[watch]
-            remove_css_class?: { if !self.selected { Some("selected") } else { None }},
-            #[watch]
-            add_css_class?: { if self.selected { Some("selected") } else { None }},
+            // #[watch]
+            // remove_css_class?: { if !self.selected { Some("selected") } else { None }},
+            // #[watch]
+            // add_css_class?: { if self.selected { Some("selected") } else { None }},
             connect_clicked[sender, index] => move |_| {
                 sender.output(LetterMsgOut::Selected(index.clone())).unwrap();
-            }
+            },
+            #[watch]
+            set_sensitive: (self.format == Format::Editable) && !self.selected
         }
     }
 
     fn init_model(value: Self::Init, _index: &DynamicIndex, _sender: FactorySender<Self>) -> Self {
         Self {
-            format: Format::Entered,
-            value: "A".to_string(), //String::new(),
-            width: value,
+            format: value.1,
+            value: " ".to_string(), //String::new(),
+            width: value.0,
             selected: false,
         }
     }

@@ -182,8 +182,12 @@ impl SimpleComponent for App {
                 self.attempts = 0;
 
                 letters_guard.clear();
-                for _ in 0..width * TRIES {
-                    letters_guard.push_back(width);
+                for i in 0..width * TRIES {
+                    if i < width {
+                        letters_guard.push_back((width, Format::Editable));
+                    } else {
+                        letters_guard.push_back((width, Format::NoMatch));
+                    }
                 }
             }
         }
