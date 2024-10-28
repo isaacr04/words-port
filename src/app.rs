@@ -11,7 +11,8 @@ use gtk::prelude::{
     WidgetExt,
 };
 use gtk::{gio, glib};
-use relm4::gtk::glib::Propagation;
+use relm4::gtk::glib::{Char, Propagation};
+use relm4::gtk::prelude::ToValue;
 use relm4::gtk::EventControllerKey;
 use relm4::{
     actions::{RelmAction, RelmActionGroup},
@@ -38,6 +39,9 @@ pub(super) enum AppMsg {
     SelectField(DynamicIndex),
     StartNewGame(String),
     EnterLetter(char),
+    Enter,
+    Delete,
+    Backspace,
     Quit,
 }
 
@@ -145,7 +149,13 @@ impl SimpleComponent for App {
         // Connect to the key-pressed signal to handle key presses
         controller.connect_key_pressed(move |_, keyval, _, _| {
             if let Some(c) = keyval.to_unicode() {
-                s.input(AppMsg::EnterLetter(c));
+                println!("Unicode: {}", u32::from(c));
+                match c {
+                    '\u{d}' => s.input(AppMsg::Enter),
+                    '\u{8}' => s.input(AppMsg::Backspace),
+                    '\u{7f}' => s.input(AppMsg::Delete),
+                    c => s.input(AppMsg::EnterLetter(c)),
+                }
             }
             Propagation::Proceed
         });
@@ -219,6 +229,12 @@ impl SimpleComponent for App {
                     select_field(new_selected_letter);
                 }
             }
+            AppMsg::Delete => {
+                println!("clear");
+                letters_guard.send(selected, LetterMsgIn::SetContent(None))
+            }
+            AppMsg::Backspace => println!("Backspace"),
+            AppMsg::Enter => println!("Enter"),
         }
     }
 
