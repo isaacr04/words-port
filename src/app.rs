@@ -22,16 +22,20 @@ use crate::{
 };
 use crate::{letter::Letter, modals::about::AboutDialog};
 
+static TRIES: usize = 6;
+
 pub(super) struct App {
     letters: FactoryVecDeque<Letter>,
     about_dialog: Controller<AboutDialog>,
     selected_letter: Option<usize>,
+    word: Option<String>,
+    attempts: usize,
 }
 
 #[derive(Debug)]
 pub(super) enum AppMsg {
     SelectLetter(DynamicIndex),
-    CreateNewField((usize, usize)),
+    StartNewGame(String),
     Quit,
 }
 
@@ -88,7 +92,7 @@ impl SimpleComponent for App {
                 adw::HeaderBar {
                     pack_start = &gtk::Button {
                         set_label: "Start",
-                        connect_clicked => AppMsg::CreateNewField((5,6)),
+                        connect_clicked => AppMsg::StartNewGame("CHLOR".to_owned()),
                     },
                     pack_end = &gtk::MenuButton {
                         set_icon_name: "open-menu-symbolic",
@@ -128,6 +132,8 @@ impl SimpleComponent for App {
             about_dialog,
             letters,
             selected_letter: None,
+            word: None,
+            attempts: 0,
         };
 
         let letter_grid = model.letters.widget();
@@ -170,9 +176,13 @@ impl SimpleComponent for App {
                 letters_guard.send(index.current_index(), LetterMsgIn::SetSelected(true));
                 self.selected_letter = Some(index.current_index());
             }
-            AppMsg::CreateNewField((width, height)) => {
+            AppMsg::StartNewGame(word) => {
+                let width = word.chars().count();
+                self.word = Some(word);
+                self.attempts = 0;
+
                 letters_guard.clear();
-                for _ in 0..width * height {
+                for _ in 0..width * TRIES {
                     letters_guard.push_back(width);
                 }
             }
