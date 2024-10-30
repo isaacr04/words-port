@@ -51,6 +51,7 @@ fn main() {
             app.quit();
         })
     };
+
     actions.add_action(quit_action);
     actions.register_for_main_application();
 

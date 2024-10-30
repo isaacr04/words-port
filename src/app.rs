@@ -11,6 +11,7 @@ use gtk::prelude::{
     WidgetExt,
 };
 use gtk::{gio, glib};
+use relm4::actions::AccelsPlus;
 use relm4::gtk::glib::Propagation;
 use relm4::gtk::EventControllerKey;
 use relm4::{
@@ -48,6 +49,7 @@ relm4::new_action_group!(pub(super) WindowActionGroup, "win");
 relm4::new_stateless_action!(PreferencesAction, WindowActionGroup, "preferences");
 relm4::new_stateless_action!(pub(super) ShortcutsAction, WindowActionGroup, "show-help-overlay");
 relm4::new_stateless_action!(AboutAction, WindowActionGroup, "about");
+relm4::new_stateless_action!(EnterAction, WindowActionGroup, "enter");
 
 #[relm4::component(pub)]
 impl SimpleComponent for App {
@@ -149,7 +151,6 @@ impl SimpleComponent for App {
         controller.connect_key_pressed(move |_, keyval, _, _| {
             if let Some(c) = keyval.to_unicode() {
                 match c {
-                    '\u{d}' => s.input(AppMsg::Enter),
                     '\u{8}' => s.input(AppMsg::Backspace),
                     '\u{7f}' => s.input(AppMsg::Delete),
                     c => s.input(AppMsg::EnterLetter(c)),
@@ -165,6 +166,15 @@ impl SimpleComponent for App {
         let widgets = view_output!();
 
         let mut actions = RelmActionGroup::<WindowActionGroup>::new();
+
+        let enter_action = {
+            RelmAction::<EnterAction>::new_stateless(move |_| {
+                sender.input(AppMsg::Enter);
+            })
+        };
+
+        let app = relm4::main_application();
+        app.set_accelerators_for_action::<EnterAction>(&["<Control>Return"]);
 
         let shortcuts_action = {
             let shortcuts = widgets.shortcuts.clone();
@@ -182,6 +192,7 @@ impl SimpleComponent for App {
 
         actions.add_action(shortcuts_action);
         actions.add_action(about_action);
+        actions.add_action(enter_action);
         actions.register_for_widget(&widgets.main_window);
 
         widgets.load_window_size();
