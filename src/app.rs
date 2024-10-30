@@ -1,3 +1,5 @@
+use std::collections::{HashMap, HashSet};
+use std::iter::Map;
 use std::{char, usize};
 
 use crate::letter::{Format, LetterMsgIn};
@@ -99,7 +101,7 @@ impl SimpleComponent for App {
                 adw::HeaderBar {
                     pack_start = &gtk::Button {
                         set_label: "Start",
-                        connect_clicked => AppMsg::StartNewGame("CHLOR".to_owned()),
+                        connect_clicked => AppMsg::StartNewGame("COLOR".to_owned()),
                     },
                     pack_end = &gtk::MenuButton {
                         set_icon_name: "open-menu-symbolic",
@@ -257,27 +259,48 @@ impl SimpleComponent for App {
                 }
             }
             AppMsg::Enter => {
+                let mut left_letters = HashMap::new();
+                let mut correct_letters = HashSet::new();
                 let width = self.word.chars().count();
-                for (i, _) in self.word.chars().enumerate() {
+                for (i, c) in self.word.chars().enumerate() {
                     let c_u = &letters_guard.get(self.attempts * width + i).unwrap().value;
-                    if self.word.chars().nth(i).unwrap().to_string() == *c_u {
+                    if c.to_string() == *c_u {
                         letters_guard.send(
-                            // TODO: Don't consider green matches for the yellow
                             self.attempts * width + i,
                             LetterMsgIn::SetFormat(Format::ExactMatch),
-                        )
-                    } else if self.word.contains(c_u) {
-                        letters_guard.send(
-                            self.attempts * width + i,
-                            LetterMsgIn::SetFormat(Format::Match),
-                        )
+                        );
+                        correct_letters.insert(i);
                     } else {
+                        left_letters
+                            .entry(c.to_string())
+                            .and_modify(|c| *c += 1)
+                            .or_insert(1);
+                    };
+                }
+
+                println!("{left_letters:?} - {correct_letters:?}");
+
+                for (i, _) in &mut self.word.chars().enumerate() {
+                    if correct_letters.contains(&i) {
+                        continue;
+                    }
+                    let c_u = &letters_guard.get(self.attempts * width + i).unwrap().value;
+                    if let Some(number) = left_letters.get_mut(c_u) {
+                        if *number > 0 {
+                            letters_guard.send(
+                                self.attempts * width + i,
+                                LetterMsgIn::SetFormat(Format::Match),
+                            );
+                            *number -= 1;
+                            continue;
+                        }
                         letters_guard.send(
                             self.attempts * width + i,
                             LetterMsgIn::SetFormat(Format::NoMatch),
                         )
                     }
                 }
+
                 self.attempts += 1;
 
                 for i in 0..width {
