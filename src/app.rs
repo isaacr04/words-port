@@ -1,5 +1,4 @@
 use std::collections::{HashMap, HashSet};
-use std::iter::Map;
 use std::{char, usize};
 
 use crate::letter::{Format, LetterMsgIn};
@@ -13,6 +12,7 @@ use gtk::prelude::{
     WidgetExt,
 };
 use gtk::{gio, glib};
+use rand::seq::IteratorRandom;
 use relm4::actions::AccelsPlus;
 use relm4::gtk::glib::Propagation;
 use relm4::gtk::EventControllerKey;
@@ -27,6 +27,7 @@ use relm4::{
 };
 
 static TRIES: usize = 6;
+static WORDS_FILE: &str = include_str!("../data/resources/wordlists/words.txt");
 
 pub(super) struct App {
     letters: FactoryVecDeque<Letter>,
@@ -34,12 +35,13 @@ pub(super) struct App {
     selected_letter: usize,
     word: String,
     attempts: usize,
+    words: HashSet<&'static str>,
 }
 
 #[derive(Debug)]
 pub(super) enum AppMsg {
     SelectField(DynamicIndex),
-    StartNewGame(String),
+    StartNewGame,
     EnterLetter(char),
     Enter,
     Delete,
@@ -101,7 +103,8 @@ impl SimpleComponent for App {
                 adw::HeaderBar {
                     pack_start = &gtk::Button {
                         set_label: "Start",
-                        connect_clicked => AppMsg::StartNewGame("COLOR".to_owned()),
+                        set_can_focus: false,
+                        connect_clicked => AppMsg::StartNewGame,
                     },
                     pack_end = &gtk::MenuButton {
                         set_icon_name: "open-menu-symbolic",
@@ -137,12 +140,15 @@ impl SimpleComponent for App {
                     LetterMsgOut::Selected(index) => AppMsg::SelectField(index),
                 });
 
+        let words = WORDS_FILE.lines().collect();
+
         let model = Self {
             about_dialog,
             letters,
             selected_letter: 0,
             word: String::new(),
             attempts: 0,
+            words,
         };
 
         let controller = EventControllerKey::new();
@@ -155,7 +161,8 @@ impl SimpleComponent for App {
                 match c {
                     '\u{8}' => s.input(AppMsg::Backspace),
                     '\u{7f}' => s.input(AppMsg::Delete),
-                    c => s.input(AppMsg::EnterLetter(c)),
+                    c if c.is_alphabetic() => s.input(AppMsg::EnterLetter(c)),
+                    _ => (),
                 }
                 Propagation::Stop
             } else {
@@ -217,7 +224,13 @@ impl SimpleComponent for App {
         match message {
             AppMsg::Quit => main_application().quit(),
             AppMsg::SelectField(index) => select_field(index.current_index()),
-            AppMsg::StartNewGame(word) => {
+            AppMsg::StartNewGame => {
+                let word = self
+                    .words
+                    .iter()
+                    .choose(&mut rand::thread_rng())
+                    .unwrap()
+                    .to_string();
                 let width = word.chars().count();
                 self.word = word;
                 self.attempts = 0;
@@ -259,11 +272,22 @@ impl SimpleComponent for App {
                 }
             }
             AppMsg::Enter => {
+                let mut r = String::new();
+                let width = self.word.chars().count();
+
+                for i in 0..width {
+                    let c_u = &letters_guard.get(self.attempts * width + i).unwrap().value;
+                    r.push_str(&c_u);
+                }
+                if !self.words.contains(r.to_uppercase().as_str()) {
+                    return;
+                }
+
                 let mut left_letters = HashMap::new();
                 let mut correct_letters = HashSet::new();
-                let width = self.word.chars().count();
                 for (i, c) in self.word.chars().enumerate() {
                     let c_u = &letters_guard.get(self.attempts * width + i).unwrap().value;
+                    r.push_str(&c_u);
                     if c.to_string() == *c_u {
                         letters_guard.send(
                             self.attempts * width + i,
@@ -277,8 +301,6 @@ impl SimpleComponent for App {
                             .or_insert(1);
                     };
                 }
-
-                println!("{left_letters:?} - {correct_letters:?}");
 
                 for (i, _) in &mut self.word.chars().enumerate() {
                     if correct_letters.contains(&i) {
@@ -302,6 +324,12 @@ impl SimpleComponent for App {
                 }
 
                 self.attempts += 1;
+
+                if self.attempts > 5 {
+                    println!("Solution: {}", self.word);
+                    sender.input(AppMsg::StartNewGame);
+                    return;
+                }
 
                 for i in 0..width {
                     letters_guard.send(
