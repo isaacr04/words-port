@@ -34,8 +34,9 @@ pub(super) struct App {
     about_dialog: Controller<AboutDialog>,
     selected_letter: usize,
     word: String,
+    width: usize,
     attempts: usize,
-    words: HashSet<&'static str>,
+    allowed_words: HashSet<&'static str>,
 }
 
 #[derive(Debug)]
@@ -140,7 +141,7 @@ impl SimpleComponent for App {
                     LetterMsgOut::Selected(index) => AppMsg::SelectField(index),
                 });
 
-        let words = WORDS_FILE.lines().collect();
+        let allowed_words = WORDS_FILE.lines().collect();
 
         let model = Self {
             about_dialog,
@@ -148,61 +149,16 @@ impl SimpleComponent for App {
             selected_letter: 0,
             word: String::new(),
             attempts: 0,
-            words,
+            allowed_words,
+            width: 0,
         };
 
-        let controller = EventControllerKey::new();
-
-        let s = sender.clone();
-
-        // Connect to the key-pressed signal to handle key presses
-        controller.connect_key_pressed(move |_, keyval, _, _| {
-            if let Some(c) = keyval.to_unicode() {
-                match c {
-                    '\u{8}' => s.input(AppMsg::Backspace),
-                    '\u{7f}' => s.input(AppMsg::Delete),
-                    c if c.is_alphabetic() => s.input(AppMsg::EnterLetter(c)),
-                    _ => (),
-                }
-                Propagation::Stop
-            } else {
-                Propagation::Proceed
-            }
-        });
-        root.add_controller(controller);
+        root.add_controller(keyboard_events_controller(sender.clone()));
 
         let letter_grid = model.letters.widget();
         let widgets = view_output!();
 
-        let mut actions = RelmActionGroup::<WindowActionGroup>::new();
-
-        let enter_action = {
-            RelmAction::<EnterAction>::new_stateless(move |_| {
-                sender.input(AppMsg::Enter);
-            })
-        };
-
-        let app = relm4::main_application();
-        app.set_accelerators_for_action::<EnterAction>(&["<Control>Return"]);
-
-        let shortcuts_action = {
-            let shortcuts = widgets.shortcuts.clone();
-            RelmAction::<ShortcutsAction>::new_stateless(move |_| {
-                shortcuts.present();
-            })
-        };
-
-        let about_action = {
-            let sender = model.about_dialog.sender().clone();
-            RelmAction::<AboutAction>::new_stateless(move |_| {
-                sender.send(()).unwrap();
-            })
-        };
-
-        actions.add_action(shortcuts_action);
-        actions.add_action(about_action);
-        actions.add_action(enter_action);
-        actions.register_for_widget(&widgets.main_window);
+        register_actions(sender, &widgets, &model);
 
         widgets.load_window_size();
 
@@ -225,25 +181,19 @@ impl SimpleComponent for App {
             AppMsg::Quit => main_application().quit(),
             AppMsg::SelectField(index) => select_field(index.current_index()),
             AppMsg::StartNewGame => {
-                let word = self
-                    .words
-                    .iter()
-                    .choose(&mut rand::thread_rng())
-                    .unwrap()
-                    .to_string();
-                let width = word.chars().count();
-                self.word = word;
+                self.word = pick_random_word(&self.allowed_words);
+                self.width = self.word.chars().count();
                 self.attempts = 0;
+                self.selected_letter = 0;
 
                 letters_guard.clear();
-                for i in 0..width * TRIES {
-                    if i < width {
-                        letters_guard.push_back((width, Format::Editable));
+                for i in 0..self.width * TRIES {
+                    if i < self.width {
+                        letters_guard.push_back((self.width, Format::Editable));
                     } else {
-                        letters_guard.push_back((width, Format::NoMatch));
+                        letters_guard.push_back((self.width, Format::NoMatch));
                     }
                 }
-                self.selected_letter = 0;
             }
             AppMsg::EnterLetter(c) => {
                 letters_guard.send(
@@ -279,7 +229,7 @@ impl SimpleComponent for App {
                     let c_u = &letters_guard.get(self.attempts * width + i).unwrap().value;
                     r.push_str(&c_u);
                 }
-                if !self.words.contains(r.to_uppercase().as_str()) {
+                if !self.allowed_words.contains(r.to_uppercase().as_str()) {
                     return;
                 }
 
@@ -345,6 +295,65 @@ impl SimpleComponent for App {
     fn shutdown(&mut self, widgets: &mut Self::Widgets, _output: relm4::Sender<Self::Output>) {
         widgets.save_window_size().unwrap();
     }
+}
+
+fn pick_random_word(words: &HashSet<&str>) -> String {
+    words
+        .iter()
+        .choose(&mut rand::thread_rng())
+        .unwrap()
+        .to_string()
+}
+
+fn keyboard_events_controller(sender: ComponentSender<App>) -> EventControllerKey {
+    let controller = EventControllerKey::new();
+    // Connect to the key-pressed signal to handle key presses
+    controller.connect_key_pressed(move |_, keyval, _, _| {
+        if let Some(c) = keyval.to_unicode() {
+            match c {
+                '\u{8}' => sender.input(AppMsg::Backspace),
+                '\u{7f}' => sender.input(AppMsg::Delete),
+                c if c.is_alphabetic() => sender.input(AppMsg::EnterLetter(c)),
+                _ => (),
+            }
+            Propagation::Stop
+        } else {
+            Propagation::Proceed
+        }
+    });
+    controller
+}
+
+fn register_actions(sender: ComponentSender<App>, widgets: &AppWidgets, model: &App) {
+    let mut actions = RelmActionGroup::<WindowActionGroup>::new();
+
+    let enter_action = {
+        RelmAction::<EnterAction>::new_stateless(move |_| {
+            sender.input(AppMsg::Enter);
+        })
+    };
+
+    let app = relm4::main_application();
+    app.set_accelerators_for_action::<EnterAction>(&["<Control>Return"]);
+
+    let shortcuts_action = {
+        let shortcuts = widgets.shortcuts.clone();
+        RelmAction::<ShortcutsAction>::new_stateless(move |_| {
+            shortcuts.present();
+        })
+    };
+
+    let about_action = {
+        let sender = model.about_dialog.sender().clone();
+        RelmAction::<AboutAction>::new_stateless(move |_| {
+            sender.send(()).unwrap();
+        })
+    };
+
+    actions.add_action(shortcuts_action);
+    actions.add_action(about_action);
+    actions.add_action(enter_action);
+    actions.register_for_widget(&widgets.main_window);
 }
 
 impl AppWidgets {
