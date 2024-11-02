@@ -8,6 +8,7 @@ use relm4::{
 #[derive(Debug, PartialEq)]
 pub enum Format {
     Editable,
+    #[allow(dead_code)]
     NotUsed,
     NoMatch,
     Match,
