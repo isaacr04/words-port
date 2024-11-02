@@ -237,6 +237,9 @@ impl SimpleComponent for App {
                 let mut correct_letters = HashSet::new();
                 for (i, c) in self.word.chars().enumerate() {
                     let c_u = &letters_guard.get(self.attempts * width + i).unwrap().value;
+                    if c_u == "" {
+                        return;
+                    }
                     r.push_str(&c_u);
                     if c.to_string() == *c_u {
                         letters_guard.send(
