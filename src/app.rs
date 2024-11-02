@@ -266,11 +266,11 @@ impl SimpleComponent for App {
                             *number -= 1;
                             continue;
                         }
-                        letters_guard.send(
-                            self.attempts * width + i,
-                            LetterMsgIn::SetFormat(Format::NoMatch),
-                        )
                     }
+                    letters_guard.send(
+                        self.attempts * width + i,
+                        LetterMsgIn::SetFormat(Format::NoMatch),
+                    )
                 }
 
                 self.attempts += 1;
@@ -287,7 +287,9 @@ impl SimpleComponent for App {
                         LetterMsgIn::SetFormat(Format::Editable),
                     )
                 }
-                self.selected_letter = self.attempts * width;
+                // sender.input(AppMsg::SelectField(DynamicIndex::new(
+                //     self.attempts * width,
+                // )));
             }
         }
     }
