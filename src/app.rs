@@ -157,9 +157,11 @@ impl SimpleComponent for App {
         let letter_grid = model.letters.widget();
         let widgets = view_output!();
 
-        register_actions(sender, &widgets, &model);
+        register_actions(sender.clone(), &widgets, &model);
 
         widgets.load_window_size();
+
+        sender.input(AppMsg::StartNewGame);
 
         ComponentParts { model, widgets }
     }
