@@ -21,9 +21,8 @@ use relm4::{
     adw,
     factory::FactoryVecDeque,
     gtk::{self, prelude::GridExt},
-    main_application,
-    prelude::DynamicIndex,
-    Component, ComponentController, ComponentParts, ComponentSender, Controller, SimpleComponent,
+    main_application, Component, ComponentController, ComponentParts, ComponentSender, Controller,
+    SimpleComponent,
 };
 
 static TRIES: usize = 6;
@@ -41,7 +40,7 @@ pub(super) struct App {
 
 #[derive(Debug)]
 pub(super) enum AppMsg {
-    SelectField(DynamicIndex),
+    SelectField(usize),
     StartNewGame,
     EnterLetter(char),
     Enter,
@@ -138,7 +137,7 @@ impl SimpleComponent for App {
             FactoryVecDeque::builder()
                 .launch_default()
                 .forward(sender.input_sender(), |msg| match msg {
-                    LetterMsgOut::Selected(index) => AppMsg::SelectField(index),
+                    LetterMsgOut::Selected(index) => AppMsg::SelectField(index.current_index()),
                 });
 
         let allowed_words = WORDS_FILE.lines().collect();
@@ -179,7 +178,7 @@ impl SimpleComponent for App {
 
         match message {
             AppMsg::Quit => main_application().quit(),
-            AppMsg::SelectField(index) => select_field(index.current_index()),
+            AppMsg::SelectField(index) => select_field(index),
             AppMsg::StartNewGame => {
                 self.word = pick_random_word(&self.allowed_words);
                 self.width = self.word.chars().count();
@@ -290,9 +289,7 @@ impl SimpleComponent for App {
                         LetterMsgIn::SetFormat(Format::Editable),
                     )
                 }
-                // sender.input(AppMsg::SelectField(DynamicIndex::new(
-                //     self.attempts * width,
-                // )));
+                sender.input(AppMsg::SelectField(self.attempts * width));
             }
         }
     }
