@@ -102,7 +102,7 @@ impl SimpleComponent for App {
 
                 adw::HeaderBar {
                     pack_start = &gtk::Button {
-                        set_label: "Start",
+                        set_label: "New",
                         set_can_focus: false,
                         connect_clicked => AppMsg::StartNewGame,
                     },
