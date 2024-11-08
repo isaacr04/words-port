@@ -1,31 +1,35 @@
 use relm4::{
     factory::{positions::GridPosition, Position},
     gtk::{self, prelude::ButtonExt, prelude::WidgetExt},
-    prelude::{DynamicIndex, FactoryComponent},
+    prelude::FactoryComponent,
     FactorySender, RelmWidgetExt,
 };
 
 #[derive(Debug, PartialEq)]
 pub enum Format {
     Editable,
-    #[allow(dead_code)]
     NotUsed,
     NoMatch,
     Match,
     ExactMatch,
 }
 
+#[derive(Debug, Clone, Copy, Eq, Hash, PartialEq)]
+pub struct Coord {
+    pub column: usize,
+    pub row: usize,
+}
+
 #[derive(Debug)]
 pub struct Letter {
     pub value: String,
     format: Format,
-    width: usize,
     selected: bool,
 }
 
 #[derive(Debug)]
 pub enum LetterMsgOut {
-    Selected(DynamicIndex),
+    Selected(Coord),
 }
 
 #[derive(Debug)]
@@ -35,14 +39,11 @@ pub enum LetterMsgIn {
     SetSelected(bool),
 }
 
-impl Position<GridPosition, DynamicIndex> for Letter {
-    fn position(&self, index: &DynamicIndex) -> GridPosition {
-        let index = index.current_index();
-        let x = index % self.width as usize;
-        let y = index / self.width as usize;
+impl Position<GridPosition, Coord> for Letter {
+    fn position(&self, index: &Coord) -> GridPosition {
         GridPosition {
-            column: x as i32,
-            row: y as i32,
+            column: index.column as i32,
+            row: index.row as i32,
             width: 1,
             height: 1,
         }
@@ -52,6 +53,7 @@ impl Position<GridPosition, DynamicIndex> for Letter {
 #[relm4::factory(pub)]
 impl FactoryComponent for Letter {
     type Init = (usize, Format);
+    type Index = Coord;
     type Input = LetterMsgIn;
     type Output = LetterMsgOut;
     type CommandOutput = ();
@@ -75,19 +77,18 @@ impl FactoryComponent for Letter {
             // #[watch]
             // add_css_class?: { if self.selected { Some("selected") } else { None }},
             connect_clicked[sender, index] => move |_| {
-                sender.output(LetterMsgOut::Selected(index.clone())).unwrap();
+                sender.output(LetterMsgOut::Selected(index)).unwrap();
             },
             #[watch]
             set_sensitive: (self.format == Format::Editable) && !self.selected
         }
     }
 
-    fn init_model(value: Self::Init, index: &DynamicIndex, _sender: FactorySender<Self>) -> Self {
+    fn init_model(value: Self::Init, index: &Coord, _sender: FactorySender<Self>) -> Self {
         Self {
             format: value.1,
             value: String::new(),
-            width: value.0,
-            selected: if index.current_index() == 0 {
+            selected: if index.column == 0 && index.row == 0 {
                 true
             } else {
                 false

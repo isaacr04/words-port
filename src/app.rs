@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet};
 use std::{char, usize};
 
-use crate::letter::{Format, LetterMsgIn};
+use crate::letter::{Coord, Format, LetterMsgIn};
 use crate::{
     config::{APP_ID, PROFILE},
     letter::LetterMsgOut,
@@ -14,12 +14,12 @@ use gtk::prelude::{
 use gtk::{gio, glib};
 use rand::seq::IteratorRandom;
 use relm4::actions::AccelsPlus;
+use relm4::factory::FactoryHashMap;
 use relm4::gtk::glib::Propagation;
 use relm4::gtk::EventControllerKey;
 use relm4::{
     actions::{RelmAction, RelmActionGroup},
     adw,
-    factory::FactoryVecDeque,
     gtk::{self, prelude::GridExt},
     main_application, Component, ComponentController, ComponentParts, ComponentSender, Controller,
     SimpleComponent,
@@ -29,9 +29,9 @@ static TRIES: usize = 6;
 static WORDS_FILE: &str = include_str!("../data/resources/wordlists/words.txt");
 
 pub(super) struct App {
-    letters: FactoryVecDeque<Letter>,
+    letters: FactoryHashMap<Coord, Letter>,
     about_dialog: Controller<AboutDialog>,
-    selected_letter: usize,
+    selected_letter: Coord,
     word: String,
     width: usize,
     attempts: usize,
@@ -40,7 +40,7 @@ pub(super) struct App {
 
 #[derive(Debug)]
 pub(super) enum AppMsg {
-    SelectField(usize),
+    SelectField(Coord),
     StartNewGame,
     EnterLetter(char),
     Enter,
@@ -134,10 +134,10 @@ impl SimpleComponent for App {
             .detach();
 
         let letters =
-            FactoryVecDeque::builder()
+            FactoryHashMap::builder()
                 .launch_default()
                 .forward(sender.input_sender(), |msg| match msg {
-                    LetterMsgOut::Selected(index) => AppMsg::SelectField(index.current_index()),
+                    LetterMsgOut::Selected(index) => AppMsg::SelectField(index),
                 });
 
         let allowed_words = WORDS_FILE.lines().collect();
@@ -145,7 +145,7 @@ impl SimpleComponent for App {
         let model = Self {
             about_dialog,
             letters,
-            selected_letter: 0,
+            selected_letter: Coord { column: 0, row: 0 },
             word: String::new(),
             attempts: 0,
             allowed_words,
@@ -167,137 +167,198 @@ impl SimpleComponent for App {
     }
 
     fn update(&mut self, message: Self::Input, sender: ComponentSender<Self>) {
-        let mut letters_guard = self.letters.guard();
-
         let selected = self.selected_letter;
-
-        let mut select_field = |index: usize| {
-            letters_guard.send(self.selected_letter, LetterMsgIn::SetSelected(false));
-
-            letters_guard.send(index, LetterMsgIn::SetSelected(true));
-            self.selected_letter = index;
-        };
 
         match message {
             AppMsg::Quit => main_application().quit(),
-            AppMsg::SelectField(index) => select_field(index),
+            AppMsg::SelectField(index) => self.select_field(index),
             AppMsg::StartNewGame => {
                 self.word = pick_random_word(&self.allowed_words);
+                println!("New Word: {}", self.word);
                 self.width = self.word.chars().count();
                 self.attempts = 0;
-                self.selected_letter = 0;
-
-                letters_guard.clear();
-                for i in 0..self.width * TRIES {
-                    if i < self.width {
-                        letters_guard.push_back((self.width, Format::Editable));
-                    } else {
-                        letters_guard.push_back((self.width, Format::NoMatch));
-                    }
-                }
+                self.selected_letter = Coord { column: 0, row: 0 };
+                self.create_empty_field();
             }
             AppMsg::EnterLetter(c) => {
-                letters_guard.send(
-                    selected,
+                self.letters.send(
+                    &selected,
                     LetterMsgIn::SetContent(Some(c.to_uppercase().to_string())),
                 );
-
-                if selected < ((self.attempts + 1) * self.word.chars().count()) - 1 {
-                    let new_selected_letter = selected + 1;
-                    select_field(new_selected_letter);
-                }
+                self.move_selection_by(1);
             }
-            AppMsg::Delete => letters_guard.send(selected, LetterMsgIn::SetContent(None)),
+            AppMsg::Delete => self.letters.send(&selected, LetterMsgIn::SetContent(None)),
             AppMsg::Backspace => {
-                let width = self.word.chars().count();
-                if selected == (self.attempts + 1) * width - 1 {
-                    if !letters_guard.get(selected).unwrap().value.is_empty() {
-                        sender.input(AppMsg::Delete);
-                        return;
-                    }
+                // if on last postion, delete letter under cursor, if there is any
+                if selected.column == self.width - 1
+                    && !self.letters.get(&selected).unwrap().value.is_empty()
+                {
+                    sender.input(AppMsg::Delete);
+                    return;
                 }
-                if selected > (self.attempts * width) {
-                    let new_selected_letter = selected - 1;
-                    select_field(new_selected_letter);
-                    letters_guard.send(new_selected_letter, LetterMsgIn::SetContent(None))
-                }
+                self.move_selection_by(-1);
+                self.letters
+                    .send(&self.selected_letter, LetterMsgIn::SetContent(None))
             }
             AppMsg::Enter => {
-                let mut r = String::new();
-                let width = self.word.chars().count();
-
-                for i in 0..width {
-                    let c_u = &letters_guard.get(self.attempts * width + i).unwrap().value;
-                    r.push_str(&c_u);
-                }
-                if !self.allowed_words.contains(r.to_uppercase().as_str()) {
+                let Some(content_of_current_attempt) = self.get_entered_word() else {
+                    return;
+                };
+                if content_of_current_attempt.chars().count() < self.width {
                     return;
                 }
 
-                let mut left_letters = HashMap::new();
-                let mut correct_letters = HashSet::new();
-                for (i, c) in self.word.chars().enumerate() {
-                    let c_u = &letters_guard.get(self.attempts * width + i).unwrap().value;
-                    if c_u == "" {
-                        return;
-                    }
-                    r.push_str(&c_u);
-                    if c.to_string() == *c_u {
-                        letters_guard.send(
-                            self.attempts * width + i,
-                            LetterMsgIn::SetFormat(Format::ExactMatch),
-                        );
-                        correct_letters.insert(i);
-                    } else {
-                        left_letters
-                            .entry(c.to_string())
-                            .and_modify(|c| *c += 1)
-                            .or_insert(1);
-                    };
+                if !self
+                    .allowed_words
+                    .contains(content_of_current_attempt.as_str())
+                {
+                    return;
                 }
 
-                for (i, _) in &mut self.word.chars().enumerate() {
-                    if correct_letters.contains(&i) {
-                        continue;
-                    }
-                    let c_u = &letters_guard.get(self.attempts * width + i).unwrap().value;
-                    if let Some(number) = left_letters.get_mut(c_u) {
-                        if *number > 0 {
-                            letters_guard.send(
-                                self.attempts * width + i,
-                                LetterMsgIn::SetFormat(Format::Match),
-                            );
-                            *number -= 1;
-                            continue;
-                        }
-                    }
-                    letters_guard.send(
-                        self.attempts * width + i,
-                        LetterMsgIn::SetFormat(Format::NoMatch),
-                    )
-                }
+                self.set_color_of_letters_according_matching(content_of_current_attempt);
 
                 self.attempts += 1;
 
-                if self.attempts > 5 {
+                if self.attempts >= TRIES {
                     println!("Solution: {}", self.word);
                     sender.input(AppMsg::StartNewGame);
                     return;
                 }
 
-                for i in 0..width {
-                    letters_guard.send(
-                        self.attempts * width + i,
-                        LetterMsgIn::SetFormat(Format::Editable),
-                    )
-                }
-                sender.input(AppMsg::SelectField(self.attempts * width));
+                self.make_attempt_row_selectable();
+
+                sender.input(AppMsg::SelectField(Coord {
+                    column: 0,
+                    row: self.attempts,
+                }));
             }
         }
     }
 
     fn shutdown(&mut self, widgets: &mut Self::Widgets, _output: relm4::Sender<Self::Output>) {
         widgets.save_window_size().unwrap();
+    }
+}
+
+impl App {
+    fn create_empty_field(&mut self) {
+        self.letters.clear();
+        for column in 0..self.width {
+            for row in 0..TRIES {
+                if row == 0 {
+                    self.letters
+                        .insert(Coord { column, row }, (self.width, Format::Editable));
+                } else {
+                    self.letters
+                        .insert(Coord { column, row }, (self.width, Format::NotUsed));
+                }
+            }
+        }
+    }
+
+    fn select_field(&mut self, coord: Coord) {
+        self.letters
+            .send(&self.selected_letter, LetterMsgIn::SetSelected(false));
+
+        self.letters.send(&coord, LetterMsgIn::SetSelected(true));
+        self.selected_letter = coord;
+    }
+
+    fn move_selection_by(&mut self, step: isize) {
+        let new_column: isize = self.selected_letter.column as isize + step;
+
+        if new_column >= 0 && new_column < self.width as isize {
+            let new_selected_letter = Coord {
+                column: new_column as usize,
+                row: self.selected_letter.row,
+            };
+            self.select_field(new_selected_letter);
+        }
+    }
+
+    fn get_entered_word(&self) -> Option<String> {
+        let mut content_of_current_attempt = String::new();
+        for column in 0..self.width {
+            let c_u = self
+                .letters
+                .get(&Coord {
+                    column,
+                    row: self.attempts,
+                })?
+                .value
+                .clone();
+            content_of_current_attempt.push_str(&c_u);
+        }
+        Some(content_of_current_attempt)
+    }
+
+    fn set_color_of_letters_according_matching(&mut self, entered_word: String) {
+        let mut left_letters = HashMap::new();
+        let mut correct_letters_positions = HashSet::new();
+
+        let matches: Vec<_> = self
+            .word
+            .chars()
+            .zip(entered_word.chars())
+            .enumerate()
+            .collect();
+
+        for (column, (target_char, user_char)) in &matches {
+            if target_char == user_char {
+                self.letters.send(
+                    &Coord {
+                        column: *column,
+                        row: self.attempts,
+                    },
+                    LetterMsgIn::SetFormat(Format::ExactMatch),
+                );
+                correct_letters_positions.insert(column);
+            } else {
+                left_letters
+                    .entry(target_char.to_string())
+                    .and_modify(|c| *c += 1)
+                    .or_insert(1);
+            };
+        }
+
+        for (column, (_, user_char)) in &matches {
+            if correct_letters_positions.contains(&column) {
+                continue;
+            }
+
+            if let Some(number) = left_letters.get_mut(&user_char.to_string()) {
+                if *number > 0 {
+                    self.letters.send(
+                        &Coord {
+                            column: *column,
+                            row: self.attempts,
+                        },
+                        LetterMsgIn::SetFormat(Format::Match),
+                    );
+                    *number -= 1;
+                    continue;
+                }
+            }
+            self.letters.send(
+                &Coord {
+                    column: *column,
+                    row: self.attempts,
+                },
+                LetterMsgIn::SetFormat(Format::NoMatch),
+            )
+        }
+    }
+
+    fn make_attempt_row_selectable(&mut self) {
+        for i in 0..self.width {
+            self.letters.send(
+                &Coord {
+                    column: i,
+                    row: self.attempts,
+                },
+                LetterMsgIn::SetFormat(Format::Editable),
+            )
+        }
     }
 }
 
