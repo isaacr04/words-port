@@ -1,6 +1,6 @@
-data/com.gitlab.tronta.wordle.desktop.in.in
-data/com.gitlab.tronta.wordle.gschema.xml.in
-data/com.gitlab.tronta.wordle.metainfo.xml.in.in
+data/org.codeberg.petsoi.wordle.desktop.in.in
+data/org.codeberg.petsoi.wordle.gschema.xml.in
+data/org.codeberg.petsoi.wordle.metainfo.xml.in.in
 data/resources/ui/shortcuts.ui
 data/resources/ui/window.ui
 src/application.rs

@@ -9,9 +9,9 @@ flatpak:
     - flatpak
   variables:
     BUNDLE: "wordle-nightly.flatpak"
-    MANIFEST_PATH: "build-aux/com.gitlab.tronta.wordle.Devel.json"
+    MANIFEST_PATH: "build-aux/org.codeberg.petsoi.wordle.Devel.json"
     FLATPAK_MODULE: "wordle"
-    APP_ID: "com.gitlab.tronta.wordle.Devel"
+    APP_ID: "org.codeberg.petsoi.wordle.Devel"
     RUNTIME_REPO: "https://nightly.gnome.org/gnome-nightly.flatpakrepo"
   script:
     - flatpak install --user --noninteractive flathub org.freedesktop.Sdk.Extension.llvm16//23.08

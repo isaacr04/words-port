@@ -9,7 +9,7 @@ project(
 i18n = import('i18n')
 gnome = import('gnome')
 
-base_id = 'com.gitlab.tronta.wordle'
+base_id = 'org.gitlab.tronta.wordle'
 
 dependency('glib-2.0', version: '>= 2.66')
 dependency('gio-2.0', version: '>= 2.66')
@@ -50,8 +50,10 @@ endif
 
 meson.add_dist_script(
   'build-aux/dist-vendor.sh',
-  meson.project_build_root() / 'meson-dist' / meson.project_name() + '-' + version,
-  meson.project_source_root()
+  meson.project_build_root() / 'meson-dist' / meson.project_name()
+  + '-'
+  + version,
+  meson.project_source_root(),
 )
 
 if get_option('profile') == 'development'

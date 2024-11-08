@@ -1,5 +1,5 @@
 {
-    "id": "com.gitlab.tronta.wordle.Devel",
+    "id": "org.codeberg.petsoi.wordle.Devel",
     "runtime": "org.gnome.Platform",
     "runtime-version": "46",
     "sdk": "org.gnome.Sdk",
@@ -51,4 +51,3 @@
         }
     ]
 }
-
