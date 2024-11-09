@@ -1,5 +1,6 @@
 use std::collections::{HashMap, HashSet};
-use std::{char, usize};
+use std::process::exit;
+use std::{char, fs, usize};
 
 use crate::letter::{Coord, Format, LetterMsgIn};
 use crate::{
@@ -36,6 +37,7 @@ pub(super) struct App {
     width: usize,
     attempts: usize,
     allowed_words: HashSet<&'static str>,
+    keys: Vec<Vec<Key>>,
 }
 
 #[derive(Debug)]
@@ -47,6 +49,12 @@ pub(super) enum AppMsg {
     Delete,
     Backspace,
     Quit,
+}
+
+enum Key {
+    Letter(char),
+    Enter,
+    Del,
 }
 
 relm4::new_action_group!(pub(super) WindowActionGroup, "win");
@@ -83,7 +91,7 @@ impl SimpleComponent for App {
 
             #[wrap(Some)]
             set_help_overlay: shortcuts = &gtk::Builder::from_resource(
-                    "/org/codeberg/petsoi/wordle/gtk/help-overlay.ui"
+                    "/org/codeberg/petsoi/wordle/gtk/help-overlay.ui2"
                 )
                 .object::<gtk::ShortcutsWindow>("help_overlay")
                 .unwrap() -> gtk::ShortcutsWindow {
@@ -140,6 +148,16 @@ impl SimpleComponent for App {
                     LetterMsgOut::Selected(index) => AppMsg::SelectField(index),
                 });
 
+        let paths = fs::read_dir("/").unwrap();
+
+        for path in paths {
+            println!("Name: {}", path.unwrap().path().display())
+        }
+        exit(0);
+
+        let contents = fs::read_to_string("/org/codeberg/petsoi/wordle/lists/words.txt")
+            .expect("Should have been able to read the file");
+
         let allowed_words = WORDS_FILE.lines().collect();
 
         let model = Self {
@@ -150,6 +168,7 @@ impl SimpleComponent for App {
             attempts: 0,
             allowed_words,
             width: 0,
+            keys: Vec::new(),
         };
 
         root.add_controller(keyboard_events_controller(sender.clone()));

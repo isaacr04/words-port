@@ -66,9 +66,9 @@ impl FactoryComponent for Letter {
             set_label: &self.value,
             #[watch]
             set_css_classes: { match &self.format {
-                Format::NotUsed | Format::Editable => &["title-1"],
-                Format::NoMatch  => &["title-1", "no_match"],
-                Format::Match  => &["title-1", "match"],
+                Format::NotUsed => &["title-1"],
+                Format::NoMatch => &["title-1", "no_match"],
+                Format::Match => &["title-1", "match"],
                 Format::ExactMatch => &["title-1", "exact"],
             }},
             // #[watch]
@@ -77,9 +77,7 @@ impl FactoryComponent for Letter {
             // add_css_class?: { if self.selected { Some("selected") } else { None }},
             connect_clicked[sender, index] => move |_| {
                 sender.output(LetterMsgOut::Selected(index)).unwrap();
-            },
-            #[watch]
-            set_sensitive: (self.format == Format::Editable) && !self.selected
+            }
         }
     }
 
