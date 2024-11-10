@@ -6,23 +6,21 @@ desktop_conf.set('icon', application_id)
 desktop_file = i18n.merge_file(
   type: 'desktop',
   input: configure_file(
-    input: '@0@.desktop.in.in'.format(base_id),
+    input: '@0@.desktop.in'.format(base_id),
     output: '@BASENAME@',
-    configuration: desktop_conf
+    configuration: desktop_conf,
   ),
   output: '@0@.desktop'.format(application_id),
   po_dir: podir,
   install: true,
-  install_dir: datadir / 'applications'
+  install_dir: datadir / 'applications',
 )
 # Validate Desktop file
 if desktop_file_validate.found()
   test(
     'validate-desktop',
     desktop_file_validate,
-    args: [
-      desktop_file.full_path()
-    ],
+    args: [desktop_file.full_path()],
     depends: desktop_file,
   )
 endif
@@ -33,22 +31,21 @@ appdata_conf.set('app-id', application_id)
 appdata_conf.set('gettext-package', gettext_package)
 appdata_file = i18n.merge_file(
   input: configure_file(
-    input: '@0@.metainfo.xml.in.in'.format(base_id),
+    input: '@0@.metainfo.xml.in'.format(base_id),
     output: '@BASENAME@',
-    configuration: appdata_conf
+    configuration: appdata_conf,
   ),
   output: '@0@.metainfo.xml'.format(application_id),
   po_dir: podir,
   install: true,
-  install_dir: datadir / 'metainfo'
+  install_dir: datadir / 'metainfo',
 )
 # Validate Appdata
 if appstreamcli.found()
   test(
-    'validate-appdata', appstreamcli,
-    args: [
-      'validate', '--no-net', '--explain', appdata_file.full_path()
-    ],
+    'validate-appdata',
+    appstreamcli,
+    args: ['validate', '--no-net', '--explain', appdata_file.full_path()],
     depends: appdata_file,
   )
 endif
@@ -62,13 +59,12 @@ configure_file(
   output: '@0@.gschema.xml'.format(application_id),
   configuration: gschema_conf,
   install: true,
-  install_dir: datadir / 'glib-2.0' / 'schemas'
+  install_dir: datadir / 'glib-2.0' / 'schemas',
 )
 
 # Validata GSchema
 test(
-  'validate-gschema', glib_compile_schemas,
-  args: [
-    '--strict', '--dry-run', meson.current_build_dir()
-  ],
+  'validate-gschema',
+  glib_compile_schemas,
+  args: ['--strict', '--dry-run', meson.current_build_dir()],
 )

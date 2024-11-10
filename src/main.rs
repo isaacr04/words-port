@@ -41,7 +41,7 @@ fn main() {
     gtk::Window::set_default_icon_name(APP_ID);
 
     let app = main_application();
-    app.set_resource_base_path(Some("/com/gitlab/tronta/wordle/"));
+    app.set_resource_base_path(Some("/org/codeberg/petsoi/wordle/"));
 
     let mut actions = RelmActionGroup::<AppActionGroup>::new();
 
@@ -61,7 +61,7 @@ fn main() {
 
     let data = res
         .lookup_data(
-            "/com/gitlab/tronta/wordle/style.css",
+            "/org/codeberg/petsoi/wordle/style.css",
             gio::ResourceLookupFlags::NONE,
         )
         .unwrap();
