@@ -6,7 +6,7 @@ desktop_conf.set('icon', application_id)
 desktop_file = i18n.merge_file(
   type: 'desktop',
   input: configure_file(
-    input: '@0@.desktop.in'.format(base_id),
+    input: '@0@.desktop.in.in'.format(base_id),
     output: '@BASENAME@',
     configuration: desktop_conf,
   ),
@@ -31,7 +31,7 @@ appdata_conf.set('app-id', application_id)
 appdata_conf.set('gettext-package', gettext_package)
 appdata_file = i18n.merge_file(
   input: configure_file(
-    input: '@0@.metainfo.xml.in'.format(base_id),
+    input: '@0@.metainfo.xml.in.in'.format(base_id),
     output: '@BASENAME@',
     configuration: appdata_conf,
   ),
