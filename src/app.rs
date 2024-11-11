@@ -1,4 +1,5 @@
 use std::collections::{HashMap, HashSet};
+use std::path::Path;
 use std::process::exit;
 use std::{char, fs, usize};
 
@@ -15,8 +16,11 @@ use gtk::prelude::{
 use gtk::{gio, glib};
 use rand::seq::IteratorRandom;
 use relm4::actions::AccelsPlus;
+use relm4::adw::Application;
 use relm4::factory::FactoryHashMap;
+use relm4::gtk::gio::ffi::g_application_get_resource_base_path;
 use relm4::gtk::glib::Propagation;
+use relm4::gtk::prelude::ApplicationExtManual;
 use relm4::gtk::EventControllerKey;
 use relm4::{
     actions::{RelmAction, RelmActionGroup},
@@ -91,7 +95,7 @@ impl SimpleComponent for App {
 
             #[wrap(Some)]
             set_help_overlay: shortcuts = &gtk::Builder::from_resource(
-                    "/org/codeberg/petsoi/wordle/gtk/help-overlay.ui2"
+                    "/org/codeberg/petsoi/wordle/gtk/help-overlay.ui"
                 )
                 .object::<gtk::ShortcutsWindow>("help_overlay")
                 .unwrap() -> gtk::ShortcutsWindow {
@@ -148,15 +152,13 @@ impl SimpleComponent for App {
                     LetterMsgOut::Selected(index) => AppMsg::SelectField(index),
                 });
 
-        let paths = fs::read_dir("/").unwrap();
+        // let path = Path::new("/usr/share");
 
-        for path in paths {
-            println!("Name: {}", path.unwrap().path().display())
-        }
-        exit(0);
+        // print_directory_contents(&path, 2);
+        // exit(0);
 
-        let contents = fs::read_to_string("/org/codeberg/petsoi/wordle/lists/words.txt")
-            .expect("Should have been able to read the file");
+        // let contents = fs::read_to_string("/org/codeberg/petsoi/wordle/lists/words.txt")
+        //     .expect("Should have been able to read the file");
 
         let allowed_words = WORDS_FILE.lines().collect();
 
@@ -256,6 +258,25 @@ impl SimpleComponent for App {
 
     fn shutdown(&mut self, widgets: &mut Self::Widgets, _output: relm4::Sender<Self::Output>) {
         widgets.save_window_size().unwrap();
+    }
+}
+
+/// Recursively prints the contents of a directory.
+fn print_directory_contents(path: &Path, indent: usize) {
+    // Check if the path is a directory
+    if let Ok(entries) = fs::read_dir(path) {
+        for entry in entries {
+            if let Ok(entry) = entry {
+                let entry_path = entry.path();
+                // Print the current entry with indentation
+                println!("{}- {}", " ".repeat(indent), entry_path.display());
+
+                // // If the entry is a directory, recurse into it
+                // if entry_path.is_dir() {
+                //     print_directory_contents(&entry_path, indent + 2);
+                // }
+            }
+        }
     }
 }
 
