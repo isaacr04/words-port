@@ -1,9 +1,9 @@
 #[rustfmt::skip]
 mod config;
 mod app;
-mod key;
 mod letter;
 mod modals;
+mod onscreen_button;
 
 use config::{APP_ID, GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
 use gettextrs::{gettext, LocaleCategory};

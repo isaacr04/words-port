@@ -1,9 +1,8 @@
 use std::collections::{HashMap, HashSet};
-use std::path::Path;
-use std::process::exit;
-use std::{char, fs, usize};
+use std::{char, usize};
 
 use crate::letter::{Coord, Format, LetterMsgIn};
+use crate::onscreen_button::{self, OnScreenButton, OnScreenButtonMsgIn, OnScreenButtonMsgOut};
 use crate::{
     config::{APP_ID, PROFILE},
     letter::LetterMsgOut,
@@ -16,11 +15,8 @@ use gtk::prelude::{
 use gtk::{gio, glib};
 use rand::seq::IteratorRandom;
 use relm4::actions::AccelsPlus;
-use relm4::adw::Application;
 use relm4::factory::FactoryHashMap;
-use relm4::gtk::gio::ffi::g_application_get_resource_base_path;
 use relm4::gtk::glib::Propagation;
-use relm4::gtk::prelude::ApplicationExtManual;
 use relm4::gtk::EventControllerKey;
 use relm4::{
     actions::{RelmAction, RelmActionGroup},
@@ -32,6 +28,7 @@ use relm4::{
 
 static TRIES: usize = 6;
 static WORDS_FILE: &str = include_str!("../data/resources/wordlists/words.txt");
+static KEYS_FILE: &str = include_str!("../data/resources/wordlists/keys.txt");
 
 pub(super) struct App {
     letters: FactoryHashMap<Coord, Letter>,
@@ -41,7 +38,9 @@ pub(super) struct App {
     width: usize,
     attempts: usize,
     allowed_words: HashSet<&'static str>,
-    keys: Vec<Vec<Key>>,
+    keyboard_row_1: FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton>,
+    keyboard_row_2: FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton>,
+    keyboard_row_3: FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton>,
 }
 
 #[derive(Debug)]
@@ -53,12 +52,6 @@ pub(super) enum AppMsg {
     Delete,
     Backspace,
     Quit,
-}
-
-enum Key {
-    Letter(char),
-    Enter,
-    Del,
 }
 
 relm4::new_action_group!(pub(super) WindowActionGroup, "win");
@@ -129,6 +122,22 @@ impl SimpleComponent for App {
                     set_orientation: gtk::Orientation::Horizontal,
                     set_column_spacing: 0,
                     set_row_spacing: 0,
+                },
+                gtk::Box {
+                    set_orientation: gtk::Orientation::Vertical,
+
+                    #[local_ref]
+                    keyboard_row_1 -> gtk::Box {
+                        set_orientation: gtk::Orientation::Horizontal,
+                    },
+                    #[local_ref]
+                    keyboard_row_2 -> gtk::Box {
+                        set_orientation: gtk::Orientation::Horizontal,
+                    },
+                    #[local_ref]
+                    keyboard_row_3 -> gtk::Box {
+                        set_orientation: gtk::Orientation::Horizontal,
+                    }
                 }
             }
 
@@ -145,6 +154,10 @@ impl SimpleComponent for App {
             .launch(())
             .detach();
 
+        let allowed_words = WORDS_FILE.lines().collect();
+
+        let mut lines = KEYS_FILE.lines();
+
         let letters =
             FactoryHashMap::builder()
                 .launch_default()
@@ -152,15 +165,9 @@ impl SimpleComponent for App {
                     LetterMsgOut::Selected(index) => AppMsg::SelectField(index),
                 });
 
-        // let path = Path::new("/usr/share");
-
-        // print_directory_contents(&path, 2);
-        // exit(0);
-
-        // let contents = fs::read_to_string("/org/codeberg/petsoi/wordle/lists/words.txt")
-        //     .expect("Should have been able to read the file");
-
-        let allowed_words = WORDS_FILE.lines().collect();
+        let keyboard_row_1 = create_map(lines.next().unwrap(), &sender);
+        let keyboard_row_2 = create_map(lines.next().unwrap(), &sender);
+        let keyboard_row_3 = create_map(lines.next().unwrap(), &sender);
 
         let model = Self {
             about_dialog,
@@ -170,12 +177,18 @@ impl SimpleComponent for App {
             attempts: 0,
             allowed_words,
             width: 0,
-            keys: Vec::new(),
+            keyboard_row_1,
+            keyboard_row_2,
+            keyboard_row_3,
         };
 
         root.add_controller(keyboard_events_controller(sender.clone()));
 
         let letter_grid = model.letters.widget();
+        let keyboard_row_1 = model.keyboard_row_1.widget();
+        let keyboard_row_2 = model.keyboard_row_2.widget();
+        let keyboard_row_3 = model.keyboard_row_3.widget();
+
         let widgets = view_output!();
 
         register_actions(sender.clone(), &widgets, &model);
@@ -200,6 +213,7 @@ impl SimpleComponent for App {
                 self.attempts = 0;
                 self.selected_letter = Coord { column: 0, row: 0 };
                 self.create_empty_field();
+                self.reset_on_screen_buttons();
             }
             AppMsg::EnterLetter(c) => {
                 self.letters.send(
@@ -261,23 +275,37 @@ impl SimpleComponent for App {
     }
 }
 
-/// Recursively prints the contents of a directory.
-fn print_directory_contents(path: &Path, indent: usize) {
-    // Check if the path is a directory
-    if let Ok(entries) = fs::read_dir(path) {
-        for entry in entries {
-            if let Ok(entry) = entry {
-                let entry_path = entry.path();
-                // Print the current entry with indentation
-                println!("{}- {}", " ".repeat(indent), entry_path.display());
+fn create_map(
+    line: &str,
+    sender: &ComponentSender<App>,
+) -> FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton> {
+    let mut keyboard_row: FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton> =
+        FactoryHashMap::builder().launch_default().forward(
+            sender.input_sender(),
+            |msg| match msg {
+                OnScreenButtonMsgOut::Letter(c) => AppMsg::EnterLetter(c),
+                OnScreenButtonMsgOut::Enter => AppMsg::Enter,
+                OnScreenButtonMsgOut::Del => AppMsg::Backspace,
+            },
+        );
+    for b in line_to_keys(line) {
+        keyboard_row.insert(b, b);
+    }
+    keyboard_row
+}
 
-                // // If the entry is a directory, recurse into it
-                // if entry_path.is_dir() {
-                //     print_directory_contents(&entry_path, indent + 2);
-                // }
-            }
+fn line_to_keys(line: &str) -> Vec<OnScreenButtonMsgOut> {
+    let mut keys = vec![];
+    for key in line.split(',') {
+        match key {
+            "SEND" => keys.push(OnScreenButtonMsgOut::Enter),
+            "DEL" => keys.push(OnScreenButtonMsgOut::Del),
+            c => keys.push(OnScreenButtonMsgOut::Letter(
+                c.chars().next().expect("No Letter found."),
+            )),
         }
     }
+    keys
 }
 
 impl App {
@@ -352,6 +380,7 @@ impl App {
                     },
                     LetterMsgIn::SetFormat(Format::ExactMatch),
                 );
+                self.send_on_screen_button_format(user_char, onscreen_button::Format::ExactMatch);
                 correct_letters_positions.insert(column);
             } else {
                 left_letters
@@ -375,6 +404,8 @@ impl App {
                         },
                         LetterMsgIn::SetFormat(Format::Match),
                     );
+                    self.send_on_screen_button_format(user_char, onscreen_button::Format::Match);
+
                     *number -= 1;
                     continue;
                 }
@@ -385,8 +416,46 @@ impl App {
                     row: self.attempts,
                 },
                 LetterMsgIn::SetFormat(Format::NoMatch),
-            )
+            );
+            self.send_on_screen_button_format(user_char, onscreen_button::Format::NoMatch);
         }
+    }
+
+    fn send_on_screen_button_format(&mut self, user_char: &char, format: onscreen_button::Format) {
+        if self
+            .keyboard_row_1
+            .get(&OnScreenButtonMsgOut::Letter(*user_char))
+            .is_some()
+        {
+            self.keyboard_row_1.send(
+                &OnScreenButtonMsgOut::Letter(*user_char),
+                OnScreenButtonMsgIn::SetFormat(format),
+            );
+        }
+        if self
+            .keyboard_row_2
+            .get(&OnScreenButtonMsgOut::Letter(*user_char))
+            .is_some()
+        {
+            self.keyboard_row_2.send(
+                &OnScreenButtonMsgOut::Letter(*user_char),
+                OnScreenButtonMsgIn::SetFormat(format),
+            );
+        }
+        if self
+            .keyboard_row_3
+            .get(&OnScreenButtonMsgOut::Letter(*user_char))
+            .is_some()
+        {
+            self.keyboard_row_3.send(
+                &OnScreenButtonMsgOut::Letter(*user_char),
+                OnScreenButtonMsgIn::SetFormat(format),
+            );
+        }
+    }
+
+    fn reset_on_screen_buttons(&mut self) {
+        // TODO: reset all
     }
 
     fn make_attempt_row_selectable(&mut self) {
