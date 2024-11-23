@@ -17,7 +17,7 @@ use rand::seq::IteratorRandom;
 use relm4::actions::AccelsPlus;
 use relm4::factory::FactoryHashMap;
 use relm4::gtk::glib::Propagation;
-use relm4::gtk::EventControllerKey;
+use relm4::gtk::{Align, EventControllerKey};
 use relm4::{
     actions::{RelmAction, RelmActionGroup},
     adw,
@@ -121,6 +121,8 @@ impl SimpleComponent for App {
                     set_orientation: gtk::Orientation::Horizontal,
                     set_column_spacing: 0,
                     set_row_spacing: 0,
+                    set_hexpand: true,
+                    set_halign: Align::Center,
                 },
                 gtk::Box {
                     set_orientation: gtk::Orientation::Vertical,
@@ -128,14 +130,20 @@ impl SimpleComponent for App {
                     #[local_ref]
                     keyboard_row_1 -> gtk::Box {
                         set_orientation: gtk::Orientation::Horizontal,
+                        set_hexpand: true,
+                        set_halign: Align::Center,
                     },
                     #[local_ref]
                     keyboard_row_2 -> gtk::Box {
                         set_orientation: gtk::Orientation::Horizontal,
+                        set_hexpand: true,
+                        set_halign: Align::Center,
                     },
                     #[local_ref]
                     keyboard_row_3 -> gtk::Box {
                         set_orientation: gtk::Orientation::Horizontal,
+                        set_hexpand: true,
+                        set_halign: Align::Center,
                     }
                 }
             }
@@ -469,7 +477,7 @@ fn pick_random_word(words: &HashSet<&str>) -> String {
 
 fn keyboard_events_controller(sender: ComponentSender<App>) -> EventControllerKey {
     let controller = EventControllerKey::new();
-    // Connect to the key-pressed signal to handle key presses
+
     controller.connect_key_pressed(move |_, keyval, _, _| {
         if let Some(c) = keyval.to_unicode() {
             match c {
