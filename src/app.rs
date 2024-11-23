@@ -38,6 +38,7 @@ pub(super) struct App {
     width: usize,
     attempts: usize,
     allowed_words: HashSet<&'static str>,
+    allowed_letters: HashSet<char>,
     keyboard_rows: Vec<FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton>>,
 }
 
@@ -169,6 +170,7 @@ impl SimpleComponent for App {
             attempts: 0,
             allowed_words,
             width: 0,
+            allowed_letters: HashSet::new(),
             keyboard_rows: create_empty_on_screen_button_rows(&sender),
         };
 
@@ -203,14 +205,21 @@ impl SimpleComponent for App {
                 self.attempts = 0;
                 self.selected_letter = Coord { column: 0, row: 0 };
                 self.create_empty_field();
-                self.create_new_keyboard(KEYS_FILE);
+                self.create_new_keyboard_and_set_allowed_letters(KEYS_FILE);
             }
             AppMsg::EnterLetter(c) => {
-                self.letters.send(
-                    &selected,
-                    LetterMsgIn::SetContent(Some(c.to_uppercase().to_string())),
-                );
-                self.move_selection_by(1);
+                let upper_case = c.to_uppercase().to_string(); // TODO: Logic needs to be improved if we want to support e.g. ß => SS
+                if upper_case.chars().count() == 1
+                    && self
+                        .allowed_letters
+                        .contains(&upper_case.chars().next().unwrap())
+                {
+                    self.letters.send(
+                        &selected,
+                        LetterMsgIn::SetContent(Some(c.to_uppercase().to_string())),
+                    );
+                    self.move_selection_by(1);
+                }
             }
             AppMsg::Delete => self.letters.send(&selected, LetterMsgIn::SetContent(None)),
             AppMsg::Backspace => {
@@ -420,15 +429,18 @@ impl App {
         }
     }
 
-    fn create_new_keyboard(&mut self, lines: &str) {
+    fn create_new_keyboard_and_set_allowed_letters(&mut self, lines: &str) {
         self.keyboard_rows.iter_mut().for_each(|row| {
             row.clear();
         });
 
-        let iter_line = self.keyboard_rows.iter_mut().zip(lines.lines());
+        self.allowed_letters.clear();
 
-        for (row, line) in iter_line {
+        for (row, line) in self.keyboard_rows.iter_mut().zip(lines.lines()) {
             for b in line_to_keys(line) {
+                if let OnScreenButtonMsgOut::Letter(c) = b {
+                    self.allowed_letters.insert(c);
+                }
                 row.insert(b, b);
             }
         }
@@ -463,7 +475,7 @@ fn keyboard_events_controller(sender: ComponentSender<App>) -> EventControllerKe
             match c {
                 '\u{8}' => sender.input(AppMsg::Backspace),
                 '\u{7f}' => sender.input(AppMsg::Delete),
-                c if c.is_alphabetic() => sender.input(AppMsg::EnterLetter(c)),
+                c => sender.input(AppMsg::EnterLetter(c)),
                 _ => (),
             }
             Propagation::Stop
