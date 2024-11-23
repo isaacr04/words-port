@@ -46,7 +46,7 @@ pub(super) struct App {
 pub(super) enum AppMsg {
     SelectField(Coord),
     StartNewGame,
-    EnterLetter(char),
+    Letter(char),
     Enter,
     Delete,
     Backspace,
@@ -207,7 +207,7 @@ impl SimpleComponent for App {
                 self.create_empty_field();
                 self.create_new_keyboard_and_set_allowed_letters(KEYS_FILE);
             }
-            AppMsg::EnterLetter(c) => {
+            AppMsg::Letter(c) => {
                 let upper_case = c.to_uppercase().to_string(); // TODO: Logic needs to be improved if we want to support e.g. ß => SS
                 if upper_case.chars().count() == 1
                     && self
@@ -283,7 +283,7 @@ fn create_empty_on_screen_button_rows(
             FactoryHashMap::builder()
                 .launch_default()
                 .forward(sender.input_sender(), |msg| match msg {
-                    OnScreenButtonMsgOut::Letter(c) => AppMsg::EnterLetter(c),
+                    OnScreenButtonMsgOut::Letter(c) => AppMsg::Letter(c),
                     OnScreenButtonMsgOut::Enter => AppMsg::Enter,
                     OnScreenButtonMsgOut::Del => AppMsg::Backspace,
                 })
@@ -475,8 +475,7 @@ fn keyboard_events_controller(sender: ComponentSender<App>) -> EventControllerKe
             match c {
                 '\u{8}' => sender.input(AppMsg::Backspace),
                 '\u{7f}' => sender.input(AppMsg::Delete),
-                c => sender.input(AppMsg::EnterLetter(c)),
-                _ => (),
+                c => sender.input(AppMsg::Letter(c)),
             }
             Propagation::Stop
         } else {

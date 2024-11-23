@@ -24,7 +24,6 @@ pub struct OnScreenButton {
 #[derive(Debug)]
 pub enum OnScreenButtonMsgIn {
     SetFormat(Format),
-    Reset,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -98,7 +97,6 @@ impl FactoryComponent for OnScreenButton {
                     self.format = f
                 }
             }
-            OnScreenButtonMsgIn::Reset => self.format = Format::NotUsed,
         }
     }
 }
