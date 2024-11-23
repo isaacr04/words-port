@@ -38,9 +38,7 @@ pub(super) struct App {
     width: usize,
     attempts: usize,
     allowed_words: HashSet<&'static str>,
-    keyboard_row_1: FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton>,
-    keyboard_row_2: FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton>,
-    keyboard_row_3: FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton>,
+    keyboard_rows: Vec<FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton>>,
 }
 
 #[derive(Debug)]
@@ -171,17 +169,15 @@ impl SimpleComponent for App {
             attempts: 0,
             allowed_words,
             width: 0,
-            keyboard_row_1: create_empty_on_screen_button_row(&sender),
-            keyboard_row_2: create_empty_on_screen_button_row(&sender),
-            keyboard_row_3: create_empty_on_screen_button_row(&sender),
+            keyboard_rows: create_empty_on_screen_button_rows(&sender),
         };
 
         root.add_controller(keyboard_events_controller(sender.clone()));
 
         let letter_grid = model.letters.widget();
-        let keyboard_row_1 = model.keyboard_row_1.widget();
-        let keyboard_row_2 = model.keyboard_row_2.widget();
-        let keyboard_row_3 = model.keyboard_row_3.widget();
+        let keyboard_row_1 = model.keyboard_rows[0].widget();
+        let keyboard_row_2 = model.keyboard_rows[1].widget();
+        let keyboard_row_3 = model.keyboard_rows[2].widget();
 
         let widgets = view_output!();
 
@@ -269,16 +265,21 @@ impl SimpleComponent for App {
     }
 }
 
-fn create_empty_on_screen_button_row(
+fn create_empty_on_screen_button_rows(
     sender: &ComponentSender<App>,
-) -> FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton> {
-    FactoryHashMap::builder()
-        .launch_default()
-        .forward(sender.input_sender(), |msg| match msg {
-            OnScreenButtonMsgOut::Letter(c) => AppMsg::EnterLetter(c),
-            OnScreenButtonMsgOut::Enter => AppMsg::Enter,
-            OnScreenButtonMsgOut::Del => AppMsg::Backspace,
+) -> Vec<FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton>> {
+    (0..3)
+        .into_iter()
+        .map(|_| {
+            FactoryHashMap::builder()
+                .launch_default()
+                .forward(sender.input_sender(), |msg| match msg {
+                    OnScreenButtonMsgOut::Letter(c) => AppMsg::EnterLetter(c),
+                    OnScreenButtonMsgOut::Enter => AppMsg::Enter,
+                    OnScreenButtonMsgOut::Del => AppMsg::Backspace,
+                })
         })
+        .collect()
 }
 
 fn line_to_keys(line: &str) -> Vec<OnScreenButtonMsgOut> {
@@ -409,52 +410,27 @@ impl App {
     }
 
     fn send_on_screen_button_format(&mut self, user_char: &char, format: onscreen_button::Format) {
-        if self
-            .keyboard_row_1
-            .get(&OnScreenButtonMsgOut::Letter(*user_char))
-            .is_some()
-        {
-            self.keyboard_row_1.send(
-                &OnScreenButtonMsgOut::Letter(*user_char),
-                OnScreenButtonMsgIn::SetFormat(format),
-            );
-        }
-        if self
-            .keyboard_row_2
-            .get(&OnScreenButtonMsgOut::Letter(*user_char))
-            .is_some()
-        {
-            self.keyboard_row_2.send(
-                &OnScreenButtonMsgOut::Letter(*user_char),
-                OnScreenButtonMsgIn::SetFormat(format),
-            );
-        }
-        if self
-            .keyboard_row_3
-            .get(&OnScreenButtonMsgOut::Letter(*user_char))
-            .is_some()
-        {
-            self.keyboard_row_3.send(
-                &OnScreenButtonMsgOut::Letter(*user_char),
-                OnScreenButtonMsgIn::SetFormat(format),
-            );
+        for row in &self.keyboard_rows {
+            if row.get(&OnScreenButtonMsgOut::Letter(*user_char)).is_some() {
+                row.send(
+                    &OnScreenButtonMsgOut::Letter(*user_char),
+                    OnScreenButtonMsgIn::SetFormat(format),
+                );
+            }
         }
     }
 
     fn create_new_keyboard(&mut self, lines: &str) {
-        self.keyboard_row_1.clear();
-        self.keyboard_row_2.clear();
-        self.keyboard_row_3.clear();
+        self.keyboard_rows.iter_mut().for_each(|row| {
+            row.clear();
+        });
 
-        let mut iter_line = lines.lines();
-        for b in line_to_keys(iter_line.next().unwrap()) {
-            self.keyboard_row_1.insert(b, b);
-        }
-        for b in line_to_keys(iter_line.next().unwrap()) {
-            self.keyboard_row_2.insert(b, b);
-        }
-        for b in line_to_keys(iter_line.next().unwrap()) {
-            self.keyboard_row_3.insert(b, b);
+        let iter_line = self.keyboard_rows.iter_mut().zip(lines.lines());
+
+        for (row, line) in iter_line {
+            for b in line_to_keys(line) {
+                row.insert(b, b);
+            }
         }
     }
 
