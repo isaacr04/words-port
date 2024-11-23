@@ -74,9 +74,9 @@ impl FactoryComponent for OnScreenButton {
             }},
             connect_clicked[sender, index] =>
                 move |_| {
-                    println!("Letter test");
                     sender.output(index).unwrap();
-                }
+                },
+            set_can_focus: false
         }
     }
 

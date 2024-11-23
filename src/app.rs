@@ -156,18 +156,12 @@ impl SimpleComponent for App {
 
         let allowed_words = WORDS_FILE.lines().collect();
 
-        let mut lines = KEYS_FILE.lines();
-
         let letters =
             FactoryHashMap::builder()
                 .launch_default()
                 .forward(sender.input_sender(), |msg| match msg {
                     LetterMsgOut::Selected(index) => AppMsg::SelectField(index),
                 });
-
-        let keyboard_row_1 = create_map(lines.next().unwrap(), &sender);
-        let keyboard_row_2 = create_map(lines.next().unwrap(), &sender);
-        let keyboard_row_3 = create_map(lines.next().unwrap(), &sender);
 
         let model = Self {
             about_dialog,
@@ -177,9 +171,9 @@ impl SimpleComponent for App {
             attempts: 0,
             allowed_words,
             width: 0,
-            keyboard_row_1,
-            keyboard_row_2,
-            keyboard_row_3,
+            keyboard_row_1: create_empty_on_screen_button_row(&sender),
+            keyboard_row_2: create_empty_on_screen_button_row(&sender),
+            keyboard_row_3: create_empty_on_screen_button_row(&sender),
         };
 
         root.add_controller(keyboard_events_controller(sender.clone()));
@@ -213,7 +207,7 @@ impl SimpleComponent for App {
                 self.attempts = 0;
                 self.selected_letter = Coord { column: 0, row: 0 };
                 self.create_empty_field();
-                self.reset_on_screen_buttons();
+                self.create_new_keyboard(KEYS_FILE);
             }
             AppMsg::EnterLetter(c) => {
                 self.letters.send(
@@ -275,23 +269,16 @@ impl SimpleComponent for App {
     }
 }
 
-fn create_map(
-    line: &str,
+fn create_empty_on_screen_button_row(
     sender: &ComponentSender<App>,
 ) -> FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton> {
-    let mut keyboard_row: FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton> =
-        FactoryHashMap::builder().launch_default().forward(
-            sender.input_sender(),
-            |msg| match msg {
-                OnScreenButtonMsgOut::Letter(c) => AppMsg::EnterLetter(c),
-                OnScreenButtonMsgOut::Enter => AppMsg::Enter,
-                OnScreenButtonMsgOut::Del => AppMsg::Backspace,
-            },
-        );
-    for b in line_to_keys(line) {
-        keyboard_row.insert(b, b);
-    }
-    keyboard_row
+    FactoryHashMap::builder()
+        .launch_default()
+        .forward(sender.input_sender(), |msg| match msg {
+            OnScreenButtonMsgOut::Letter(c) => AppMsg::EnterLetter(c),
+            OnScreenButtonMsgOut::Enter => AppMsg::Enter,
+            OnScreenButtonMsgOut::Del => AppMsg::Backspace,
+        })
 }
 
 fn line_to_keys(line: &str) -> Vec<OnScreenButtonMsgOut> {
@@ -454,8 +441,21 @@ impl App {
         }
     }
 
-    fn reset_on_screen_buttons(&mut self) {
-        // TODO: reset all
+    fn create_new_keyboard(&mut self, lines: &str) {
+        self.keyboard_row_1.clear();
+        self.keyboard_row_2.clear();
+        self.keyboard_row_3.clear();
+
+        let mut iter_line = lines.lines();
+        for b in line_to_keys(iter_line.next().unwrap()) {
+            self.keyboard_row_1.insert(b, b);
+        }
+        for b in line_to_keys(iter_line.next().unwrap()) {
+            self.keyboard_row_2.insert(b, b);
+        }
+        for b in line_to_keys(iter_line.next().unwrap()) {
+            self.keyboard_row_3.insert(b, b);
+        }
     }
 
     fn make_attempt_row_selectable(&mut self) {
