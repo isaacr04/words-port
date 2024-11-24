@@ -186,7 +186,15 @@ impl SimpleComponent for App {
                         },
                         gtk::Label {
                             #[watch]
-                            set_label: &if model.attempts == 1 { "You needed only one try!!".to_owned() } else {format!("You needed {} tries.", model.attempts) },
+                            set_label: &if model.game_won {
+                                    if model.attempts == 1 {
+                                        "You needed only one try!!".to_owned()
+                                    } else {
+                                        format!("You needed {} tries.", model.attempts)
+                                    }
+                                } else {
+                                    "Good luck for next time!".to_owned()
+                                },
                             set_css_classes: &["title-3"],
                             set_wrap: true,
                             set_justify: gtk::Justification::Center,
