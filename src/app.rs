@@ -40,11 +40,14 @@ pub(super) struct App {
     allowed_words: HashSet<&'static str>,
     allowed_letters: HashSet<char>,
     keyboard_rows: Vec<FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton>>,
+    current_page: &'static str,
+    game_won: bool,
 }
 
 #[derive(Debug)]
 pub(super) enum AppMsg {
     SelectField(Coord),
+    GameOver(bool),
     StartNewGame,
     Letter(char),
     Enter,
@@ -77,78 +80,113 @@ impl SimpleComponent for App {
     }
 
     view! {
-        main_window = adw::ApplicationWindow::new(&main_application()) {
-            set_visible: true,
+    main_window = adw::ApplicationWindow::new(&main_application()) {
+        set_visible: true,
 
-            connect_close_request[sender] => move |_| {
-                sender.input(AppMsg::Quit);
-                glib::Propagation::Stop
+        connect_close_request[sender] => move |_| {
+            sender.input(AppMsg::Quit);
+            glib::Propagation::Stop
+        },
+
+        #[wrap(Some)]
+        set_help_overlay: shortcuts = &gtk::Builder::from_resource(
+                "/org/codeberg/petsoi/wordle/gtk/help-overlay.ui"
+            )
+            .object::<gtk::ShortcutsWindow>("help_overlay")
+            .unwrap() -> gtk::ShortcutsWindow {
+                set_transient_for: Some(&main_window),
+                set_application: Some(&main_application()),
+        },
+
+        add_css_class?: if PROFILE == "Devel" {
+                Some("devel")
+            } else {
+                None
             },
 
-            #[wrap(Some)]
-            set_help_overlay: shortcuts = &gtk::Builder::from_resource(
-                    "/org/codeberg/petsoi/wordle/gtk/help-overlay.ui"
-                )
-                .object::<gtk::ShortcutsWindow>("help_overlay")
-                .unwrap() -> gtk::ShortcutsWindow {
-                    set_transient_for: Some(&main_window),
-                    set_application: Some(&main_application()),
+        gtk::Box {
+            set_orientation: gtk::Orientation::Vertical,
+            set_hexpand: true,
+            set_vexpand: true,
+
+            adw::HeaderBar {
+                pack_start = &gtk::Button {
+                    set_label: "New",
+                    set_can_focus: false,
+                    connect_clicked => AppMsg::StartNewGame,
+                },
+                pack_end = &gtk::MenuButton {
+                    set_icon_name: "open-menu-symbolic",
+                    set_menu_model: Some(&primary_menu),
+                }
             },
 
-            add_css_class?: if PROFILE == "Devel" {
-                    Some("devel")
-                } else {
-                    None
-                },
+            gtk::Stack {
+                #[watch]
+                set_visible_child_name: model.current_page,
 
-            gtk::Box {
-                set_orientation: gtk::Orientation::Vertical,
-
-                adw::HeaderBar {
-                    pack_start = &gtk::Button {
-                        set_label: "New",
-                        set_can_focus: false,
-                        connect_clicked => AppMsg::StartNewGame,
-                    },
-                    pack_end = &gtk::MenuButton {
-                        set_icon_name: "open-menu-symbolic",
-                        set_menu_model: Some(&primary_menu),
-                    }
-                },
-
-                #[local_ref]
-                letter_grid -> gtk::Grid {
-                    set_orientation: gtk::Orientation::Horizontal,
-                    set_column_spacing: 0,
-                    set_row_spacing: 0,
-                    set_hexpand: true,
-                    set_halign: Align::Center,
-                },
-                gtk::Box {
+                add_child=&gtk::Box{
                     set_orientation: gtk::Orientation::Vertical,
 
                     #[local_ref]
-                    keyboard_row_1 -> gtk::Box {
+                    letter_grid -> gtk::Grid {
                         set_orientation: gtk::Orientation::Horizontal,
-                        set_hexpand: true,
+                        set_column_spacing: 0,
+                        set_row_spacing: 0,
                         set_halign: Align::Center,
+                        //set_hexpand: true,
+                        //set_vexpand: true,
                     },
-                    #[local_ref]
-                    keyboard_row_2 -> gtk::Box {
-                        set_orientation: gtk::Orientation::Horizontal,
+                    gtk::Box {
+                        set_orientation: gtk::Orientation::Vertical,
+                        set_vexpand: true,
                         set_hexpand: true,
-                        set_halign: Align::Center,
-                    },
-                    #[local_ref]
-                    keyboard_row_3 -> gtk::Box {
-                        set_orientation: gtk::Orientation::Horizontal,
-                        set_hexpand: true,
-                        set_halign: Align::Center,
-                    }
-                }
-            }
 
+                        #[local_ref]
+                        keyboard_row_1 -> gtk::Box {
+                            set_orientation: gtk::Orientation::Horizontal,
+                            set_hexpand: true,
+                            set_vexpand: true,
+                            // set_halign: Align::Center,
+                        },
+                        #[local_ref]
+                        keyboard_row_2 -> gtk::Box {
+                            set_orientation: gtk::Orientation::Horizontal,
+                            set_hexpand: true,
+                            set_vexpand: true,
+                            // set_halign: Align::Center,
+                        },
+                        #[local_ref]
+                        keyboard_row_3 -> gtk::Box {
+                            set_orientation: gtk::Orientation::Horizontal,
+                            set_hexpand: true,
+                            set_vexpand: true,
+                            // set_halign: Align::Center,
+                        }
+                    }
+                } -> { set_name: "game" },
+
+                add_child = &gtk::Box{
+                        set_orientation: gtk::Orientation::Vertical,
+                        gtk::Label {
+                            #[watch]
+                            set_label: if model.game_won {"Congratulation!"} else {"Game Over"},
+                            set_css_classes: &["title-1"],
+                        },
+                        gtk::Label {
+                            #[watch]
+                            set_label: &format!("The word was {}", model.word ),
+                        },
+                        gtk::Label {
+                            #[watch]
+                            set_label: &format!("You had {} tries", model.attempts ),
+                        }
+                    } -> { set_name: "game_over" }
+                }
+
+            }
         }
+
     }
 
     fn init(
@@ -180,6 +218,8 @@ impl SimpleComponent for App {
             width: 0,
             allowed_letters: HashSet::new(),
             keyboard_rows: create_empty_on_screen_button_rows(&sender),
+            current_page: "game",
+            game_won: false,
         };
 
         root.add_controller(keyboard_events_controller(sender.clone()));
@@ -212,6 +252,7 @@ impl SimpleComponent for App {
                 self.width = self.word.chars().count();
                 self.attempts = 0;
                 self.selected_letter = Coord { column: 0, row: 0 };
+                self.current_page = "game";
                 self.create_empty_field();
                 self.create_new_keyboard_and_set_allowed_letters(KEYS_FILE);
             }
@@ -246,6 +287,11 @@ impl SimpleComponent for App {
                 let Some(content_of_current_attempt) = self.get_entered_word() else {
                     return;
                 };
+                if content_of_current_attempt == self.word {
+                    self.attempts += 1;
+                    sender.input(AppMsg::GameOver(true));
+                    return;
+                }
                 if content_of_current_attempt.chars().count() < self.width {
                     return;
                 }
@@ -262,8 +308,7 @@ impl SimpleComponent for App {
                 self.attempts += 1;
 
                 if self.attempts >= TRIES {
-                    println!("Solution: {}", self.word);
-                    sender.input(AppMsg::StartNewGame);
+                    sender.input(AppMsg::GameOver(false));
                     return;
                 }
 
@@ -273,6 +318,10 @@ impl SimpleComponent for App {
                     column: 0,
                     row: self.attempts,
                 }));
+            }
+            AppMsg::GameOver(won) => {
+                self.game_won = won;
+                self.current_page = "game_over"
             }
         }
     }

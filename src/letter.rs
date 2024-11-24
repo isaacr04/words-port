@@ -60,9 +60,10 @@ impl FactoryComponent for Letter {
     type ParentWidget = gtk::Grid;
 
     view! {
-        root = gtk::Button {
+        root = &gtk::Button {
             set_margin_all: 1,
-            set_has_frame: true,
+            set_hexpand: true,
+            set_vexpand: true,
             #[watch]
             set_label: &self.value,
             #[watch]
@@ -72,10 +73,6 @@ impl FactoryComponent for Letter {
                 Format::Match  => &["title-1", "match"],
                 Format::ExactMatch => &["title-1", "exact"],
             }},
-            // #[watch]
-            // remove_css_class?: { if !self.selected { Some("selected") } else { None }},
-            // #[watch]
-            // add_css_class?: { if self.selected { Some("selected") } else { None }},
             connect_clicked[sender, index] => move |_| {
                 sender.output(LetterMsgOut::Selected(index)).unwrap();
             },

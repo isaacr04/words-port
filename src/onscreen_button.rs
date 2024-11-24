@@ -52,16 +52,13 @@ impl FactoryComponent for OnScreenButton {
     type CommandOutput = ();
     type ParentWidget = gtk::Box;
 
-    // = help: implement the missing item: `type Root = /* Type */;`
-    // = help: implement the missing item: `fn init_root(&self) -> <Self as FactoryComponent>::Root { todo!() }`
-    // = help: implement the missing item: `fn init_widgets(&mut self, _: &<Self as FactoryComponent>::Index, _: <Self as FactoryComponent>::Root, _: &<<Self as FactoryComponent>::ParentWidget as FactoryView>::ReturnedWidget, _: FactorySender<Self>) -> <Self as FactoryComponent>::Widgets { todo!() }`
-
     view! {
         #[root]
         #[name(button)]
         gtk::Button {
             set_margin_all: 1,
-            set_has_frame: true,
+            set_hexpand: true,
+            set_vexpand: true,
             #[watch]
             set_label: &self.trigger.get_label(),
             #[watch]
