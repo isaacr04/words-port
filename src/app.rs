@@ -18,6 +18,7 @@ use relm4::actions::AccelsPlus;
 use relm4::factory::FactoryHashMap;
 use relm4::gtk::glib::Propagation;
 use relm4::gtk::{Align, EventControllerKey};
+use relm4::RelmWidgetExt;
 use relm4::{
     actions::{RelmAction, RelmActionGroup},
     adw,
@@ -168,6 +169,8 @@ impl SimpleComponent for App {
 
                 add_child = &gtk::Box{
                         set_orientation: gtk::Orientation::Vertical,
+                        set_halign: Align::Center,
+                        set_valign: Align::Center,
                         gtk::Label {
                             #[watch]
                             set_label: if model.game_won {"Congratulation!"} else {"Game Over"},
@@ -175,11 +178,18 @@ impl SimpleComponent for App {
                         },
                         gtk::Label {
                             #[watch]
-                            set_label: &format!("The word was {}", model.word ),
+                            set_label: &format!("The word we were looking for was {}.", model.word ),
+                            set_css_classes: &["title-3"],
+                            set_margin_all: 20,
+                            set_wrap: true,
+                            set_justify: gtk::Justification::Center,
                         },
                         gtk::Label {
                             #[watch]
-                            set_label: &format!("You had {} tries", model.attempts ),
+                            set_label: &if model.attempts == 1 { "You needed only one try!!".to_owned() } else {format!("You needed {} tries.", model.attempts) },
+                            set_css_classes: &["title-3"],
+                            set_wrap: true,
+                            set_justify: gtk::Justification::Center,
                         }
                     } -> { set_name: "game_over" }
                 }
