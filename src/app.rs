@@ -54,6 +54,7 @@ pub(super) enum AppMsg {
     Enter,
     Delete,
     Backspace,
+    Space,
     Quit,
 }
 
@@ -128,15 +129,18 @@ impl SimpleComponent for App {
 
                 add_child=&gtk::Box{
                     set_orientation: gtk::Orientation::Vertical,
+                    set_halign: Align::Center,
 
                     #[local_ref]
                     letter_grid -> gtk::Grid {
                         set_orientation: gtk::Orientation::Horizontal,
                         set_column_spacing: 0,
                         set_row_spacing: 0,
-                        set_halign: Align::Center,
-                        //set_hexpand: true,
+                        // set_halign: Align::Center,
+                        set_hexpand: true,
                         //set_vexpand: true,
+                        set_row_spacing: 1,
+                        set_column_spacing: 1,
                     },
                     gtk::Box {
                         set_orientation: gtk::Orientation::Vertical,
@@ -289,6 +293,10 @@ impl SimpleComponent for App {
                 }
             }
             AppMsg::Delete => self.letters.send(&selected, LetterMsgIn::SetContent(None)),
+            AppMsg::Space => {
+                self.letters.send(&selected, LetterMsgIn::SetContent(None));
+                self.move_selection_by(1);
+            }
             AppMsg::Backspace => {
                 // if on last postion, delete letter under cursor, if there is any
                 if selected.column == self.width - 1
@@ -548,6 +556,7 @@ fn keyboard_events_controller(sender: ComponentSender<App>) -> EventControllerKe
     controller.connect_key_pressed(move |_, keyval, _, _| {
         if let Some(c) = keyval.to_unicode() {
             match c {
+                ' ' => sender.input(AppMsg::Space),
                 '\u{8}' => sender.input(AppMsg::Backspace),
                 '\u{7f}' => sender.input(AppMsg::Delete),
                 c => sender.input(AppMsg::Letter(c)),
