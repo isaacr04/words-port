@@ -7,12 +7,25 @@
   <name>Wordle</name>
   <summary>Have fun guessing Words</summary>
   <description>
-    <p>A boilerplate template for GTK + Rust. It uses Meson as a build system and has flatpak support by default.</p>
+    <p>Wordle is a popular word puzzle game where players try to guess a hidden five-letter word within six attempts.</p>
+    <p>It's simple yet addictive, combining logic, vocabulary, and deduction.</p>
   </description>
   <screenshots>
     <screenshot type="default">
-      <image>https://gitlab.gnome.org/bilelmoussaoui/wordle/raw/master/data/resources/screenshots/screenshot1.png</image>
-      <caption>Main window</caption>
+      <image>https://codeberg.org/petsoi/wordle/raw/branch/main/data/resources/screenshots/main_light.png</image>
+      <caption>Main window light</caption>
+    </screenshot>
+    <screenshot type="default">
+      <image>https://codeberg.org/petsoi/wordle/raw/branch/main/data/resources/screenshots/main_dark.png</image>
+      <caption>Main window dark</caption>
+    </screenshot>
+    <screenshot type="default">
+      <image>https://codeberg.org/petsoi/wordle/raw/branch/main/data/resources/screenshots/gameover_light.png</image>
+      <caption>Game Over light</caption>
+    </screenshot>
+    <screenshot type="default">
+      <image>https://codeberg.org/petsoi/wordle/raw/branch/main/data/resources/screenshots/gameover_dark.png</image>
+      <caption>Game Over dark</caption>
     </screenshot>
   </screenshots>
   <url type="homepage">https://codeberg.org/petsoi/wordle</url>
@@ -47,10 +60,10 @@
     https://docs.flathub.org/docs/for-app-authors/metainfo-guidelines/#brand-color
   -->
   <branding>
-    <color type="primary" scheme_preference="light">#ff00ff</color>
-    <color type="primary" scheme_preference="dark">#993d3d</color>
+    <color type="primary" scheme_preference="light">#2EC27E</color>
+    <color type="primary" scheme_preference="dark">#2EC27E</color>
   </branding>  
   <update_contact>peter@sonniger-tag.eu</update_contact>
   <translation type="gettext">@gettext-package@</translation>
-  <launchable type="desktop-id">@app-id@.desktop</launchable>
+  <launchable type="desktop-id">org.codeberg.petsoi.wordle.desktop</launchable>
 </component>
