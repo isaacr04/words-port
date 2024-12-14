@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Peter Sonntag 2019 <peter@sonniger-tag.eu> -->
 <component type="desktop-application">
-  <id>@app-id@</id>
+  <id>org.codeberg.petsoi.wordle</id>
   <metadata_license>CC0</metadata_license>
-  <!-- Insert your license of choice here -->
-  <!-- <project_license>MIT</project_license> -->
+    <project_license>GPL-3.0-or-later</project_license>
   <name>Wordle</name>
-  <summary>Write a GTK + Rust application</summary>
+  <summary>Have fun guessing Words</summary>
   <description>
     <p>A boilerplate template for GTK + Rust. It uses Meson as a build system and has flatpak support by default.</p>
   </description>
@@ -16,12 +15,12 @@
       <caption>Main window</caption>
     </screenshot>
   </screenshots>
-  <url type="homepage">https://gitlab.gnome.org/bilelmoussaoui/wordle</url>
-  <url type="bugtracker">https://gitlab.gnome.org/bilelmoussaoui/wordle/issues</url>
+  <url type="homepage">https://codeberg.org/petsoi/wordle</url>
+  <url type="bugtracker">https://codeberg.org/petsoi/wordle/issues</url>
   <!-- Source code repository -->
-  <url type="vcs-browser">https://gitlab.gnome.org/bilelmoussaoui/wordle</url>
+  <url type="vcs-browser">https://codeberg.org/petsoi/wordle</url>
   <!-- Translation repository -->
-  <url type="translate">https://gitlab.gnome.org/bilelmoussaoui/wordle/-/tree/master/po</url>
+  <!-- <url type="translate">https://gitlab.gnome.org/bilelmoussaoui/wordle/-/tree/master/po</url> -->
   <!-- Open Age Ratings Service:
        https://hughsie.github.io/oars/generate.html
   -->
