@@ -1,11 +1,10 @@
 {
-    "id": "org.codeberg.petsoi.wordle.Devel",
+    "id": "org.codeberg.petsoi.wordle",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "46",
+    "runtime-version": "47",
     "sdk": "org.gnome.Sdk",
     "sdk-extensions": [
-        "org.freedesktop.Sdk.Extension.rust-stable",
-        "org.freedesktop.Sdk.Extension.llvm16"
+        "org.freedesktop.Sdk.Extension.rust-stable"
     ],
     "command": "wordle",
     "finish-args": [
@@ -18,16 +17,13 @@
         "--env=RUST_BACKTRACE=1"
     ],
     "build-options": {
-        "append-path": "/usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/llvm16/bin",
+        "append-path": "/usr/lib/sdk/rust-stable/bin",
         "build-args": [
             "--share=network"
         ],
-        "env": {
-            "CARGO_REGISTRIES_CRATES_IO_PROTOCOL": "sparse",
-            "CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER": "clang",
-            "CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS": "-C link-arg=-fuse-ld=/usr/lib/sdk/rust-stable/bin/mold",
-            "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER": "clang",
-            "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUSTFLAGS": "-C link-arg=-fuse-ld=/usr/lib/sdk/rust-stable/bin/mold"
+        "env" : {
+            "RUST_BACKTRACE" : "1",
+            "RUST_LOG" : "test-project=debug"
         },
         "test-args": [
             "--socket=x11",

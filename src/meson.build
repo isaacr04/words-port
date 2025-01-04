@@ -16,6 +16,7 @@ run_command(
 
 cargo_options = ['--manifest-path', meson.project_source_root() / 'Cargo.toml']
 cargo_options += ['--target-dir', meson.project_build_root() / 'src']
+cargo_env  = [ 'CARGO_HOME=' + meson.project_build_root()  / 'cargo-home' ]
 
 if get_option('profile') == 'default'
   cargo_options += ['--release']
@@ -26,9 +27,7 @@ else
   message('Building in debug mode')
 endif
 
-cargo_env = ['CARGO_HOME=' + meson.project_build_root() / 'cargo-home']
-
-custom_target(
+cargo_build = custom_target(
   'cargo-build',
   build_by_default: true,
   build_always_stale: true,

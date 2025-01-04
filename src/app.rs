@@ -329,7 +329,7 @@ impl SimpleComponent for App {
                     return;
                 }
 
-                self.set_color_of_letters_according_matching(content_of_current_attempt);
+                self.set_color_of_letters_according_matching(&content_of_current_attempt);
 
                 self.attempts += 1;
 
@@ -440,64 +440,19 @@ impl App {
         Some(content_of_current_attempt)
     }
 
-    fn set_color_of_letters_according_matching(&mut self, entered_word: String) {
-        let mut left_letters = HashMap::new();
-        let mut correct_letters_positions = HashSet::new();
+    fn set_color_of_letters_according_matching(&mut self, entered_word: &str) {
+        let format = calculate_color(&self.word, entered_word);
 
-        let matches: Vec<_> = self
-            .word
-            .chars()
-            .zip(entered_word.chars())
-            .enumerate()
-            .collect();
-
-        for (column, (target_char, user_char)) in &matches {
-            if target_char == user_char {
-                self.letters.send(
-                    &Coord {
-                        column: *column,
-                        row: self.attempts,
-                    },
-                    LetterMsgIn::SetFormat(Format::ExactMatch),
-                );
-                self.send_on_screen_button_format(user_char, onscreen_button::Format::ExactMatch);
-                correct_letters_positions.insert(column);
-            } else {
-                left_letters
-                    .entry(target_char.to_string())
-                    .and_modify(|c| *c += 1)
-                    .or_insert(1);
-            };
-        }
-
-        for (column, (_, user_char)) in &matches {
-            if correct_letters_positions.contains(&column) {
-                continue;
-            }
-
-            if let Some(number) = left_letters.get_mut(&user_char.to_string()) {
-                if *number > 0 {
-                    self.letters.send(
-                        &Coord {
-                            column: *column,
-                            row: self.attempts,
-                        },
-                        LetterMsgIn::SetFormat(Format::Match),
-                    );
-                    self.send_on_screen_button_format(user_char, onscreen_button::Format::Match);
-
-                    *number -= 1;
-                    continue;
-                }
-            }
+        for (column, (format, c)) in format.into_iter().zip(entered_word.chars()).enumerate() {
             self.letters.send(
                 &Coord {
-                    column: *column,
+                    column,
                     row: self.attempts,
                 },
-                LetterMsgIn::SetFormat(Format::NoMatch),
+                LetterMsgIn::SetFormat(format),
             );
-            self.send_on_screen_button_format(user_char, onscreen_button::Format::NoMatch);
+
+            self.send_on_screen_button_format(&c, format.to_osb_format());
         }
     }
 
@@ -626,5 +581,119 @@ impl AppWidgets {
         if is_maximized {
             self.main_window.maximize();
         }
+    }
+}
+
+fn calculate_color(correct_word: &str, entered_word: &str) -> Vec<Format> {
+    let mut format = vec![Format::NoMatch; correct_word.len()];
+
+    let mut left_letters = HashMap::new();
+    let mut exact_positions = HashSet::new();
+
+    // First pass: find exact matches and count leftover characters
+    for (i, (target_char, user_char)) in correct_word.chars().zip(entered_word.chars()).enumerate()
+    {
+        if target_char == user_char {
+            format[i] = Format::ExactMatch;
+            exact_positions.insert(i);
+        } else {
+            *left_letters.entry(target_char).or_insert(0) += 1;
+        }
+    }
+
+    // Second pass: find partial matches (ignoring exact matches)
+    for (i, user_char) in entered_word.chars().enumerate() {
+        if format[i] == Format::ExactMatch {
+            continue;
+        }
+
+        if let Some(count) = left_letters.get_mut(&user_char) {
+            if *count > 0 {
+                format[i] = Format::Match;
+                *count -= 1;
+            }
+        }
+    }
+
+    format
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_exact_match() {
+        let result = calculate_color("hello", "hello");
+        assert_eq!(
+            result,
+            vec![
+                Format::ExactMatch,
+                Format::ExactMatch,
+                Format::ExactMatch,
+                Format::ExactMatch,
+                Format::ExactMatch
+            ]
+        );
+    }
+
+    #[test]
+    fn test_no_match() {
+        let result = calculate_color("hello", "rqdas");
+        assert_eq!(
+            result,
+            vec![
+                Format::NoMatch,
+                Format::NoMatch,
+                Format::NoMatch,
+                Format::NoMatch,
+                Format::NoMatch
+            ]
+        );
+    }
+
+    #[test]
+    fn test_partial_match() {
+        let result = calculate_color("hello", "ollzx");
+        assert_eq!(
+            result,
+            vec![
+                Format::Match,
+                Format::Match,
+                Format::ExactMatch,
+                Format::NoMatch,
+                Format::NoMatch
+            ]
+        );
+    }
+
+    #[test]
+    fn test_mixed_match() {
+        let result = calculate_color("crate", "trace");
+        assert_eq!(
+            result,
+            vec![
+                Format::Match,
+                Format::ExactMatch,
+                Format::ExactMatch,
+                Format::Match,
+                Format::ExactMatch
+            ]
+        );
+    }
+
+    #[test]
+    fn test_extra_letters() {
+        let result = calculate_color("apple", "allee");
+        assert_eq!(
+            result,
+            vec![
+                Format::ExactMatch,
+                Format::Match,
+                Format::NoMatch,
+                Format::NoMatch,
+                Format::ExactMatch
+            ]
+        );
     }
 }

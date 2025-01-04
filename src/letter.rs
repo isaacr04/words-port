@@ -1,17 +1,32 @@
 use relm4::{
     factory::{positions::GridPosition, Position},
-    gtk::{self, prelude::ButtonExt, prelude::WidgetExt},
+    gtk::{
+        self,
+        prelude::{ButtonExt, WidgetExt},
+    },
     prelude::FactoryComponent,
     FactorySender, RelmWidgetExt,
 };
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Format {
     Editable,
     NotUsed,
     NoMatch,
     Match,
     ExactMatch,
+}
+
+impl Format {
+    pub fn to_osb_format(&self) -> crate::onscreen_button::Format {
+        match self {
+            Format::Editable => crate::onscreen_button::Format::NotUsed,
+            Format::NotUsed => crate::onscreen_button::Format::NoMatch,
+            Format::NoMatch => crate::onscreen_button::Format::NoMatch,
+            Format::Match => crate::onscreen_button::Format::Match,
+            Format::ExactMatch => crate::onscreen_button::Format::ExactMatch,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, Eq, Hash, PartialEq)]
