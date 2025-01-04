@@ -16,16 +16,16 @@ impl SimpleComponent for AboutDialog {
         adw::AboutWindow::builder()
             .application_icon(APP_ID)
             // Insert your license of choice here
-            // .license_type(gtk::License::MitX11)
+            .license_type(gtk::License::Gpl30)
             // Insert your website here
-            // .website("https://gitlab.gnome.org/bilelmoussaoui/wordle/")
+            .website("https://codeberg.org/petsoi/wordle")
             // Insert your Issues page
-            // .issue_url("https://gitlab.gnome.org/World/Rust/wordle/-/issues")
+            .issue_url("https://codeberg.org/petsoi/wordle/issues")
             // Insert your application name here
             .application_name("Wordle")
             .version(VERSION)
             // .translator_credits("translator-credits")
-            .copyright("© 2023 Peter Sonntag")
+            .copyright("© 2025 Peter Sonntag")
             .developers(vec!["Peter Sonntag"])
             .designers(vec!["Peter Sonntag"])
             .hide_on_close(true)
