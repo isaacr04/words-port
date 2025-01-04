@@ -1,33 +1,31 @@
 {
-    "id": "org.codeberg.petsoi.wordle",
+    "id": "org.codeberg.petsoi.wordle.Devel",
     "runtime": "org.gnome.Platform",
     "runtime-version": "47",
     "sdk": "org.gnome.Sdk",
     "sdk-extensions": [
-        "org.freedesktop.Sdk.Extension.rust-stable"
+        "org.freedesktop.Sdk.Extension.rust-stable",
+        "org.freedesktop.Sdk.Extension.llvm18"
     ],
     "command": "wordle",
     "finish-args": [
         "--share=ipc",
         "--socket=fallback-x11",
-        "--socket=wayland",
         "--device=dri",
-        "--env=RUST_LOG=wordle=debug",
-        "--env=G_MESSAGES_DEBUG=none",
-        "--env=RUST_BACKTRACE=1"
+        "--socket=wayland"
     ],
     "build-options": {
+        "append-ld-library-path": "/usr/lib/sdk/llvm18/lib",
         "append-path": "/usr/lib/sdk/rust-stable/bin",
+        "env": {
+            "RUST_BACKTRACE": "1",
+            "RUST_LOG": "test-project=debug"
+        },
         "build-args": [
             "--share=network"
         ],
-        "env" : {
-            "RUST_BACKTRACE" : "1",
-            "RUST_LOG" : "test-project=debug"
-        },
         "test-args": [
-            "--socket=x11",
-            "--share=network"
+            "--socket=x11"
         ]
     },
     "modules": [
@@ -40,8 +38,9 @@
             ],
             "sources": [
                 {
-                    "type": "dir",
-                    "path": "../"
+                    "type": "git",
+                    "url": "https://codeberg.org/petsoi/wordle",
+                    "branch": "main"
                 }
             ]
         }
