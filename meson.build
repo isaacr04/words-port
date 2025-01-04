@@ -1,8 +1,6 @@
-project(
-  'wordle',
-  'rust',
+project( 'wordle', 'rust',
   version: '0.1.0',
-  meson_version: '>= 0.59',
+  meson_version: '>= 1.0.0',
   license: 'GPL-3',
 )
 
