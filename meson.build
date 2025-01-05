@@ -1,6 +1,8 @@
-project( 'wordle', 'rust',
+project(
+  'wordle',
+  'rust',
   version: '0.1.0',
-  meson_version: '>= 1.0.0',
+  meson_version: '>= 1.1.0',
   license: 'GPL-3',
 )
 
@@ -11,7 +13,13 @@ base_id = 'org.codeberg.petsoi.wordle'
 
 dependency('glib-2.0', version: '>= 2.66')
 dependency('gio-2.0', version: '>= 2.66')
-dependency('gtk4', version: '>= 4.0.0')
+dependency('gtk4', version: '>= 4.16.0')
+dependency(
+  'libadwaita-1',
+  version: '>= 1.6',
+  fallback: ['libadwaita', 'libadwaita_dep'],
+  default_options: ['tests=false', 'examples=false', 'vapi=false'],
+)
 
 find_program('glib-compile-resources')
 glib_compile_schemas = find_program('glib-compile-schemas')
@@ -45,7 +53,6 @@ else
   version_suffix = ''
   application_id = base_id
 endif
-
 
 subdir('data')
 subdir('po')

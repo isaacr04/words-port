@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Peter Sonntag 2019 <peter@sonniger-tag.eu> -->
 <component type="desktop-application">
-  <id>org.codeberg.petsoi.wordle</id>
+  <id>@app-id@</id>
   <metadata_license>CC0</metadata_license>
     <project_license>GPL-3.0-or-later</project_license>
   <name>Wordle</name>
