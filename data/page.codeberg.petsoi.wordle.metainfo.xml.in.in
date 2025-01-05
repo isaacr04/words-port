@@ -65,5 +65,5 @@
   </branding>  
   <update_contact>peter@sonniger-tag.eu</update_contact>
   <translation type="gettext">@gettext-package@</translation>
-  <launchable type="desktop-id">org.codeberg.petsoi.wordle.desktop</launchable>
+  <launchable type="desktop-id">page.codeberg.petsoi.wordle.desktop</launchable>
 </component>

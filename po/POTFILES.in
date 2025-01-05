@@ -1,6 +1,6 @@
-data/org.codeberg.petsoi.wordle.desktop.in
-data/org.codeberg.petsoi.wordle.gschema.xml.in
-data/org.codeberg.petsoi.wordle.metainfo.xml.in
+data/page.codeberg.petsoi.wordle.desktop.in
+data/page.codeberg.petsoi.wordle.gschema.xml.in
+data/page.codeberg.petsoi.wordle.metainfo.xml.in
 data/resources/ui/shortcuts.ui
 data/resources/wordlists/words.txt
 src/application.rs

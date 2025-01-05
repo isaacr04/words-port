@@ -92,7 +92,7 @@ impl SimpleComponent for App {
 
         #[wrap(Some)]
         set_help_overlay: shortcuts = &gtk::Builder::from_resource(
-                "/org/codeberg/petsoi/wordle/gtk/help-overlay.ui"
+                "/page/codeberg/petsoi/wordle/gtk/help-overlay.ui"
             )
             .object::<gtk::ShortcutsWindow>("help_overlay")
             .unwrap() -> gtk::ShortcutsWindow {

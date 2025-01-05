@@ -1,5 +1,5 @@
 {
-    "id": "org.codeberg.petsoi.wordle.Devel",
+    "id": "page.codeberg.petsoi.wordle.Devel",
     "runtime": "org.gnome.Platform",
     "runtime-version": "47",
     "sdk": "org.gnome.Sdk",
