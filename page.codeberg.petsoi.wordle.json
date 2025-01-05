@@ -1,5 +1,5 @@
 {
-    "id": "page.codeberg.petsoi.wordle.Devel",
+    "id": "page.codeberg.petsoi.wordle",
     "runtime": "org.gnome.Platform",
     "runtime-version": "47",
     "sdk": "org.gnome.Sdk",
@@ -38,9 +38,8 @@
             ],
             "sources": [
                 {
-                    "type": "git",
-                    "url": "https://codeberg.org/petsoi/wordle",
-                    "branch": "main"
+                    "type": "dir",
+                    "path": "./"
                 }
             ]
         }
