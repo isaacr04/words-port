@@ -38,11 +38,17 @@
        https://hughsie.github.io/oars/generate.html
   -->
   <content_rating type="oars-1.1" />
-    <supports>
+  <supports>
     <control>pointing</control>
     <control>touch</control>
     <control>keyboard</control>
   </supports>
+  <categories>
+    <category>Game</category>
+  </categories>
+  <keywords>
+    <keyword>wordle</keyword>
+  </keywords>
   <kudos>
      <!--
        GNOME Software kudos:
