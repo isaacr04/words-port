@@ -1,6 +1,6 @@
-# words
+# Words!
 
-**words** is a popular word puzzle game where players try to guess a hidden five-letter word within six attempts. It's simple yet addictive, combining logic, vocabulary, and deduction. Here's a breakdown of the game:
+**Words!** is similar to a popular word puzzle game where players try to guess a hidden word within six attempts. It's simple yet addictive, combining logic, vocabulary, and deduction. Here's a breakdown of the game:
 
 <div align="center">
 
@@ -14,7 +14,7 @@
    - Guess the secret five-letter word (set by the game) in six or fewer tries.
 
 2. **How it Works**:
-   - The player enters a five-letter word as a guess.
+   - The player enters a word as a guess. One can also use Ctrl+Return for entering a word.
    - After each guess, the game provides feedback for each letter:
      - **Green**: The letter is in the correct position.
      - **Yellow**: The letter is in the word but in the wrong position.
