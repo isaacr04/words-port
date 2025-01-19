@@ -76,7 +76,7 @@ impl SimpleComponent for App {
             section! {
                 "_Preferences" => PreferencesAction,
                 "_Keyboard" => ShortcutsAction,
-                "_About Wordle" => AboutAction,
+                "_About words" => AboutAction,
             }
         }
     }
@@ -92,7 +92,7 @@ impl SimpleComponent for App {
 
         #[wrap(Some)]
         set_help_overlay: shortcuts = &gtk::Builder::from_resource(
-                "/page/codeberg/petsoi/wordle/gtk/help-overlay.ui"
+                "/page/codeberg/petsoi/words/gtk/help-overlay.ui"
             )
             .object::<gtk::ShortcutsWindow>("help_overlay")
             .unwrap() -> gtk::ShortcutsWindow {

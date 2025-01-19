@@ -18,11 +18,11 @@ impl SimpleComponent for AboutDialog {
             // Insert your license of choice here
             .license_type(gtk::License::Gpl30)
             // Insert your website here
-            .website("https://codeberg.org/petsoi/wordle")
+            .website("https://codeberg.org/petsoi/words")
             // Insert your Issues page
-            .issue_url("https://codeberg.org/petsoi/wordle/issues")
+            .issue_url("https://codeberg.org/petsoi/words/issues")
             // Insert your application name here
-            .application_name("Wordle")
+            .application_name("words")
             .version(VERSION)
             // .translator_credits("translator-credits")
             .copyright("© 2025 Peter Sonntag")

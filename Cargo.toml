@@ -1,5 +1,5 @@
 [package]
-name = "wordle"
+name = "words"
 version = "0.1.0"
 authors = ["Peter Sonntag <peter@sonniger-tag.eu>"]
 edition = "2021"

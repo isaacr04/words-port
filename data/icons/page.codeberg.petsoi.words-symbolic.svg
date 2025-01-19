@@ -5,7 +5,7 @@
    viewBox="0 0 16 16"
    version="1.1"
    id="svg12"
-   sodipodi:docname="page.codeberg.petsoi.wordle-symbolic-source.svg"
+   sodipodi:docname="page.codeberg.petsoi.words-symbolic.svg"
    inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -215,16 +215,10 @@
        x="1.62"
        y="1.86"
        ry="4.3200002" />
-    <text
-       xml:space="preserve"
-       style="font-size:20.192px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke-width:1.68267"
-       x="0.63652813"
-       y="19.685375"
-       id="text3"><tspan
-         sodipodi:role="line"
-         id="tspan3"
-         x="0.63652813"
-         y="19.685375"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'TeX Gyre Bonum';-inkscape-font-specification:'TeX Gyre Bonum Italic';stroke-width:1.68267">W</tspan></text>
+    <path
+       style="font-style:italic;font-size:20.192px;font-family:'TeX Gyre Bonum';-inkscape-font-specification:'TeX Gyre Bonum Italic';stroke-width:1.68267"
+       d="m 22.645808,6.5201916 0.10096,-0.585568 h -4.84608 l -0.10096,0.585568 0.282688,0.040384 c 0.848064,0.141344 1.171136,0.40384 1.171136,0.868256 0,0.4038399 -0.242304,0.9692159 -0.625952,1.7365119 l -3.957632,7.9758395 -1.21152,-8.6421755 c -0.04038,-0.323072 -0.10096,-0.60576 -0.10096,-0.8480639 0,-0.585568 0.222112,-0.969216 1.090368,-1.090368 l 0.323072,-0.040384 0.10096,-0.585568 H 9.7027359 l -0.10096,0.585568 0.20192,0.040384 c 1.0297921,0.323072 1.3730561,0.868256 1.6153601,2.6047679 L 7.5018079,17.141183 6.20952,8.2567035 c -0.040384,-0.20192 -0.040384,-0.383648 -0.040384,-0.545184 0,-0.6461439 0.262496,-1.0297919 1.1509439,-1.1509439 l 0.30288,-0.040384 0.10096,-0.585568 H 2.4941921 l -0.10096,0.585568 0.181728,0.040384 C 3.705712,6.8836476 3.867248,7.0855676 4.149936,8.7816955 L 5.947024,19.685375 H 7.21912 l 4.502816,-8.924864 1.332672,8.924864 h 1.31248 L 20.121808,8.4990075 C 20.74776,7.2874876 21.393904,6.7019196 22.403504,6.5605756 Z"
+       id="text3"
+       aria-label="W" />
   </g>
 </svg>

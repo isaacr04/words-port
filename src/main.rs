@@ -33,7 +33,7 @@ fn main() {
     gettextrs::bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR).expect("Unable to bind the text domain");
     gettextrs::textdomain(GETTEXT_PACKAGE).expect("Unable to switch to the text domain");
 
-    glib::set_application_name(&gettext("Wordle"));
+    glib::set_application_name(&gettext("Words!"));
 
     let res = gio::Resource::load(RESOURCES_FILE).expect("Could not load gresource file");
     gio::resources_register(&res);
@@ -41,7 +41,7 @@ fn main() {
     gtk::Window::set_default_icon_name(APP_ID);
 
     let app = main_application();
-    app.set_resource_base_path(Some("/page/codeberg/petsoi/wordle/"));
+    app.set_resource_base_path(Some("/page/codeberg/petsoi/words/"));
 
     let mut actions = RelmActionGroup::<AppActionGroup>::new();
 
@@ -61,7 +61,7 @@ fn main() {
 
     let data = res
         .lookup_data(
-            "/page/codeberg/petsoi/wordle/style.css",
+            "/page/codeberg/petsoi/words/style.css",
             gio::ResourceLookupFlags::NONE,
         )
         .unwrap();

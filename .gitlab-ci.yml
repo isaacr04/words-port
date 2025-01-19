@@ -8,10 +8,10 @@ flatpak:
   tags:
     - flatpak
   variables:
-    BUNDLE: "wordle-nightly.flatpak"
-    MANIFEST_PATH: "build-aux/page.codeberg.petsoi.wordle.Devel.json"
-    FLATPAK_MODULE: "wordle"
-    APP_ID: "page.codeberg.petsoi.wordle.Devel"
+    BUNDLE: "words-nightly.flatpak"
+    MANIFEST_PATH: "build-aux/page.codeberg.petsoi.words.Devel.json"
+    FLATPAK_MODULE: "words"
+    APP_ID: "page.codeberg.petsoi.words.Devel"
     RUNTIME_REPO: "https://nightly.gnome.org/gnome-nightly.flatpakrepo"
   script:
     - flatpak install --user --noninteractive flathub org.freedesktop.Sdk.Extension.llvm16//23.08

@@ -1,6 +1,6 @@
-# Wordle
+# words
 
-**Wordle** is a popular word puzzle game where players try to guess a hidden five-letter word within six attempts. It's simple yet addictive, combining logic, vocabulary, and deduction. Here's a breakdown of the game:
+**words** is a popular word puzzle game where players try to guess a hidden five-letter word within six attempts. It's simple yet addictive, combining logic, vocabulary, and deduction. Here's a breakdown of the game:
 
 <div align="center">
 

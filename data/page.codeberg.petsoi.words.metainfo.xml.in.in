@@ -4,36 +4,36 @@
   <id>@app-id@</id>
   <metadata_license>CC0</metadata_license>
     <project_license>GPL-3.0-or-later</project_license>
-  <name>Wordle</name>
+  <name>Words!</name>
   <summary>Have fun guessing Words</summary>
   <description>
-    <p>Wordle is a popular word puzzle game where players try to guess a hidden five-letter word within six attempts.</p>
+    <p>Words is a popular word puzzle game, similar to Wordle, where players try to guess a hidden word within six attempts.</p>
     <p>It's simple yet addictive, combining logic, vocabulary, and deduction.</p>
   </description>
   <screenshots>
     <screenshot type="default">
-      <image type="source">https://codeberg.org/petsoi/wordle/raw/commit/9b2a34ac106d060546efa9a7bd81658e8a455954/data/resources/screenshots/main_light.png</image>
+      <image type="source">https://codeberg.org/petsoi/words/raw/commit/9b2a34ac106d060546efa9a7bd81658e8a455954/data/resources/screenshots/main_light.png</image>
       <caption>Main Window, light</caption>
     </screenshot>
     <screenshot>
-      <image type="source">https://codeberg.org/petsoi/wordle/raw/commit/9b2a34ac106d060546efa9a7bd81658e8a455954/data/resources/screenshots/main_dark.png</image>
+      <image type="source">https://codeberg.org/petsoi/words/raw/commit/9b2a34ac106d060546efa9a7bd81658e8a455954/data/resources/screenshots/main_dark.png</image>
       <caption>Main Window, dark</caption>
     </screenshot>
     <screenshot>
-      <image type="source">https://codeberg.org/petsoi/wordle/raw/commit/9b2a34ac106d060546efa9a7bd81658e8a455954/data/resources/screenshots/gameover_light.png</image>
+      <image type="source">https://codeberg.org/petsoi/words/raw/commit/9b2a34ac106d060546efa9a7bd81658e8a455954/data/resources/screenshots/gameover_light.png</image>
       <caption>Game Over, light</caption>
     </screenshot>
     <screenshot>
-      <image type="source">https://codeberg.org/petsoi/wordle/raw/commit/9b2a34ac106d060546efa9a7bd81658e8a455954/data/resources/screenshots/gameover_dark.png</image>
+      <image type="source">https://codeberg.org/petsoi/words/raw/commit/9b2a34ac106d060546efa9a7bd81658e8a455954/data/resources/screenshots/gameover_dark.png</image>
       <caption>Game Over, dark</caption>
     </screenshot>
   </screenshots>
-  <url type="homepage">https://codeberg.org/petsoi/wordle</url>
-  <url type="bugtracker">https://codeberg.org/petsoi/wordle/issues</url>
+  <url type="homepage">https://codeberg.org/petsoi/words</url>
+  <url type="bugtracker">https://codeberg.org/petsoi/words/issues</url>
   <!-- Source code repository -->
-  <url type="vcs-browser">https://codeberg.org/petsoi/wordle</url>
+  <url type="vcs-browser">https://codeberg.org/petsoi/words</url>
   <!-- Translation repository -->
-  <!-- <url type="translate">https://gitlab.gnome.org/bilelmoussaoui/wordle/-/tree/master/po</url> -->
+  <!-- <url type="translate">https://gitlab.gnome.org/bilelmoussaoui/words/-/tree/master/po</url> -->
   <!-- Open Age Ratings Service:
        https://hughsie.github.io/oars/generate.html
   -->
