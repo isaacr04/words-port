@@ -43,9 +43,6 @@
     <control>touch</control>
     <control>keyboard</control>
   </supports>
-  <recommends>
-    <control>touch</control>
-  </recommends>
   <kudos>
      <!--
        GNOME Software kudos:
