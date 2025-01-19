@@ -12,20 +12,20 @@
   </description>
   <screenshots>
     <screenshot type="default">
-      <image>https://codeberg.org/petsoi/wordle/raw/branch/main/data/resources/screenshots/main_light.png</image>
-      <caption>Main window light</caption>
+      <image type="source">https://codeberg.org/petsoi/wordle/raw/commit/9b2a34ac106d060546efa9a7bd81658e8a455954/data/resources/screenshots/main_light.png</image>
+      <caption>Main Window, light</caption>
     </screenshot>
-    <screenshot type="default">
-      <image>https://codeberg.org/petsoi/wordle/raw/branch/main/data/resources/screenshots/main_dark.png</image>
-      <caption>Main window dark</caption>
+    <screenshot>
+      <image type="source">https://codeberg.org/petsoi/wordle/raw/commit/9b2a34ac106d060546efa9a7bd81658e8a455954/data/resources/screenshots/main_dark.png</image>
+      <caption>Main Window, dark</caption>
     </screenshot>
-    <screenshot type="default">
-      <image>https://codeberg.org/petsoi/wordle/raw/branch/main/data/resources/screenshots/gameover_light.png</image>
-      <caption>Game Over light</caption>
+    <screenshot>
+      <image type="source">https://codeberg.org/petsoi/wordle/raw/commit/9b2a34ac106d060546efa9a7bd81658e8a455954/data/resources/screenshots/gameover_light.png</image>
+      <caption>Game Over, light</caption>
     </screenshot>
-    <screenshot type="default">
-      <image>https://codeberg.org/petsoi/wordle/raw/branch/main/data/resources/screenshots/gameover_dark.png</image>
-      <caption>Game Over dark</caption>
+    <screenshot>
+      <image type="source">https://codeberg.org/petsoi/wordle/raw/commit/9b2a34ac106d060546efa9a7bd81658e8a455954/data/resources/screenshots/gameover_dark.png</image>
+      <caption>Game Over, dark</caption>
     </screenshot>
   </screenshots>
   <url type="homepage">https://codeberg.org/petsoi/wordle</url>
@@ -38,9 +38,14 @@
        https://hughsie.github.io/oars/generate.html
   -->
   <content_rating type="oars-1.1" />
-  <releases>
-    <release version="0.1.0" date="2019-07-11" />
-  </releases>
+    <supports>
+    <control>pointing</control>
+    <control>touch</control>
+    <control>keyboard</control>
+  </supports>
+  <recommends>
+    <control>touch</control>
+  </recommends>
   <kudos>
      <!--
        GNOME Software kudos:
@@ -65,5 +70,12 @@
   </branding>  
   <update_contact>peter@sonniger-tag.eu</update_contact>
   <translation type="gettext">@gettext-package@</translation>
-  <launchable type="desktop-id">page.codeberg.petsoi.wordle.desktop</launchable>
+  <launchable type="desktop-id">@app-id@.desktop</launchable>
+  <releases>
+    <release version="0.1.0" date="2025-01-19">
+      <description>
+        <p>First simple release.</p>
+      </description>
+    </release>
+  </releases>
 </component>

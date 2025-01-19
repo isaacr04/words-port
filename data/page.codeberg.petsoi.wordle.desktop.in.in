@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Wordle
-Comment=Write a GTK + Rust application
+Comment=Play Wordle
 Type=Application
 Exec=wordle
 Terminal=false
@@ -9,4 +9,4 @@ Categories=GNOME;GTK;
 Keywords=Gnome;GTK;
 # Translators: Do NOT translate or transliterate this text (this is an icon file name)!
 Icon=@icon@
-StartupNotify=true
+StartupNotify=false
