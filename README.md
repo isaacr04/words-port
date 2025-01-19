@@ -11,7 +11,7 @@
 
 ## Gameplay
 1. **Objective**:
-   - Guess the secret five-letter word (set by the game) in six or fewer tries.
+   - Guess the secret word (set by the game) in six or fewer tries.
 
 2. **How it Works**:
    - The player enters a word as a guess. One can also use Ctrl+Return for entering a word.
