@@ -28,6 +28,8 @@
 
 ## Current State of Development
 
+The word list has room for improvements. Help is welcome.
+
 Currently it's just the first released version and I'm also still learning. There fore a lot of things are missing (See issues).
 
 Help is always welcome!
