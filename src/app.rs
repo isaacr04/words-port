@@ -14,7 +14,6 @@ use gtk::prelude::{
 };
 use gtk::{gio, glib};
 use rand::seq::IteratorRandom;
-use relm4::actions::AccelsPlus;
 use relm4::factory::FactoryHashMap;
 use relm4::gtk::glib::Propagation;
 use relm4::gtk::{Align, EventControllerKey};
@@ -50,8 +49,8 @@ pub(super) enum AppMsg {
     SelectField(Coord),
     GameOver(bool),
     StartNewGame,
-    Letter(char),
-    Enter,
+    EnterLetter(char),
+    EnterWord,
     Delete,
     Backspace,
     Space,
@@ -62,7 +61,6 @@ relm4::new_action_group!(pub(super) WindowActionGroup, "win");
 relm4::new_stateless_action!(PreferencesAction, WindowActionGroup, "preferences");
 relm4::new_stateless_action!(pub(super) ShortcutsAction, WindowActionGroup, "show-help-overlay");
 relm4::new_stateless_action!(AboutAction, WindowActionGroup, "about");
-relm4::new_stateless_action!(EnterAction, WindowActionGroup, "enter");
 
 #[relm4::component(pub)]
 impl SimpleComponent for App {
@@ -278,7 +276,7 @@ impl SimpleComponent for App {
                 self.create_empty_field();
                 self.create_new_keyboard_and_set_allowed_letters(KEYS_FILE);
             }
-            AppMsg::Letter(c) => {
+            AppMsg::EnterLetter(c) => {
                 let upper_case = c.to_uppercase().to_string(); // TODO: Logic needs to be improved if we want to support e.g. ß => SS
                 if upper_case.chars().count() == 1
                     && self
@@ -309,7 +307,7 @@ impl SimpleComponent for App {
                 self.letters
                     .send(&self.selected_letter, LetterMsgIn::SetContent(None))
             }
-            AppMsg::Enter => {
+            AppMsg::EnterWord => {
                 let Some(content_of_current_attempt) = self.get_entered_word() else {
                     return;
                 };
@@ -366,8 +364,8 @@ fn create_empty_on_screen_button_rows(
             FactoryHashMap::builder()
                 .launch_default()
                 .forward(sender.input_sender(), |msg| match msg {
-                    OnScreenButtonMsgOut::Letter(c) => AppMsg::Letter(c),
-                    OnScreenButtonMsgOut::Enter => AppMsg::Enter,
+                    OnScreenButtonMsgOut::Letter(c) => AppMsg::EnterLetter(c),
+                    OnScreenButtonMsgOut::Enter => AppMsg::EnterWord,
                     OnScreenButtonMsgOut::Del => AppMsg::Backspace,
                 })
         })
@@ -514,7 +512,8 @@ fn keyboard_events_controller(sender: ComponentSender<App>) -> EventControllerKe
                 ' ' => sender.input(AppMsg::Space),
                 '\u{8}' => sender.input(AppMsg::Backspace),
                 '\u{7f}' => sender.input(AppMsg::Delete),
-                c => sender.input(AppMsg::Letter(c)),
+                '\r' => sender.input(AppMsg::EnterWord),
+                c => sender.input(AppMsg::EnterLetter(c)),
             }
             Propagation::Stop
         } else {
@@ -524,17 +523,8 @@ fn keyboard_events_controller(sender: ComponentSender<App>) -> EventControllerKe
     controller
 }
 
-fn register_actions(sender: ComponentSender<App>, widgets: &AppWidgets, model: &App) {
+fn register_actions(_sender: ComponentSender<App>, widgets: &AppWidgets, model: &App) {
     let mut actions = RelmActionGroup::<WindowActionGroup>::new();
-
-    let enter_action = {
-        RelmAction::<EnterAction>::new_stateless(move |_| {
-            sender.input(AppMsg::Enter);
-        })
-    };
-
-    let app = relm4::main_application();
-    app.set_accelerators_for_action::<EnterAction>(&["<Control>Return"]);
 
     let shortcuts_action = {
         let shortcuts = widgets.shortcuts.clone();
@@ -552,7 +542,6 @@ fn register_actions(sender: ComponentSender<App>, widgets: &AppWidgets, model: &
 
     actions.add_action(shortcuts_action);
     actions.add_action(about_action);
-    actions.add_action(enter_action);
     actions.register_for_widget(&widgets.main_window);
 }
 

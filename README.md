@@ -14,7 +14,7 @@
    - Guess the secret word (set by the game) in six or fewer tries.
 
 2. **How it Works**:
-   - The player enters a word as a guess. One can also use Ctrl+Return for entering a word.
+   - The player enters a word as a guess.
    - After each guess, the game provides feedback for each letter:
      - **Green**: The letter is in the correct position.
      - **Yellow**: The letter is in the word but in the wrong position.
