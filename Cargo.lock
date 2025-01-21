@@ -1336,7 +1336,7 @@ dependencies = [
 
 [[package]]
 name = "words"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "gettext-rs",
  "rand",

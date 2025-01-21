@@ -22,7 +22,7 @@ impl SimpleComponent for AboutDialog {
             // Insert your Issues page
             .issue_url("https://codeberg.org/petsoi/words/issues")
             // Insert your application name here
-            .application_name("words")
+            .application_name("Words!")
             .version(VERSION)
             // .translator_credits("translator-credits")
             .copyright("© 2025 Peter Sonntag")

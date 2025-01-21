@@ -90,7 +90,11 @@
   <releases>
     <release version="0.1.1" date="2025-01-21">
       <description>
-        <p>Relax runtime to 46.</p>
+        <p>Changes:</p>
+        <ul>
+          <li>Fix keyboard (Z was missing).</li>
+          <li>Make the default size more narrow.</li>
+        </ul>
       </description>
     </release>
     <release version="0.1.0" date="2025-01-19">
