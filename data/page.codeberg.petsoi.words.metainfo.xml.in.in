@@ -2,14 +2,18 @@
 <!-- Peter Sonntag 2019 <peter@sonniger-tag.eu> -->
 <component type="desktop-application">
   <id>@app-id@</id>
+
   <metadata_license>CC0</metadata_license>
-    <project_license>GPL-3.0-or-later</project_license>
+  <project_license>GPL-3.0-or-later</project_license>
+
   <name>Words!</name>
   <summary>Have fun guessing Words</summary>
+
   <description>
     <p>Words is a popular word puzzle game, similar to Wordle, where players try to guess a hidden word within six attempts.</p>
     <p>It's simple yet addictive, combining logic, vocabulary, and deduction.</p>
   </description>
+
   <screenshots>
     <screenshot type="default">
       <image type="source">https://codeberg.org/petsoi/words/raw/commit/9b2a34ac106d060546efa9a7bd81658e8a455954/data/resources/screenshots/main_light.png</image>
@@ -28,6 +32,7 @@
       <caption>Game Over, dark</caption>
     </screenshot>
   </screenshots>
+
   <url type="homepage">https://codeberg.org/petsoi/words</url>
   <url type="bugtracker">https://codeberg.org/petsoi/words/issues</url>
   <!-- Source code repository -->
@@ -38,17 +43,22 @@
        https://hughsie.github.io/oars/generate.html
   -->
   <content_rating type="oars-1.1" />
-  <supports>
+
+  <recommends>
     <control>pointing</control>
     <control>touch</control>
     <control>keyboard</control>
-  </supports>
+    <control>tablet</control>
+  </recommends>
+
   <categories>
     <category>Game</category>
   </categories>
+
   <keywords>
     <keyword>wordle</keyword>
   </keywords>
+
   <kudos>
      <!--
        GNOME Software kudos:
@@ -63,6 +73,7 @@
   <developer id="gnome.org">
     <name translate="no">Peter Sonntag</name>
   </developer>
+  <url type="donation">https://paypal.me/KleinerOnkel</url>
   <!-- 
     Branding colors:
     https://docs.flathub.org/docs/for-app-authors/metainfo-guidelines/#brand-color
@@ -71,9 +82,11 @@
     <color type="primary" scheme_preference="light">#2EC27E</color>
     <color type="primary" scheme_preference="dark">#2EC27E</color>
   </branding>  
+
   <update_contact>peter@sonniger-tag.eu</update_contact>
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
+  
   <releases>
     <release version="0.1.0" date="2025-01-19">
       <description>
