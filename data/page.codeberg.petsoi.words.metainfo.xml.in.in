@@ -93,5 +93,10 @@
         <p>First simple release.</p>
       </description>
     </release>
+    <release version="0.1.1" date="2025-01-21">
+      <description>
+        <p>Relax runtime to 46.</p>
+      </description>
+    </release>
   </releases>
 </component>
