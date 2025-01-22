@@ -462,6 +462,7 @@ impl App {
                     &OnScreenButtonMsgOut::Letter(*user_char),
                     OnScreenButtonMsgIn::SetFormat(format),
                 );
+                return;
             }
         }
     }
