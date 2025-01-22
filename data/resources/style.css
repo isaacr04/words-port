@@ -18,3 +18,9 @@
 .selected {
   border: 2px solid @accent-color;
 }
+
+.osk {
+  padding: 0px;
+  min-width: 10px;
+  min-height: 10px;
+}

@@ -61,12 +61,13 @@ impl FactoryComponent for OnScreenButton {
             set_vexpand: true,
             #[watch]
             set_label: &self.trigger.get_label(),
+            set_css_classes: &["osk"],
             #[watch]
-            set_css_classes: { match &self.format {
-                Format::NotUsed => &[],
-                Format::NoMatch => &["no_match"],
-                Format::Match => &["match"],
-                Format::ExactMatch => &["exact"],
+            add_css_class: { match &self.format {
+                Format::NotUsed => "",
+                Format::NoMatch => "no_match",
+                Format::Match => "match",
+                Format::ExactMatch => "exact",
             }},
             connect_clicked[sender, index] =>
                 move |_| {

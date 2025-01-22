@@ -127,7 +127,8 @@ impl SimpleComponent for App {
 
                 add_child=&gtk::Box{
                     set_orientation: gtk::Orientation::Vertical,
-                    set_halign: Align::Center,
+                    set_vexpand: true,
+                    set_hexpand: true,
 
                     #[local_ref]
                     letter_grid -> gtk::Grid {
