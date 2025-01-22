@@ -64,7 +64,7 @@ impl FactoryComponent for OnScreenButton {
             set_css_classes: &["osk"],
             #[watch]
             add_css_class: { match &self.format {
-                Format::NotUsed => "",
+                Format::NotUsed => "empty-class",
                 Format::NoMatch => "no_match",
                 Format::Match => "match",
                 Format::ExactMatch => "exact",
