@@ -74,7 +74,7 @@ impl SimpleComponent for App {
             section! {
                 "_Preferences" => PreferencesAction,
                 "_Keyboard" => ShortcutsAction,
-                "_About words" => AboutAction,
+                "_About Words!" => AboutAction,
             }
         }
     }

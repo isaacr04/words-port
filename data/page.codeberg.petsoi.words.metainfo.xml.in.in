@@ -88,6 +88,15 @@
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   
   <releases>
+    <release version="0.1.2" date="2025-01-22">
+      <description>
+        <p>Changes:</p>
+        <ul>
+          <li>Improve wording.</li>
+          <li>Enable smaller screensizes.</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.1.1" date="2025-01-21">
       <description>
         <p>Changes:</p>
