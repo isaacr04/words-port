@@ -190,12 +190,12 @@ impl SimpleComponent for App {
                             #[watch]
                             set_label: &if model.game_won {
                                     if model.attempts == 1 {
-                                        "You needed only one try!!".to_owned()
+                                        "You only needed one attempt!!".to_owned()
                                     } else {
-                                        format!("You needed {} tries.", model.attempts)
+                                        format!("You needed {} attempts.", model.attempts)
                                     }
                                 } else {
-                                    "Good luck for next time!".to_owned()
+                                    "Good luck next time!".to_owned()
                                 },
                             set_css_classes: &["title-3"],
                             set_wrap: true,
