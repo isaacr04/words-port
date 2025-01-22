@@ -23,16 +23,20 @@
 
 3. **Rules**:
    - Each guess must be a valid five-letter word (not random letters).
-   - You cannot reuse an exact guess from before.
    - The goal is to deduce the correct word within the six allowed attempts.
 
 ## Current State of Development
 
 The word list has room for improvements. Help is welcome.
 
-Currently it's just the first released version and I'm also still learning. There fore a lot of things are missing (See issues).
+Currently it's my first app and I'm also still learning. Some things are missing ([See issues](https://codeberg.org/petsoi/words/issues)).
 
 Help is always welcome!
+
+## Useful Dev Tools
+
+ * Just
+ * Poetry (if you want to generate the dependency manifest)
 
 ## Credits
 
