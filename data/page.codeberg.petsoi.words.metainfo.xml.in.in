@@ -16,11 +16,11 @@
 
   <screenshots>
     <screenshot type="default">
-      <image type="source">https://codeberg.org/petsoi/words/raw/commit/9b2a34ac106d060546efa9a7bd81658e8a455954/data/resources/screenshots/main_light.png</image>
+      <image type="source">https://codeberg.org/petsoi/words/raw/commit/6d570509550a9e96fee454535585b59f482b8652/data/resources/screenshots/main_light.png</image>
       <caption>Main Window, light</caption>
     </screenshot>
     <screenshot>
-      <image type="source">https://codeberg.org/petsoi/words/raw/commit/9b2a34ac106d060546efa9a7bd81658e8a455954/data/resources/screenshots/main_dark.png</image>
+      <image type="source">https://codeberg.org/petsoi/words/raw/commit/6d570509550a9e96fee454535585b59f482b8652/data/resources/screenshots/main_dark.png</image>
       <caption>Main Window, dark</caption>
     </screenshot>
     <screenshot>
