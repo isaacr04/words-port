@@ -133,6 +133,8 @@ impl SimpleComponent for App {
                     #[local_ref]
                     letter_grid -> gtk::Grid {
                         set_orientation: gtk::Orientation::Horizontal,
+                        set_column_homogeneous: true,
+                        set_row_homogeneous: true,
                         set_column_spacing: 0,
                         set_row_spacing: 0,
                         // set_halign: Align::Center,
