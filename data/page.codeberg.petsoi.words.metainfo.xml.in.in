@@ -88,6 +88,15 @@
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   
   <releases>
+    <release version="0.1.3" date="2025-01-23">
+      <description>
+        <p>Changes:</p>
+        <ul>
+          <li>Fix bug of incorrect on-screen key color.</li>
+          <li>No unwanted change in column width for wide letters.</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.1.2" date="2025-01-22">
       <description>
         <p>Changes:</p>
