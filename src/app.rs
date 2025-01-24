@@ -269,7 +269,11 @@ impl SimpleComponent for App {
 
         match message {
             AppMsg::Quit => main_application().quit(),
-            AppMsg::SelectField(index) => self.select_field(index),
+            AppMsg::SelectField(index) => {
+                if index.row == self.attempts {
+                    self.select_field(index)
+                }
+            }
             AppMsg::MoveCursor(step) => self.move_selection_by(step),
             AppMsg::StartNewGame => {
                 self.word = pick_random_word(&self.allowed_words);

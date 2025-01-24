@@ -93,7 +93,7 @@ impl FactoryComponent for Letter {
                 sender.output(LetterMsgOut::Selected(index)).unwrap();
             },
             #[watch]
-            set_sensitive: (self.format == Format::Editable) && !self.selected
+            add_css_class: if self.selected == true { "selected" } else {"none"},
         }
     }
 
