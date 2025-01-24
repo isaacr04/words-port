@@ -223,7 +223,7 @@ impl SimpleComponent for App {
             .launch(())
             .detach();
 
-        let allowed_words = WORDS_FILE.lines().collect();
+        let allowed_words = WORDS_FILE.lines().filter(|w| !w.is_empty()).collect();
 
         let letters =
             FactoryHashMap::builder()
