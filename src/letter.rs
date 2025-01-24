@@ -79,6 +79,7 @@ impl FactoryComponent for Letter {
             set_margin_all: 1,
             set_hexpand: true,
             set_vexpand: true,
+            set_can_focus: false,
             #[watch]
             set_label: &self.value,
             #[watch]

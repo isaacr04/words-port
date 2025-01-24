@@ -15,7 +15,7 @@ use gtk::prelude::{
 use gtk::{gio, glib};
 use rand::seq::IteratorRandom;
 use relm4::factory::FactoryHashMap;
-use relm4::gtk::glib::Propagation;
+use relm4::gtk::glib::{GString, Propagation};
 use relm4::gtk::{Align, EventControllerKey};
 use relm4::RelmWidgetExt;
 use relm4::{
@@ -50,6 +50,7 @@ pub(super) enum AppMsg {
     GameOver(bool),
     StartNewGame,
     EnterLetter(char),
+    MoveCursor(isize),
     EnterWord,
     Delete,
     Backspace,
@@ -109,13 +110,15 @@ impl SimpleComponent for App {
 
             adw::HeaderBar {
                 pack_start = &gtk::Button {
-                    set_label: "New",
+                    set_label: "_New",
                     set_can_focus: false,
+                    set_use_underline: true,
                     connect_clicked => AppMsg::StartNewGame,
                 },
                 pack_end = &gtk::MenuButton {
                     set_icon_name: "open-menu-symbolic",
                     set_menu_model: Some(&primary_menu),
+                    set_can_focus: false,
                 }
             },
 
@@ -267,6 +270,7 @@ impl SimpleComponent for App {
         match message {
             AppMsg::Quit => main_application().quit(),
             AppMsg::SelectField(index) => self.select_field(index),
+            AppMsg::MoveCursor(step) => self.move_selection_by(step),
             AppMsg::StartNewGame => {
                 self.word = pick_random_word(&self.allowed_words);
                 println!("New Word: {}", self.word);
@@ -507,8 +511,18 @@ fn pick_random_word(words: &HashSet<&str>) -> String {
 
 fn keyboard_events_controller(sender: ComponentSender<App>) -> EventControllerKey {
     let controller = EventControllerKey::new();
+    let right = GString::from("Right");
+    let left = GString::from("Left");
 
     controller.connect_key_pressed(move |_, keyval, _, _| {
+        if let Some(name) = keyval.name() {
+            if name == right {
+                sender.input(AppMsg::MoveCursor(1))
+            };
+            if name == left {
+                sender.input(AppMsg::MoveCursor(-1))
+            };
+        };
         if let Some(c) = keyval.to_unicode() {
             match c {
                 ' ' => sender.input(AppMsg::Space),
