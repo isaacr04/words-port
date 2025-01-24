@@ -17,3 +17,8 @@ flathub-update-cargo-dependencies:
 # Entering shell for python
 enter-shell:
     poetry shell
+
+# clean up dictionary
+clean-words:
+    tr a-z A-Z < data/resources/wordlists/words.txt | sort | uniq > data/resources/wordlists/words_new.txt
+    mv data/resources/wordlists/words_new.txt data/resources/wordlists/words.txt
