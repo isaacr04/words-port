@@ -88,6 +88,14 @@
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   
   <releases>
+    <release version="0.2.0" date="2025-01-25">
+      <description>
+        <p>Changes:</p>
+        <ul>
+          <li>Give feedback if word is not in dictionary.</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.1.6" date="2025-01-24">
       <description>
         <p>Changes:</p>
