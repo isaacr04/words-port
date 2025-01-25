@@ -24,7 +24,6 @@ use relm4::{
     adw,
     gtk::{self, prelude::GridExt},
     main_application, Component, ComponentController, ComponentParts, ComponentSender, Controller,
-    SimpleComponent,
 };
 
 static TRIES: usize = 6;
