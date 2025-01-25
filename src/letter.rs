@@ -40,6 +40,7 @@ pub struct Letter {
     pub value: String,
     format: Format,
     selected: bool,
+    incorrect: bool,
 }
 
 #[derive(Debug)]
@@ -52,6 +53,7 @@ pub enum LetterMsgIn {
     SetContent(Option<String>),
     SetFormat(Format),
     SetSelected(bool),
+    SetIncorrect(bool),
 }
 
 impl Position<GridPosition, Coord> for Letter {
@@ -94,6 +96,8 @@ impl FactoryComponent for Letter {
             },
             #[watch]
             add_css_class: if self.selected == true { "selected" } else {"none"},
+            #[watch]
+            add_css_class: if self.incorrect == true { "shake" } else {"none"},
         }
     }
 
@@ -101,6 +105,7 @@ impl FactoryComponent for Letter {
         Self {
             format: value.1,
             value: String::new(),
+            incorrect: false,
             selected: if index.column == 0 && index.row == 0 {
                 true
             } else {
@@ -120,6 +125,7 @@ impl FactoryComponent for Letter {
             }
             LetterMsgIn::SetFormat(f) => self.format = f,
             LetterMsgIn::SetSelected(v) => self.selected = v,
+            LetterMsgIn::SetIncorrect(v) => self.incorrect = v,
         }
     }
 }

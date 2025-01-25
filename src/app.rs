@@ -1,4 +1,5 @@
 use std::collections::{HashMap, HashSet};
+use std::time::Duration;
 use std::{char, usize};
 
 use crate::letter::{Coord, Format, LetterMsgIn};
@@ -58,16 +59,22 @@ pub(super) enum AppMsg {
     Quit,
 }
 
+#[derive(Debug)]
+pub(super) enum CommandMsg {
+    ResetIncorrectWord,
+}
+
 relm4::new_action_group!(pub(super) WindowActionGroup, "win");
 relm4::new_stateless_action!(pub(super) ShortcutsAction, WindowActionGroup, "show-help-overlay");
 relm4::new_stateless_action!(AboutAction, WindowActionGroup, "about");
 
 #[relm4::component(pub)]
-impl SimpleComponent for App {
+impl Component for App {
     type Init = ();
     type Input = AppMsg;
     type Output = ();
     type Widgets = AppWidgets;
+    type CommandOutput = CommandMsg;
 
     menu! {
         primary_menu: {
@@ -264,7 +271,7 @@ impl SimpleComponent for App {
         ComponentParts { model, widgets }
     }
 
-    fn update(&mut self, message: Self::Input, sender: ComponentSender<Self>) {
+    fn update(&mut self, message: Self::Input, sender: ComponentSender<Self>, _: &Self::Root) {
         let selected = self.selected_letter;
 
         match message {
@@ -333,6 +340,11 @@ impl SimpleComponent for App {
                     .allowed_words
                     .contains(content_of_current_attempt.as_str())
                 {
+                    self.set_word_to_incorrect(true);
+                    sender.spawn_oneshot_command(|| {
+                        std::thread::sleep(Duration::from_secs(1));
+                        CommandMsg::ResetIncorrectWord
+                    });
                     return;
                 }
 
@@ -352,10 +364,22 @@ impl SimpleComponent for App {
                     row: self.attempts,
                 }));
             }
+
             AppMsg::GameOver(won) => {
                 self.game_won = won;
                 self.current_page = "game_over"
             }
+        }
+    }
+
+    fn update_cmd(
+        &mut self,
+        message: Self::CommandOutput,
+        _sender: ComponentSender<Self>,
+        _: &Self::Root,
+    ) {
+        match message {
+            CommandMsg::ResetIncorrectWord => self.set_word_to_incorrect(false),
         }
     }
 
@@ -501,6 +525,18 @@ impl App {
                 },
                 LetterMsgIn::SetFormat(Format::Editable),
             )
+        }
+    }
+
+    fn set_word_to_incorrect(&mut self, v: bool) {
+        for column in 0..self.width {
+            self.letters.send(
+                &Coord {
+                    column,
+                    row: self.attempts,
+                },
+                LetterMsgIn::SetIncorrect(v),
+            );
         }
     }
 }

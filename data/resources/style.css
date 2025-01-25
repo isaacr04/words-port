@@ -25,3 +25,33 @@
   min-width: 10px;
   min-height: 10px;
 }
+
+@keyframes shake {
+  0% {
+    transform: rotate(0);
+  }
+
+  20% {
+    transform: rotate(-20deg);
+  }
+
+  40% {
+    transform: rotate(40deg);
+  }
+
+  60% {
+    transform: rotate(-40deg);
+  }
+
+  80% {
+    transform: rotate(40deg);
+  }
+
+  100% {
+    transform: rotate(0);
+  }
+}
+
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
