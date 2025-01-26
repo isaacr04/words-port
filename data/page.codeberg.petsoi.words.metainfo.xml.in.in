@@ -88,6 +88,11 @@
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   
   <releases>
+      <release version="0.2.1" date="2025-01-26">
+      <description>
+        <p>Add toast which explains that words need to be in dictionary.</p>
+      </description>
+    </release>
     <release version="0.2.0" date="2025-01-25">
       <description>
         <p>Changes:</p>
