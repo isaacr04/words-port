@@ -59,7 +59,6 @@ impl FactoryComponent for OnScreenButton {
             set_margin_all: 1,
             set_hexpand: true,
             set_vexpand: true,
-            #[watch]
             set_label: &self.trigger.get_label(),
             #[watch]
             set_css_classes: { match &self.format {
