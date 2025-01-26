@@ -15,6 +15,8 @@ use gtk::prelude::{
 };
 use gtk::{gio, glib};
 use rand::seq::IteratorRandom;
+use relm4::abstractions::Toaster;
+use relm4::adw::Toast;
 use relm4::factory::FactoryHashMap;
 use relm4::gtk::glib::{GString, Propagation};
 use relm4::gtk::{Align, EventControllerKey};
@@ -42,6 +44,8 @@ pub(super) struct App {
     keyboard_rows: Vec<FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton>>,
     current_page: &'static str,
     game_won: bool,
+    toaster: Toaster,
+    toast_words_in_dictionary_displayed: bool,
 }
 
 #[derive(Debug)]
@@ -127,7 +131,6 @@ impl Component for App {
                     set_can_focus: false,
                 }
             },
-
             gtk::Stack {
                 #[watch]
                 set_visible_child_name: model.current_page,
@@ -138,17 +141,20 @@ impl Component for App {
                     set_hexpand: true,
 
                     #[local_ref]
-                    letter_grid -> gtk::Grid {
-                        set_orientation: gtk::Orientation::Horizontal,
-                        set_column_homogeneous: true,
-                        set_row_homogeneous: true,
-                        set_column_spacing: 0,
-                        set_row_spacing: 0,
-                        // set_halign: Align::Center,
-                        set_hexpand: true,
-                        //set_vexpand: true,
-                        set_row_spacing: 1,
-                        set_column_spacing: 1,
+                    toast_overlay -> adw::ToastOverlay {
+                        #[local_ref]
+                        letter_grid -> gtk::Grid {
+                            set_orientation: gtk::Orientation::Horizontal,
+                            set_column_homogeneous: true,
+                            set_row_homogeneous: true,
+                            set_column_spacing: 0,
+                            set_row_spacing: 0,
+                            // set_halign: Align::Center,
+                            set_hexpand: true,
+                            //set_vexpand: true,
+                            set_row_spacing: 1,
+                            set_column_spacing: 1,
+                        }
                     },
                     gtk::Box {
                         set_orientation: gtk::Orientation::Vertical,
@@ -214,6 +220,7 @@ impl Component for App {
                     } -> { set_name: "game_over" }
                 }
 
+
             }
         }
 
@@ -250,6 +257,8 @@ impl Component for App {
             keyboard_rows: create_empty_on_screen_button_rows(&sender),
             current_page: "game",
             game_won: false,
+            toaster: Toaster::default(),
+            toast_words_in_dictionary_displayed: false,
         };
 
         root.add_controller(keyboard_events_controller(sender.clone()));
@@ -258,6 +267,8 @@ impl Component for App {
         let keyboard_row_1 = model.keyboard_rows[0].widget();
         let keyboard_row_2 = model.keyboard_rows[1].widget();
         let keyboard_row_3 = model.keyboard_rows[2].widget();
+
+        let toast_overlay = model.toaster.overlay_widget();
 
         let widgets = view_output!();
 
@@ -339,6 +350,12 @@ impl Component for App {
                     .allowed_words
                     .contains(content_of_current_attempt.as_str())
                 {
+                    if !self.toast_words_in_dictionary_displayed {
+                        let toast = Toast::new("Words have to be in the dictionary.");
+                        self.toaster.add_toast(toast);
+                        self.toast_words_in_dictionary_displayed = true;
+                    }
+
                     self.set_word_to_incorrect(true);
                     sender.spawn_oneshot_command(|| {
                         std::thread::sleep(Duration::from_secs(1));
