@@ -10,7 +10,6 @@ use relm4::{
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Format {
-    Editable,
     NotUsed,
     NoMatch,
     Match,
@@ -20,7 +19,6 @@ pub enum Format {
 impl Format {
     pub fn to_osb_format(&self) -> crate::onscreen_button::Format {
         match self {
-            Format::Editable => crate::onscreen_button::Format::NotUsed,
             Format::NotUsed => crate::onscreen_button::Format::NoMatch,
             Format::NoMatch => crate::onscreen_button::Format::NoMatch,
             Format::Match => crate::onscreen_button::Format::Match,
@@ -86,7 +84,7 @@ impl FactoryComponent for Letter {
             set_label: &self.value,
             #[watch]
             set_css_classes: { match &self.format {
-                Format::NotUsed | Format::Editable => &["letter"],
+                Format::NotUsed => &["letter"],
                 Format::NoMatch  => &["letter", "no_match"],
                 Format::Match  => &["letter", "match"],
                 Format::ExactMatch => &["letter", "exact"],

@@ -46,6 +46,8 @@ pub(super) struct App {
     game_won: bool,
     toaster: Toaster,
     toast_words_in_dictionary_displayed: bool,
+    /// used, to check if we backspace should delete the last or the second last letter
+    last_entered_letter: usize,
 }
 
 #[derive(Debug)]
@@ -259,6 +261,7 @@ impl Component for App {
             game_won: false,
             toaster: Toaster::default(),
             toast_words_in_dictionary_displayed: false,
+            last_entered_letter: 0,
         };
 
         root.add_controller(keyboard_events_controller(sender.clone()));
@@ -287,16 +290,21 @@ impl Component for App {
         match message {
             AppMsg::Quit => main_application().quit(),
             AppMsg::SelectField(index) => {
+                self.last_entered_letter = 0;
                 if index.row == self.attempts {
                     self.select_field(index)
                 }
             }
-            AppMsg::MoveCursor(step) => self.move_selection_by(step),
+            AppMsg::MoveCursor(step) => {
+                self.last_entered_letter = 0;
+                self.move_selection_by(step)
+            }
             AppMsg::StartNewGame => {
                 self.word = pick_random_word(&self.allowed_words);
                 println!("New Word: {}", self.word);
                 self.width = self.word.chars().count();
                 self.attempts = 0;
+                self.last_entered_letter = 0;
                 self.selected_letter = Coord { column: 0, row: 0 };
                 self.current_page = "game";
                 self.create_empty_field();
@@ -313,6 +321,7 @@ impl Component for App {
                         &selected,
                         LetterMsgIn::SetContent(Some(c.to_uppercase().to_string())),
                     );
+                    self.last_entered_letter = self.selected_letter.column;
                     self.move_selection_by(1);
                 }
             }
@@ -322,9 +331,12 @@ impl Component for App {
                 self.move_selection_by(1);
             }
             AppMsg::Backspace => {
-                // if on last postion, delete letter under cursor, if there is any
-                if selected.column == self.width - 1
+                dbg!(selected.column, self.last_entered_letter, self.width);
+                // if on last position, delete letter under cursor, if there is any
+                if selected.column == self.width - 1 // are we on the last field
+                    && self.last_entered_letter != self.width - 2 // and we just did not the second last letter
                     && !self.letters.get(&selected).unwrap().value.is_empty()
+                // and the last letter is not empty
                 {
                     sender.input(AppMsg::Delete);
                     return;
@@ -372,8 +384,6 @@ impl Component for App {
                     sender.input(AppMsg::GameOver(false));
                     return;
                 }
-
-                self.make_attempt_row_selectable();
 
                 sender.input(AppMsg::SelectField(Coord {
                     column: 0,
@@ -440,13 +450,8 @@ impl App {
         self.letters.clear();
         for column in 0..self.width {
             for row in 0..TRIES {
-                if row == 0 {
-                    self.letters
-                        .insert(Coord { column, row }, (self.width, Format::Editable));
-                } else {
-                    self.letters
-                        .insert(Coord { column, row }, (self.width, Format::NotUsed));
-                }
+                self.letters
+                    .insert(Coord { column, row }, (self.width, Format::NotUsed));
             }
         }
     }
@@ -529,18 +534,6 @@ impl App {
                 }
                 row.insert(b, b);
             }
-        }
-    }
-
-    fn make_attempt_row_selectable(&mut self) {
-        for i in 0..self.width {
-            self.letters.send(
-                &Coord {
-                    column: i,
-                    row: self.attempts,
-                },
-                LetterMsgIn::SetFormat(Format::Editable),
-            )
         }
     }
 
