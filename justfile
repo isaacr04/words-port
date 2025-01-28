@@ -21,12 +21,12 @@ enter-shell:
 # clean up dictionary
 clean-words name:
     #!/bin/bash
-    if [ ! -f "data/resources/wordlists/{{ name }}" ]; then
+    if [ ! -f "data/resources/word-lists/{{ name }}" ]; then
         echo "Error: File '{{ name }}' does not exist!" >&2
         exit 1
     fi
-    tr a-z A-Z < data/resources/wordlists/{{name}} | sort | uniq > data/resources/wordlists/words_new.txt
-    mv data/resources/wordlists/words_new.txt data/resources/wordlists/{{name}}
+    tr a-z A-Z < data/resources/word-lists/{{name}} | sort | uniq > data/resources/word-lists/words_new.txt
+    mv data/resources/word-lists/words_new.txt data/resources/word-lists/{{name}}
 
 # Freshly build and install Flatpak on machine
 install:
