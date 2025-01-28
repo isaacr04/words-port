@@ -19,6 +19,20 @@ enter-shell:
     poetry shell
 
 # clean up dictionary
-clean-words:
-    tr a-z A-Z < data/resources/wordlists/words.txt | sort | uniq > data/resources/wordlists/words_new.txt
-    mv data/resources/wordlists/words_new.txt data/resources/wordlists/words.txt
+clean-words name:
+    #!/bin/bash
+    if [ ! -f "data/resources/wordlists/{{ name }}" ]; then
+        echo "Error: File '{{ name }}' does not exist!" >&2
+        exit 1
+    fi
+    tr a-z A-Z < data/resources/wordlists/{{name}} | sort | uniq > data/resources/wordlists/words_new.txt
+    mv data/resources/wordlists/words_new.txt data/resources/wordlists/{{name}}
+
+# Freshly build and install Flatpak on machine
+install:
+    flatpak-builder --user --force-clean --install build-dir page.codeberg.petsoi.words.json
+
+# Run program inside Flatpak
+run:
+    flatpak-builder --run build-dir page.codeberg.petsoi.words.json words
+

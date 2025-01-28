@@ -33,10 +33,11 @@ Currently it's my first app and I'm also still learning. Some things are missing
 
 Help is always welcome!
 
-## Useful Dev Tools
+## Dev Tools
 
  * Just
  * Poetry (if you want to generate the dependency manifest)
+ * flatpak-builder
 
 ## Credits
 
