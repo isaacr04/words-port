@@ -241,7 +241,7 @@ impl Component for App {
 
         let current_word_length = 5;
         let available_word_lengths = vec![4, 5, 6];
-        let name_of_current_word_list = "English full".to_owned();
+        let name_of_current_word_list = "English".to_owned();
 
         let (allowed_words, letters) =
             read_word_list(&name_of_current_word_list, current_word_length);
