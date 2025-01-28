@@ -72,3 +72,11 @@ test(
   glib_compile_schemas,
   args: ['--strict', '--dry-run', meson.current_build_dir()],
 )
+
+#Install dictionaries
+txt_files = files('resources/word-lists/de_words.txt', 'resources/word-lists/words.txt')
+
+install_data(
+  txt_files,
+  install_dir: join_paths(get_option('datadir'), 'word-lists'),
+)

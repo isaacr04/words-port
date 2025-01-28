@@ -29,8 +29,6 @@ use relm4::{
 };
 
 static TRIES: usize = 6;
-static WORDS_FILE: &str = include_str!("../data/resources/wordlists/words.txt");
-static KEYS_FILE: &str = include_str!("../data/resources/wordlists/keys.txt");
 
 pub(super) struct App {
     letters: FactoryHashMap<Coord, Letter>,
@@ -39,7 +37,7 @@ pub(super) struct App {
     word: String,
     width: usize,
     attempts: usize,
-    allowed_words: HashSet<&'static str>,
+    allowed_words: HashSet<String>,
     allowed_letters: HashSet<char>,
     keyboard_rows: Vec<FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton>>,
     current_page: &'static str,
@@ -48,6 +46,9 @@ pub(super) struct App {
     toast_words_in_dictionary_displayed: bool,
     /// used, to check if we backspace should delete the last or the second last letter
     last_entered_letter: usize,
+    name_of_current_word_list: String,
+    available_word_lengths: Vec<usize>,
+    current_word_length: usize,
 }
 
 #[derive(Debug)]
@@ -238,7 +239,12 @@ impl Component for App {
             .launch(())
             .detach();
 
-        let allowed_words = WORDS_FILE.lines().filter(|w| !w.is_empty()).collect();
+        let current_word_length = 5;
+        let available_word_lengths = vec![4, 5, 6];
+        let name_of_current_word_list = "English full".to_owned();
+
+        let (allowed_words, letters) =
+            read_word_list(&name_of_current_word_list, current_word_length);
 
         let letters =
             FactoryHashMap::builder()
@@ -262,6 +268,9 @@ impl Component for App {
             toaster: Toaster::default(),
             toast_words_in_dictionary_displayed: false,
             last_entered_letter: 0,
+            current_word_length,
+            available_word_lengths,
+            name_of_current_word_list,
         };
 
         root.add_controller(keyboard_events_controller(sender.clone()));
@@ -412,6 +421,13 @@ impl Component for App {
     fn shutdown(&mut self, widgets: &mut Self::Widgets, _output: relm4::Sender<Self::Output>) {
         widgets.save_window_size().unwrap();
     }
+}
+
+fn read_word_list(
+    name_of_current_word_list: &str,
+    current_word_length: usize,
+) -> (HashSet<String>, FactoryHashMap<Coord, Letter>) {
+    let allowed_words = WORDS_FILE.lines().filter(|w| !w.is_empty()).collect();
 }
 
 fn create_empty_on_screen_button_rows(
