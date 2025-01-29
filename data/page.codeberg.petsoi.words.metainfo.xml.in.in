@@ -88,6 +88,12 @@
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   
   <releases>
+    <release version="0.2.3" date="2025-01-29">
+      <description>
+        <p>Improve deleting behavior of letters.</p>
+        <p>Fix typo 'Congratulations'.</p>
+      </description>
+    </release>
     <release version="0.2.2" date="2025-01-27">
       <description>
         <p>Improve word list.</p>
