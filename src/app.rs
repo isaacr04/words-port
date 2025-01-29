@@ -193,7 +193,7 @@ impl Component for App {
                         set_valign: Align::Center,
                         gtk::Label {
                             #[watch]
-                            set_label: if model.game_won {"Congratulation!"} else {"Game Over"},
+                            set_label: if model.game_won {"Congratulations!"} else {"Game Over"},
                             set_css_classes: &["title-1"],
                         },
                         gtk::Label {
