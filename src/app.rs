@@ -370,7 +370,7 @@ impl Component for App {
 
                     self.set_word_to_incorrect(true);
                     sender.spawn_oneshot_command(|| {
-                        std::thread::sleep(Duration::from_secs(1));
+                        std::thread::sleep(Duration::from_millis(500));
                         CommandMsg::ResetIncorrectWord
                     });
                     return;
