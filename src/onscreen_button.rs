@@ -17,7 +17,7 @@ pub enum Format {
 
 #[derive(Debug)]
 pub struct OnScreenButton {
-    pub trigger: OnScreenButtonMsgOut,
+    pub trigger: Key,
     pub format: Format,
 }
 
@@ -27,28 +27,28 @@ pub enum OnScreenButtonMsgIn {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum OnScreenButtonMsgOut {
+pub enum Key {
     Letter(char),
     Enter,
     Del,
 }
 
-impl OnScreenButtonMsgOut {
+impl Key {
     fn get_label(&self) -> String {
         match self {
-            OnScreenButtonMsgOut::Letter(c) => c.to_uppercase().to_string(),
-            OnScreenButtonMsgOut::Enter => "Enter".to_owned(),
-            OnScreenButtonMsgOut::Del => "Delete".to_owned(),
+            Key::Letter(c) => c.to_uppercase().to_string(),
+            Key::Enter => "Enter".to_owned(),
+            Key::Del => "Delete".to_owned(),
         }
     }
 }
 
 #[relm4::factory(pub)]
 impl FactoryComponent for OnScreenButton {
-    type Init = OnScreenButtonMsgOut;
-    type Index = OnScreenButtonMsgOut;
+    type Init = Key;
+    type Index = Key;
     type Input = OnScreenButtonMsgIn;
-    type Output = OnScreenButtonMsgOut;
+    type Output = Key;
     type CommandOutput = ();
     type ParentWidget = gtk::Box;
 
@@ -75,11 +75,7 @@ impl FactoryComponent for OnScreenButton {
         }
     }
 
-    fn init_model(
-        value: Self::Init,
-        _index: &OnScreenButtonMsgOut,
-        _sender: FactorySender<Self>,
-    ) -> Self {
+    fn init_model(value: Self::Init, _index: &Key, _sender: FactorySender<Self>) -> Self {
         Self {
             format: Format::NotUsed,
             trigger: value.into(),

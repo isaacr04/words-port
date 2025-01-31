@@ -74,7 +74,7 @@ test(
 )
 
 #Install dictionaries
-txt_files = files('resources/word-lists/de_words.txt', 'resources/word-lists/words.txt')
+txt_files = files('resources/word-lists/Deutsch.txt', 'resources/word-lists/English.txt')
 
 install_data(
   txt_files,

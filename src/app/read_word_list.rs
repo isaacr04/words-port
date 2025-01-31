@@ -19,23 +19,20 @@ pub(crate) struct WordList {
 }
 
 pub(crate) fn read_word_list(
-    name_of_current_word_list: &str,
-    current_word_length: usize,
+    name_of_word_list: &str,
+    word_length: usize,
 ) -> anyhow::Result<WordList> {
     let path = if Ok("1".to_owned()) == env::var("FLATPAK_SANDBOX") {
-        "/app/share/word-list/"
+        "/app/share/word-lists/"
     } else {
-        "../data/resources/word-list/"
+        "data/resources/word-lists/"
     };
 
-    read_word_list_from_path(
-        &(path.to_owned() + name_of_current_word_list),
-        current_word_length,
-    )
+    read_word_list_from_path(&(path.to_owned() + name_of_word_list + ".txt"), word_length)
 }
 
 fn read_word_list_from_path(path: &str, length: usize) -> anyhow::Result<WordList> {
-    let file = File::open(path).unwrap();
+    let file = File::open(path).map_err(|_| anyhow!("Could not open '{path}'"))?;
 
     let mut lines = io::BufReader::new(file).lines();
 

@@ -1,9 +1,11 @@
+mod read_word_list;
+
 use std::collections::{HashMap, HashSet};
 use std::time::Duration;
 use std::{char, usize};
 
 use crate::letter::{Coord, Format, LetterMsgIn};
-use crate::onscreen_button::{self, OnScreenButton, OnScreenButtonMsgIn, OnScreenButtonMsgOut};
+use crate::onscreen_button::{self, Key, OnScreenButton, OnScreenButtonMsgIn};
 use crate::{
     config::{APP_ID, PROFILE},
     letter::LetterMsgOut,
@@ -15,6 +17,7 @@ use gtk::prelude::{
 };
 use gtk::{gio, glib};
 use rand::seq::IteratorRandom;
+use read_word_list::{read_word_list, WordList};
 use relm4::abstractions::Toaster;
 use relm4::adw::Toast;
 use relm4::factory::FactoryHashMap;
@@ -37,18 +40,14 @@ pub(super) struct App {
     word: String,
     width: usize,
     attempts: usize,
-    allowed_words: HashSet<String>,
-    allowed_letters: HashSet<char>,
-    keyboard_rows: Vec<FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton>>,
-    current_page: &'static str,
+    word_list: WordList,
+    keyboard_rows: Vec<FactoryHashMap<Key, OnScreenButton>>,
+    current_ui_page: &'static str,
     game_won: bool,
     toaster: Toaster,
     toast_words_in_dictionary_displayed: bool,
     /// used, to check if we backspace should delete the last or the second last letter
-    last_entered_letter: usize,
-    name_of_current_word_list: String,
-    available_word_lengths: Vec<usize>,
-    current_word_length: usize,
+    index_of_last_entered_letter: usize,
 }
 
 #[derive(Debug)]
@@ -136,7 +135,7 @@ impl Component for App {
             },
             gtk::Stack {
                 #[watch]
-                set_visible_child_name: model.current_page,
+                set_visible_child_name: model.current_ui_page,
 
                 add_child=&gtk::Box{
                     set_orientation: gtk::Orientation::Vertical,
@@ -239,12 +238,10 @@ impl Component for App {
             .launch(())
             .detach();
 
-        let current_word_length = 5;
-        let available_word_lengths = vec![4, 5, 6];
-        let name_of_current_word_list = "English".to_owned();
+        let current_game = "English";
+        let number_of_letters = 6;
 
-        let (allowed_words, letters) =
-            read_word_list(&name_of_current_word_list, current_word_length);
+        let word_list = read_word_list(current_game, number_of_letters).unwrap();
 
         let letters =
             FactoryHashMap::builder()
@@ -259,18 +256,14 @@ impl Component for App {
             selected_letter: Coord { column: 0, row: 0 },
             word: String::new(),
             attempts: 0,
-            allowed_words,
             width: 0,
-            allowed_letters: HashSet::new(),
             keyboard_rows: create_empty_on_screen_button_rows(&sender),
-            current_page: "game",
+            current_ui_page: "game",
             game_won: false,
             toaster: Toaster::default(),
             toast_words_in_dictionary_displayed: false,
-            last_entered_letter: 0,
-            current_word_length,
-            available_word_lengths,
-            name_of_current_word_list,
+            index_of_last_entered_letter: 0,
+            word_list,
         };
 
         root.add_controller(keyboard_events_controller(sender.clone()));
@@ -299,30 +292,31 @@ impl Component for App {
         match message {
             AppMsg::Quit => main_application().quit(),
             AppMsg::SelectField(index) => {
-                self.last_entered_letter = 0;
+                self.index_of_last_entered_letter = 0;
                 if index.row == self.attempts {
                     self.select_field(index)
                 }
             }
             AppMsg::MoveCursor(step) => {
-                self.last_entered_letter = 0;
+                self.index_of_last_entered_letter = 0;
                 self.move_selection_by(step)
             }
             AppMsg::StartNewGame => {
-                self.word = pick_random_word(&self.allowed_words);
+                self.word = pick_random_word(&self.word_list.allowed_words);
                 println!("New Word: {}", self.word);
                 self.width = self.word.chars().count();
                 self.attempts = 0;
-                self.last_entered_letter = 0;
+                self.index_of_last_entered_letter = 0;
                 self.selected_letter = Coord { column: 0, row: 0 };
-                self.current_page = "game";
+                self.current_ui_page = "game";
                 self.create_empty_field();
-                self.create_new_keyboard_and_set_allowed_letters(KEYS_FILE);
+                self.create_new_keyboard();
             }
             AppMsg::EnterLetter(c) => {
                 let upper_case = c.to_uppercase().to_string(); // TODO: Logic needs to be improved if we want to support e.g. ß => SS
                 if upper_case.chars().count() == 1
                     && self
+                        .word_list
                         .allowed_letters
                         .contains(&upper_case.chars().next().unwrap())
                 {
@@ -330,7 +324,7 @@ impl Component for App {
                         &selected,
                         LetterMsgIn::SetContent(Some(c.to_uppercase().to_string())),
                     );
-                    self.last_entered_letter = self.selected_letter.column;
+                    self.index_of_last_entered_letter = self.selected_letter.column;
                     self.move_selection_by(1);
                 }
             }
@@ -340,10 +334,14 @@ impl Component for App {
                 self.move_selection_by(1);
             }
             AppMsg::Backspace => {
-                dbg!(selected.column, self.last_entered_letter, self.width);
+                dbg!(
+                    selected.column,
+                    self.index_of_last_entered_letter,
+                    self.width
+                );
                 // if on last position, delete letter under cursor, if there is any
                 if selected.column == self.width - 1 // are we on the last field
-                    && self.last_entered_letter != self.width - 2 // and we just did not the second last letter
+                    && self.index_of_last_entered_letter != self.width - 2 // and we just did not the second last letter
                     && !self.letters.get(&selected).unwrap().value.is_empty()
                 // and the last letter is not empty
                 {
@@ -368,6 +366,7 @@ impl Component for App {
                 }
 
                 if !self
+                    .word_list
                     .allowed_words
                     .contains(content_of_current_attempt.as_str())
                 {
@@ -402,7 +401,7 @@ impl Component for App {
 
             AppMsg::GameOver(won) => {
                 self.game_won = won;
-                self.current_page = "game_over"
+                self.current_ui_page = "game_over"
             }
         }
     }
@@ -423,39 +422,30 @@ impl Component for App {
     }
 }
 
-fn read_word_list(
-    name_of_current_word_list: &str,
-    current_word_length: usize,
-) -> (HashSet<String>, FactoryHashMap<Coord, Letter>) {
-    let allowed_words = WORDS_FILE.lines().filter(|w| !w.is_empty()).collect();
-}
-
 fn create_empty_on_screen_button_rows(
     sender: &ComponentSender<App>,
-) -> Vec<FactoryHashMap<OnScreenButtonMsgOut, OnScreenButton>> {
+) -> Vec<FactoryHashMap<Key, OnScreenButton>> {
     (0..3)
         .into_iter()
         .map(|_| {
             FactoryHashMap::builder()
                 .launch_default()
                 .forward(sender.input_sender(), |msg| match msg {
-                    OnScreenButtonMsgOut::Letter(c) => AppMsg::EnterLetter(c),
-                    OnScreenButtonMsgOut::Enter => AppMsg::EnterWord,
-                    OnScreenButtonMsgOut::Del => AppMsg::Backspace,
+                    Key::Letter(c) => AppMsg::EnterLetter(c),
+                    Key::Enter => AppMsg::EnterWord,
+                    Key::Del => AppMsg::Backspace,
                 })
         })
         .collect()
 }
 
-fn line_to_keys(line: &str) -> Vec<OnScreenButtonMsgOut> {
+fn line_to_keys(line: &str) -> Vec<Key> {
     let mut keys = vec![];
     for key in line.split(',') {
         match key {
-            "SEND" => keys.push(OnScreenButtonMsgOut::Enter),
-            "DEL" => keys.push(OnScreenButtonMsgOut::Del),
-            c => keys.push(OnScreenButtonMsgOut::Letter(
-                c.chars().next().expect("No Letter found."),
-            )),
+            "SEND" => keys.push(Key::Enter),
+            "DEL" => keys.push(Key::Del),
+            c => keys.push(Key::Letter(c.chars().next().expect("No Letter found."))),
         }
     }
     keys
@@ -526,9 +516,9 @@ impl App {
 
     fn send_on_screen_button_format(&mut self, user_char: &char, format: onscreen_button::Format) {
         for row in &self.keyboard_rows {
-            if row.get(&OnScreenButtonMsgOut::Letter(*user_char)).is_some() {
+            if row.get(&Key::Letter(*user_char)).is_some() {
                 row.send(
-                    &OnScreenButtonMsgOut::Letter(*user_char),
+                    &Key::Letter(*user_char),
                     OnScreenButtonMsgIn::SetFormat(format),
                 );
                 return;
@@ -536,19 +526,14 @@ impl App {
         }
     }
 
-    fn create_new_keyboard_and_set_allowed_letters(&mut self, lines: &str) {
+    fn create_new_keyboard(&mut self) {
         self.keyboard_rows.iter_mut().for_each(|row| {
             row.clear();
         });
 
-        self.allowed_letters.clear();
-
-        for (row, line) in self.keyboard_rows.iter_mut().zip(lines.lines()) {
-            for b in line_to_keys(line) {
-                if let OnScreenButtonMsgOut::Letter(c) = b {
-                    self.allowed_letters.insert(c);
-                }
-                row.insert(b, b);
+        for (row, key_row) in self.keyboard_rows.iter_mut().zip(&self.word_list.keys) {
+            for b in key_row {
+                row.insert(*b, *b);
             }
         }
     }
@@ -566,12 +551,8 @@ impl App {
     }
 }
 
-fn pick_random_word(words: &HashSet<&str>) -> String {
-    words
-        .iter()
-        .choose(&mut rand::thread_rng())
-        .unwrap()
-        .to_string()
+fn pick_random_word(words: &HashSet<String>) -> String {
+    words.iter().choose(&mut rand::rng()).unwrap().clone()
 }
 
 fn keyboard_events_controller(sender: ComponentSender<App>) -> EventControllerKey {
