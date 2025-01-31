@@ -17,7 +17,7 @@ use gtk::prelude::{
 };
 use gtk::{gio, glib};
 use rand::seq::IteratorRandom;
-use read_word_list::{read_word_list, WordList};
+use read_word_list::{get_available_word_lists, read_word_list, WordList};
 use relm4::abstractions::Toaster;
 use relm4::adw::Toast;
 use relm4::factory::FactoryHashMap;
@@ -48,6 +48,7 @@ pub(super) struct App {
     toast_words_in_dictionary_displayed: bool,
     /// used, to check if we backspace should delete the last or the second last letter
     index_of_last_entered_letter: usize,
+    available_word_lists: Vec<String>,
 }
 
 #[derive(Debug)]
@@ -239,7 +240,9 @@ impl Component for App {
             .detach();
 
         let current_game = "English";
-        let number_of_letters = 6;
+        let number_of_letters = 5;
+
+        let available_word_lists = get_available_word_lists().unwrap();
 
         let word_list = read_word_list(current_game, number_of_letters).unwrap();
 
@@ -264,6 +267,7 @@ impl Component for App {
             toast_words_in_dictionary_displayed: false,
             index_of_last_entered_letter: 0,
             word_list,
+            available_word_lists,
         };
 
         root.add_controller(keyboard_events_controller(sender.clone()));
@@ -437,18 +441,6 @@ fn create_empty_on_screen_button_rows(
                 })
         })
         .collect()
-}
-
-fn line_to_keys(line: &str) -> Vec<Key> {
-    let mut keys = vec![];
-    for key in line.split(',') {
-        match key {
-            "SEND" => keys.push(Key::Enter),
-            "DEL" => keys.push(Key::Del),
-            c => keys.push(Key::Letter(c.chars().next().expect("No Letter found."))),
-        }
-    }
-    keys
 }
 
 impl App {

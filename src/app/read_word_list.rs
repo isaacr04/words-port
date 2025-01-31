@@ -1,12 +1,11 @@
 use std::{
     collections::HashSet,
     env,
-    fs::File,
+    fs::{self, File},
     io::{self, BufRead, BufReader},
 };
 
 use anyhow::{anyhow, Context};
-use gettextrs::dgettext;
 
 use crate::onscreen_button::Key;
 
@@ -18,17 +17,38 @@ pub(crate) struct WordList {
     pub available_word_lengths: Vec<usize>,
 }
 
+pub(crate) fn get_available_word_lists() -> anyhow::Result<Vec<String>> {
+    let mut files = vec![];
+    for entry in
+        fs::read_dir(get_path()).map_err(|_| anyhow!("Could read directory '{}'", get_path()))?
+    {
+        if let Ok(entry) = entry {
+            if entry.path().is_file() {
+                if let Some(name) = entry.path().file_name() {
+                    let name: String = name.to_string_lossy().into();
+                    files.push(name.chars().take(name.chars().count() - 4).collect());
+                }
+            }
+        }
+    }
+    Ok(files)
+}
+
 pub(crate) fn read_word_list(
     name_of_word_list: &str,
     word_length: usize,
 ) -> anyhow::Result<WordList> {
-    let path = if Ok("1".to_owned()) == env::var("FLATPAK_SANDBOX") {
+    let path = get_path();
+
+    read_word_list_from_path(&(path.to_owned() + name_of_word_list + ".txt"), word_length)
+}
+
+fn get_path() -> &'static str {
+    if env::var("FLATPAK_ID").is_ok() {
         "/app/share/word-lists/"
     } else {
         "data/resources/word-lists/"
-    };
-
-    read_word_list_from_path(&(path.to_owned() + name_of_word_list + ".txt"), word_length)
+    }
 }
 
 fn read_word_list_from_path(path: &str, length: usize) -> anyhow::Result<WordList> {
