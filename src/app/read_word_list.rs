@@ -29,6 +29,22 @@ pub(crate) struct WordLengths {
     pub l11: bool,
 }
 
+impl WordLengths {
+    fn contains(&self, length: usize) -> bool {
+        match length {
+            4 => self.l4,
+            5 => self.l5,
+            6 => self.l6,
+            7 => self.l7,
+            8 => self.l8,
+            9 => self.l9,
+            10 => self.l10,
+            11 => self.l11,
+            _ => panic!("Out of range"),
+        }
+    }
+}
+
 pub(crate) fn get_available_word_lists() -> anyhow::Result<Vec<String>> {
     let mut files = vec![];
     for entry in
@@ -49,7 +65,7 @@ pub(crate) fn get_available_word_lists() -> anyhow::Result<Vec<String>> {
 pub(crate) fn read_word_list(
     name_of_word_list: &str,
     word_length: usize,
-) -> anyhow::Result<WordList> {
+) -> anyhow::Result<Option<WordList>> {
     let path = get_path();
 
     read_word_list_from_path(&(path.to_owned() + name_of_word_list + ".txt"), word_length)
@@ -63,7 +79,7 @@ fn get_path() -> &'static str {
     }
 }
 
-fn read_word_list_from_path(path: &str, length: usize) -> anyhow::Result<WordList> {
+fn read_word_list_from_path(path: &str, length: usize) -> anyhow::Result<Option<WordList>> {
     let file = File::open(path).map_err(|_| anyhow!("Could not open '{path}'"))?;
 
     let mut lines = io::BufReader::new(file).lines();
@@ -73,14 +89,18 @@ fn read_word_list_from_path(path: &str, length: usize) -> anyhow::Result<WordLis
     let available_word_lengths =
         get_available_word_lengths(lines.next().context("File too short")??)?;
 
+    if !available_word_lengths.contains(length) {
+        return Ok(None);
+    }
+
     let allowed_words = get_allowed_words(lines, length);
 
-    Ok(WordList {
+    Ok(Some(WordList {
         allowed_words,
         allowed_letters,
         keys,
         available_word_lengths,
-    })
+    }))
 }
 
 fn get_available_word_lengths(line: String) -> anyhow::Result<WordLengths> {
@@ -193,6 +213,6 @@ mod tests {
             },
         };
 
-        assert_eq!(actual_word_list, expected_word_list);
+        assert_eq!(actual_word_list, Some(expected_word_list));
     }
 }

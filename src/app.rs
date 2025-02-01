@@ -21,6 +21,7 @@ use read_word_list::{get_available_word_lists, read_word_list, WordList};
 use relm4::abstractions::Toaster;
 use relm4::adw::Toast;
 use relm4::factory::FactoryHashMap;
+use relm4::gtk::glib::object::Cast;
 use relm4::gtk::glib::{GString, Propagation};
 use relm4::gtk::prelude::ToggleButtonExt;
 use relm4::gtk::{Align, EventControllerKey};
@@ -51,7 +52,8 @@ pub(super) struct App {
     /// used, to check if we backspace should delete the last or the second last letter
     index_of_last_entered_letter: usize,
     available_word_lists: Vec<String>,
-    index_of_currently_selected_word_list: u32,
+    index_of_currently_selected_word_list: usize,
+    current_word_list_name: String,
 }
 
 #[derive(Debug)]
@@ -61,6 +63,8 @@ pub(super) enum AppMsg {
     StartNewGame,
     EnterLetter(char),
     MoveCursor(isize),
+    SetLengthTo(usize),
+    SwitchToWordList(String),
     EnterWord,
     Delete,
     Backspace,
@@ -243,7 +247,15 @@ impl Component for App {
                     set_align: Align::Start,
                 },
                 gtk::DropDown::from_strings(model.available_word_lists.iter().map(|s| s.as_str()).collect::<Vec<&str>>().iter().as_slice()) {
-                    set_selected: model.index_of_currently_selected_word_list
+                    set_selected: model.index_of_currently_selected_word_list as u32,
+                    connect_selected_notify[sender] => move |dropdown| {
+                        if let Some(selected_item) = dropdown.selected_item() {
+                            if let Ok(string_object) = selected_item.downcast::<gtk::StringObject>() {
+                                let new_list = string_object.string();
+                                sender.input(AppMsg::SwitchToWordList(new_list.to_string()));
+                            }
+                        }
+                    }
                 },
 
                 gtk::Label {
@@ -254,78 +266,119 @@ impl Component for App {
                 gtk::Box {
                     set_orientation: gtk::Orientation::Horizontal,
 
+                    #[name = "toggle_button_4"]
                     gtk::ToggleButton {
                         set_label: "4",
                         set_css_classes: &["numb_letter"],
                         #[watch]
                         set_sensitive: model.word_list.available_word_lengths.l4,
                         #[watch]
-                        set_active: model.width==4
-                        // connect_clicked => AppMsg::StartNewGame,
+                        set_active: model.width == 4,
+                        connect_toggled[sender] => move |btn| {
+                            if btn.has_focus() {
+                                sender.input(AppMsg::SetLengthTo(4));
+                            }
+                        }
                     },
+                    #[name = "toggle_button_5"]
                     gtk::ToggleButton {
                         set_label: "5",
                         set_css_classes: &["numb_letter"],
+                        set_group: Some(&toggle_button_4),
                         #[watch]
                         set_sensitive: model.word_list.available_word_lengths.l5,
                         #[watch]
-                        set_active: model.width==5
-                        // connect_clicked => AppMsg::StartNewGame,
+                        set_active: model.width == 5,
+                        connect_toggled[sender] => move |btn| {
+                            if btn.has_focus() {
+                                sender.input(AppMsg::SetLengthTo(5));
+                            }
+                        }
                     },
+                    #[name = "toggle_button_6"]
                     gtk::ToggleButton {
                         set_label: "6",
                         set_css_classes: &["numb_letter"],
+                        set_group: Some(&toggle_button_4),
                         #[watch]
                         set_sensitive: model.word_list.available_word_lengths.l6,
                         #[watch]
-                        set_active: model.width==6
-                        // connect_clicked => AppMsg::StartNewGame,
-                    },
+                        set_active: model.width == 6,
+                        connect_toggled[sender] => move |btn| {
+                            if btn.has_focus() {
+                                sender.input(AppMsg::SetLengthTo(6));
+                            }
+                        }                    },
+                    #[name = "toggle_button_7"]
                     gtk::ToggleButton {
                         set_label: "7",
                         set_css_classes: &["numb_letter"],
+                        set_group: Some(&toggle_button_4),
                         #[watch]
                         set_sensitive: model.word_list.available_word_lengths.l7,
                         #[watch]
-                        set_active: model.width==7
-                        // connect_clicked => AppMsg::StartNewGame,
-                    },
+                        set_active: model.width == 7,
+                        connect_toggled[sender] => move |btn| {
+                            if btn.has_focus() {
+                                sender.input(AppMsg::SetLengthTo(7));
+                            }
+                        }                    },
+                    #[name = "toggle_button_8"]
                     gtk::ToggleButton {
                         set_label: "8",
                         set_css_classes: &["numb_letter"],
+                        set_group: Some(&toggle_button_4),
                         #[watch]
                         set_sensitive: model.word_list.available_word_lengths.l8,
                         #[watch]
-                        set_active: model.width==8
-                        // connect_clicked => AppMsg::StartNewGame,
-                    },
+                        set_active: model.width == 8,
+                        connect_toggled[sender] => move |btn| {
+                            if btn.has_focus() {
+                                sender.input(AppMsg::SetLengthTo(8));
+                            }
+                        }                    },
+                    #[name = "toggle_button_9"]
                     gtk::ToggleButton {
                         set_label: "9",
                         set_css_classes: &["numb_letter"],
+                        set_group: Some(&toggle_button_4),
                         #[watch]
                         set_sensitive: model.word_list.available_word_lengths.l9,
                         #[watch]
-                        set_active: model.width==9
-                        // connect_clicked => AppMsg::StartNewGame,
-                    },
+                        set_active: model.width == 9,
+                        connect_toggled[sender] => move |btn| {
+                            if btn.has_focus() {
+                                sender.input(AppMsg::SetLengthTo(9));
+                            }
+                        }                    },
+                    #[name = "toggle_button_10"]
                     gtk::ToggleButton {
                         set_label: "10",
                         set_css_classes: &["numb_letter"],
+                        set_group: Some(&toggle_button_4),
                         #[watch]
                         set_sensitive: model.word_list.available_word_lengths.l10,
                         #[watch]
-                        set_active: model.width==10
-                        // connect_clicked => AppMsg::StartNewGame,
-                    },
+                        set_active: model.width == 10,
+                        connect_toggled[sender] => move |btn| {
+                            if btn.has_focus() {
+                                sender.input(AppMsg::SetLengthTo(10));
+                            }
+                        }                    },
+                    #[name = "toggle_button_11"]
                     gtk::ToggleButton {
                         set_label: "11",
                         set_css_classes: &["numb_letter"],
+                        set_group: Some(&toggle_button_4),
                         #[watch]
                         set_sensitive: model.word_list.available_word_lengths.l11,
                         #[watch]
-                        set_active: model.width==11
-                        // connect_clicked => AppMsg::StartNewGame,
-                    },
+                        set_active: model.width == 11,
+                        connect_toggled[sender] => move |btn| {
+                            if btn.has_focus() {
+                                sender.input(AppMsg::SetLengthTo(11));
+                            }
+                        }                    },
                 },
 
             }
@@ -348,18 +401,22 @@ impl Component for App {
 
         let available_word_lists = get_available_word_lists().unwrap();
 
-        let (index_of_currently_selected_word_list, current_game) =
+        let fallback = available_word_lists[0].to_owned();
+
+        let (index_of_currently_selected_word_list, list_name) =
             if let Some(i) = get_index(&available_word_lists, &last_game) {
                 (i, last_game)
             } else {
                 if let Some(i) = get_index(&available_word_lists, &DEFAULT_GAME_NAME) {
                     (i, "English")
                 } else {
-                    (0, available_word_lists[0].as_str())
+                    (0, fallback.as_str())
                 }
             };
 
-        let word_list = read_word_list(current_game, last_number_of_letters).unwrap();
+        let word_list = read_word_list(list_name, last_number_of_letters)
+            .unwrap()
+            .unwrap();
 
         let letters =
             FactoryHashMap::builder()
@@ -374,7 +431,7 @@ impl Component for App {
             selected_letter: Coord { column: 0, row: 0 },
             word: String::new(),
             attempts: 0,
-            width: 0,
+            width: last_number_of_letters,
             keyboard_rows: create_empty_on_screen_button_rows(&sender),
             current_ui_page: "game",
             game_won: false,
@@ -384,6 +441,7 @@ impl Component for App {
             word_list,
             available_word_lists,
             index_of_currently_selected_word_list,
+            current_word_list_name: list_name.to_owned(),
         };
 
         root.add_controller(keyboard_events_controller(sender.clone()));
@@ -426,7 +484,6 @@ impl Component for App {
             AppMsg::StartNewGame => {
                 self.word = pick_random_word(&self.word_list.allowed_words);
                 println!("New Word: {}", self.word);
-                self.width = self.word.chars().count();
                 self.attempts = 0;
                 self.index_of_last_entered_letter = 0;
                 self.selected_letter = Coord { column: 0, row: 0 };
@@ -524,6 +581,33 @@ impl Component for App {
             AppMsg::GameOver(won) => {
                 self.game_won = won;
                 self.current_ui_page = "game_over"
+            }
+
+            AppMsg::SetLengthTo(length) => {
+                if length != self.width {
+                    println!(
+                        "Current wordlist {}, set length to {length}",
+                        &self.current_word_list_name,
+                    );
+                    self.word_list = read_word_list(&self.current_word_list_name, length)
+                        .unwrap()
+                        .unwrap();
+
+                    self.width = length;
+
+                    sender.input(AppMsg::StartNewGame);
+                }
+            }
+            AppMsg::SwitchToWordList(name) => {
+                self.word_list = if let Some(word_list) = read_word_list(&name, self.width).unwrap()
+                {
+                    word_list
+                } else {
+                    self.width = 5;
+                    read_word_list(&name, self.width).unwrap().unwrap()
+                };
+                self.current_word_list_name = name;
+                sender.input(AppMsg::StartNewGame);
             }
         }
     }
@@ -745,8 +829,8 @@ impl AppWidgets {
     }
 }
 
-fn get_index(vec: &Vec<String>, s: &str) -> Option<u32> {
-    Some(vec.iter().position(|r| r == s)? as u32)
+fn get_index(vec: &Vec<String>, s: &str) -> Option<usize> {
+    Some(vec.iter().position(|r| r == s)?)
 }
 
 fn calculate_color(correct_word: &str, entered_word: &str) -> Vec<Format> {
