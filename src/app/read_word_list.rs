@@ -75,8 +75,8 @@ fn get_available_word_lengths(line: String) -> anyhow::Result<Vec<usize>> {
     let (prefix, numbers) = line
         .split_at_checked(9)
         .ok_or_else(|| anyhow!("String too short {line}"))?;
-    if prefix != "4Lengths:" {
-        Err(anyhow!("Expected prefix '4Lengths:'"))
+    if prefix != "4LENGTHS:" {
+        Err(anyhow!("Expected prefix '4LENGTHS:', got '{}'", line))
     } else {
         Ok(numbers
             .split(',')

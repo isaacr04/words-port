@@ -32,6 +32,7 @@ use relm4::{
 };
 
 static TRIES: usize = 6;
+static DEFAULT_GAME_NAME: &str = "English";
 
 pub(super) struct App {
     letters: FactoryHashMap<Coord, Letter>,
@@ -49,6 +50,7 @@ pub(super) struct App {
     /// used, to check if we backspace should delete the last or the second last letter
     index_of_last_entered_letter: usize,
     available_word_lists: Vec<String>,
+    index_of_currently_selected_word_list: u32,
 }
 
 #[derive(Debug)]
@@ -82,16 +84,17 @@ impl Component for App {
     type Widgets = AppWidgets;
     type CommandOutput = CommandMsg;
 
-    menu! {
-        primary_menu: {
-            section! {
-                "_Keyboard" => ShortcutsAction,
-                "_About Words!" => AboutAction,
-            }
-        }
-    }
+    // menu! {
+    //     primary_menu: {
+    //         section! {
+    //             "_Keyboard" => ShortcutsAction,
+    //             "_About Words!" => AboutAction,
+    //         }
+    //     }
+    // }
 
     view! {
+    #[root]
     main_window = adw::ApplicationWindow::new(&main_application()) {
         set_visible: true,
 
@@ -130,7 +133,8 @@ impl Component for App {
                 },
                 pack_end = &gtk::MenuButton {
                     set_icon_name: "open-menu-symbolic",
-                    set_menu_model: Some(&primary_menu),
+                    set_popover: Some(&primary_menu),
+                    set_direction: gtk::ArrowType::Down,
                     set_can_focus: false,
                 }
             },
@@ -225,6 +229,22 @@ impl Component for App {
 
 
             }
+        },
+
+        #[local_ref]
+        primary_menu -> gtk::Popover {
+            gtk::Box {
+                set_orientation: gtk::Orientation::Vertical,
+                set_margin_all: 10,
+
+                gtk::Label {
+                    set_label: "Language:",
+                    set_align: Align::Start,
+                },
+                gtk::DropDown::from_strings(model.available_word_lists.iter().map(|s| s.as_str()).collect::<Vec<&str>>().iter().as_slice()) {
+                    set_selected: model.index_of_currently_selected_word_list
+                }
+            }
         }
 
     }
@@ -239,12 +259,23 @@ impl Component for App {
             .launch(())
             .detach();
 
-        let current_game = "English";
-        let number_of_letters = 5;
+        let last_game = "Deutsch2";
+        let last_number_of_letters = 5;
 
         let available_word_lists = get_available_word_lists().unwrap();
 
-        let word_list = read_word_list(current_game, number_of_letters).unwrap();
+        let (index_of_currently_selected_word_list, current_game) =
+            if let Some(i) = get_index(&available_word_lists, &last_game) {
+                (i, last_game)
+            } else {
+                if let Some(i) = get_index(&available_word_lists, &DEFAULT_GAME_NAME) {
+                    (i, "English")
+                } else {
+                    (0, available_word_lists[0].as_str())
+                }
+            };
+
+        let word_list = read_word_list(current_game, last_number_of_letters).unwrap();
 
         let letters =
             FactoryHashMap::builder()
@@ -268,6 +299,7 @@ impl Component for App {
             index_of_last_entered_letter: 0,
             word_list,
             available_word_lists,
+            index_of_currently_selected_word_list,
         };
 
         root.add_controller(keyboard_events_controller(sender.clone()));
@@ -278,6 +310,8 @@ impl Component for App {
         let keyboard_row_3 = model.keyboard_rows[2].widget();
 
         let toast_overlay = model.toaster.overlay_widget();
+
+        let primary_menu = gtk::Popover::new();
 
         let widgets = view_output!();
 
@@ -627,6 +661,10 @@ impl AppWidgets {
     }
 }
 
+fn get_index(vec: &Vec<String>, s: &str) -> Option<u32> {
+    Some(vec.iter().position(|r| r == s)? as u32)
+}
+
 fn calculate_color(correct_word: &str, entered_word: &str) -> Vec<Format> {
     let mut format = vec![Format::NoMatch; correct_word.len()];
 
@@ -662,7 +700,30 @@ fn calculate_color(correct_word: &str, entered_word: &str) -> Vec<Format> {
 }
 
 #[cfg(test)]
-mod tests {
+mod string_finding {
+    use super::*;
+
+    #[test]
+    fn find_string() {
+        let strings = vec!["one".to_owned(), "two".to_owned(), "three".to_owned()];
+        let string = "two";
+
+        let actual = get_index(&strings, string);
+        assert_eq!(actual, Some(1));
+    }
+
+    #[test]
+    fn not_find_string() {
+        let strings = vec!["one".to_owned(), "two".to_owned(), "three".to_owned()];
+        let string = "four";
+
+        let actual = get_index(&strings, string);
+        assert_eq!(actual, None);
+    }
+}
+
+#[cfg(test)]
+mod matching {
     use super::*;
 
     #[test]
