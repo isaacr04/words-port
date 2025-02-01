@@ -22,6 +22,7 @@ use relm4::abstractions::Toaster;
 use relm4::adw::Toast;
 use relm4::factory::FactoryHashMap;
 use relm4::gtk::glib::{GString, Propagation};
+use relm4::gtk::prelude::ToggleButtonExt;
 use relm4::gtk::{Align, EventControllerKey};
 use relm4::RelmWidgetExt;
 use relm4::{
@@ -243,7 +244,90 @@ impl Component for App {
                 },
                 gtk::DropDown::from_strings(model.available_word_lists.iter().map(|s| s.as_str()).collect::<Vec<&str>>().iter().as_slice()) {
                     set_selected: model.index_of_currently_selected_word_list
-                }
+                },
+
+                gtk::Label {
+                    set_label: "Letters:",
+                    set_align: Align::Start,
+                },
+
+                gtk::Box {
+                    set_orientation: gtk::Orientation::Horizontal,
+
+                    gtk::ToggleButton {
+                        set_label: "4",
+                        set_css_classes: &["numb_letter"],
+                        #[watch]
+                        set_sensitive: model.word_list.available_word_lengths.l4,
+                        #[watch]
+                        set_active: model.width==4
+                        // connect_clicked => AppMsg::StartNewGame,
+                    },
+                    gtk::ToggleButton {
+                        set_label: "5",
+                        set_css_classes: &["numb_letter"],
+                        #[watch]
+                        set_sensitive: model.word_list.available_word_lengths.l5,
+                        #[watch]
+                        set_active: model.width==5
+                        // connect_clicked => AppMsg::StartNewGame,
+                    },
+                    gtk::ToggleButton {
+                        set_label: "6",
+                        set_css_classes: &["numb_letter"],
+                        #[watch]
+                        set_sensitive: model.word_list.available_word_lengths.l6,
+                        #[watch]
+                        set_active: model.width==6
+                        // connect_clicked => AppMsg::StartNewGame,
+                    },
+                    gtk::ToggleButton {
+                        set_label: "7",
+                        set_css_classes: &["numb_letter"],
+                        #[watch]
+                        set_sensitive: model.word_list.available_word_lengths.l7,
+                        #[watch]
+                        set_active: model.width==7
+                        // connect_clicked => AppMsg::StartNewGame,
+                    },
+                    gtk::ToggleButton {
+                        set_label: "8",
+                        set_css_classes: &["numb_letter"],
+                        #[watch]
+                        set_sensitive: model.word_list.available_word_lengths.l8,
+                        #[watch]
+                        set_active: model.width==8
+                        // connect_clicked => AppMsg::StartNewGame,
+                    },
+                    gtk::ToggleButton {
+                        set_label: "9",
+                        set_css_classes: &["numb_letter"],
+                        #[watch]
+                        set_sensitive: model.word_list.available_word_lengths.l9,
+                        #[watch]
+                        set_active: model.width==9
+                        // connect_clicked => AppMsg::StartNewGame,
+                    },
+                    gtk::ToggleButton {
+                        set_label: "10",
+                        set_css_classes: &["numb_letter"],
+                        #[watch]
+                        set_sensitive: model.word_list.available_word_lengths.l10,
+                        #[watch]
+                        set_active: model.width==10
+                        // connect_clicked => AppMsg::StartNewGame,
+                    },
+                    gtk::ToggleButton {
+                        set_label: "11",
+                        set_css_classes: &["numb_letter"],
+                        #[watch]
+                        set_sensitive: model.word_list.available_word_lengths.l11,
+                        #[watch]
+                        set_active: model.width==11
+                        // connect_clicked => AppMsg::StartNewGame,
+                    },
+                },
+
             }
         }
 
@@ -259,7 +343,7 @@ impl Component for App {
             .launch(())
             .detach();
 
-        let last_game = "Deutsch2";
+        let last_game = "Deutsch";
         let last_number_of_letters = 5;
 
         let available_word_lists = get_available_word_lists().unwrap();

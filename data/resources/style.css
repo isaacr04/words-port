@@ -26,6 +26,11 @@
   min-height: 10px;
 }
 
+.numb_letter {
+  padding: 5px;
+  margin: 1px;
+}
+
 @keyframes shake {
   0% {
     transform: rotate(0);

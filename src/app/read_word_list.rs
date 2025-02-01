@@ -14,7 +14,19 @@ pub(crate) struct WordList {
     pub allowed_words: HashSet<String>,
     pub allowed_letters: HashSet<char>,
     pub keys: Vec<Vec<Key>>,
-    pub available_word_lengths: Vec<usize>,
+    pub available_word_lengths: WordLengths,
+}
+
+#[derive(Debug, PartialEq, Eq, Default)]
+pub(crate) struct WordLengths {
+    pub l4: bool,
+    pub l5: bool,
+    pub l6: bool,
+    pub l7: bool,
+    pub l8: bool,
+    pub l9: bool,
+    pub l10: bool,
+    pub l11: bool,
 }
 
 pub(crate) fn get_available_word_lists() -> anyhow::Result<Vec<String>> {
@@ -71,20 +83,29 @@ fn read_word_list_from_path(path: &str, length: usize) -> anyhow::Result<WordLis
     })
 }
 
-fn get_available_word_lengths(line: String) -> anyhow::Result<Vec<usize>> {
+fn get_available_word_lengths(line: String) -> anyhow::Result<WordLengths> {
+    let mut lengths = WordLengths::default();
+
     let (prefix, numbers) = line
         .split_at_checked(9)
         .ok_or_else(|| anyhow!("String too short {line}"))?;
     if prefix != "4LENGTHS:" {
         Err(anyhow!("Expected prefix '4LENGTHS:', got '{}'", line))
     } else {
-        Ok(numbers
-            .split(',')
-            .map(|v| {
-                v.parse::<usize>()
-                    .map_err(|e| anyhow!("Failed to parse '{e}'"))
-            })
-            .collect::<anyhow::Result<Vec<_>>>()?)
+        for number in numbers.split(',') {
+            match number {
+                "4" => lengths.l4 = true,
+                "5" => lengths.l5 = true,
+                "6" => lengths.l6 = true,
+                "7" => lengths.l7 = true,
+                "8" => lengths.l8 = true,
+                "9" => lengths.l9 = true,
+                "10" => lengths.l10 = true,
+                "11" => lengths.l11 = true,
+                _ => return Err(anyhow!("Word length {number} not supported")),
+            }
+        }
+        Ok(lengths)
     }
 }
 
@@ -164,7 +185,12 @@ mod tests {
                 ],
                 vec![Key::Del, Key::Letter('Y'), Key::Enter],
             ],
-            available_word_lengths: vec![4, 5, 6].into_iter().collect(),
+            available_word_lengths: WordLengths {
+                l4: true,
+                l5: true,
+                l6: true,
+                ..Default::default()
+            },
         };
 
         assert_eq!(actual_word_list, expected_word_list);
