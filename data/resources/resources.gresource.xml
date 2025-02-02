@@ -5,5 +5,6 @@
     <file compressed="true" preprocess="xml-stripblanks" alias="gtk/help-overlay.ui">ui/shortcuts.ui</file>
     <!-- <file compressed="false" alias="lists/words.txt">wordlists/words.txt</file> -->
     <file compressed="true">style.css</file>
+    <file compressed="true">style-dark.css</file>
   </gresource>
 </gresources>

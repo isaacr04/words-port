@@ -66,6 +66,13 @@ fn main() {
         )
         .unwrap();
     set_global_css(&glib::GString::from_utf8_checked(data.to_vec()).unwrap());
+    let data = res
+        .lookup_data(
+            "/page/codeberg/petsoi/words/style-dark.css",
+            gio::ResourceLookupFlags::NONE,
+        )
+        .unwrap();
+    set_global_css(&glib::GString::from_utf8_checked(data.to_vec()).unwrap());
 
     app.visible_on_activate(false).run::<App>(());
 }

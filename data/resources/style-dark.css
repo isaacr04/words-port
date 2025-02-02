@@ -1,0 +1,11 @@
+.no_match {
+  background-color: @dark_1;
+}
+
+.match {
+  background-color: @orange_2;
+}
+
+.exact {
+  background-color: @green_5;
+}
