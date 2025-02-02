@@ -245,7 +245,7 @@ impl Component for App {
                 set_margin_all: 10,
 
                 gtk::Label {
-                    set_label: "Language:",
+                    set_label: "Word List:",
                     set_align: Align::Start,
                 },
 
@@ -263,7 +263,7 @@ impl Component for App {
                 },
 
                 gtk::Label {
-                    set_label: "Letters:",
+                    set_label: "Number of Letters:",
                     set_align: Align::Start,
                 },
 
