@@ -89,14 +89,14 @@ impl Component for App {
     type Widgets = AppWidgets;
     type CommandOutput = CommandMsg;
 
-    // menu! {
-    //     primary_menu: {
-    //         section! {
-    //             "_Keyboard" => ShortcutsAction,
-    //             "_About Words!" => AboutAction,
-    //         }
-    //     }
-    // }
+    menu! {
+        main_menu: {
+            section! {
+                "_Keyboard" => ShortcutsAction,
+                "_About Words!" => AboutAction,
+            }
+        }
+    }
 
     view! {
     #[root]
@@ -130,15 +130,15 @@ impl Component for App {
             set_vexpand: true,
 
             adw::HeaderBar {
-                pack_start = &gtk::Button {
-                    set_label: "_New",
-                    set_can_focus: false,
-                    set_use_underline: true,
+                pack_start = &adw::SplitButton {
+                    set_label: "New",
+                    set_hexpand: true,
                     connect_clicked => AppMsg::StartNewGame,
+                    set_popover: Some(&game_menu),
                 },
                 pack_end = &gtk::MenuButton {
                     set_icon_name: "open-menu-symbolic",
-                    set_popover: Some(&primary_menu),
+                    set_menu_model: Some(&main_menu),
                     set_direction: gtk::ArrowType::Down,
                     set_can_focus: false,
                 }
@@ -231,13 +231,11 @@ impl Component for App {
                         }
                     } -> { set_name: "game_over" }
                 }
-
-
             }
         },
 
         #[local_ref]
-        primary_menu -> gtk::Popover {
+        game_menu -> gtk::Popover {
             gtk::Box {
                 set_orientation: gtk::Orientation::Vertical,
                 set_margin_all: 10,
@@ -380,8 +378,7 @@ impl Component for App {
                             }
                         }
                     },
-                },
-
+                }
             }
         }
 
@@ -456,7 +453,7 @@ impl Component for App {
 
         let toast_overlay = model.toaster.overlay_widget();
 
-        let primary_menu = gtk::Popover::new();
+        let game_menu = gtk::Popover::new();
 
         let widgets = view_output!();
 
