@@ -239,7 +239,7 @@ impl Component for App {
         #[local_ref]
         game_menu -> gtk::Popover {
             set_autohide: true,
-            set_cascade_popdown: true,
+            set_cascade_popdown: true, // Workaround for https://gitlab.gnome.org/GNOME/gtk/-/issues/5568
             gtk::Box {
                 set_orientation: gtk::Orientation::Vertical,
                 set_margin_all: 10,
