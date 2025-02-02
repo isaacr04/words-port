@@ -88,6 +88,11 @@
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   
   <releases>
+    <release version="0.3.0" date="2025-03-03">
+      <description>
+        <p>Enable changing word list and word length.</p>
+      </description>
+    </release>  
     <release version="0.2.3" date="2025-01-29">
       <description>
         <p>Improve deleting behavior of letters.</p>

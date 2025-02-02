@@ -48,3 +48,4 @@ install:
 # Run program inside Flatpak
 run:
     flatpak-builder --run build-dir page.codeberg.petsoi.words.json words
+
