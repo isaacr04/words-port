@@ -41,7 +41,7 @@ pub(super) struct App {
     about_dialog: Controller<AboutDialog>,
     selected_letter: Coord,
     word: String,
-    width: usize,
+    number_of_letters: usize,
     attempts: usize,
     word_list: WordList,
     keyboard_rows: Vec<FactoryHashMap<Key, OnScreenButton>>,
@@ -273,7 +273,7 @@ impl Component for App {
                         #[watch]
                         set_sensitive: model.word_list.available_word_lengths.l4,
                         #[watch]
-                        set_active: model.width == 4,
+                        set_active: model.number_of_letters == 4,
                         connect_toggled[sender] => move |btn| {
                             if btn.has_focus() {
                                 sender.input(AppMsg::SetLengthTo(4));
@@ -288,7 +288,7 @@ impl Component for App {
                         #[watch]
                         set_sensitive: model.word_list.available_word_lengths.l5,
                         #[watch]
-                        set_active: model.width == 5,
+                        set_active: model.number_of_letters == 5,
                         connect_toggled[sender] => move |btn| {
                             if btn.has_focus() {
                                 sender.input(AppMsg::SetLengthTo(5));
@@ -303,7 +303,7 @@ impl Component for App {
                         #[watch]
                         set_sensitive: model.word_list.available_word_lengths.l6,
                         #[watch]
-                        set_active: model.width == 6,
+                        set_active: model.number_of_letters == 6,
                         connect_toggled[sender] => move |btn| {
                             if btn.has_focus() {
                                 sender.input(AppMsg::SetLengthTo(6));
@@ -317,7 +317,7 @@ impl Component for App {
                         #[watch]
                         set_sensitive: model.word_list.available_word_lengths.l7,
                         #[watch]
-                        set_active: model.width == 7,
+                        set_active: model.number_of_letters == 7,
                         connect_toggled[sender] => move |btn| {
                             if btn.has_focus() {
                                 sender.input(AppMsg::SetLengthTo(7));
@@ -331,7 +331,7 @@ impl Component for App {
                         #[watch]
                         set_sensitive: model.word_list.available_word_lengths.l8,
                         #[watch]
-                        set_active: model.width == 8,
+                        set_active: model.number_of_letters == 8,
                         connect_toggled[sender] => move |btn| {
                             if btn.has_focus() {
                                 sender.input(AppMsg::SetLengthTo(8));
@@ -345,7 +345,7 @@ impl Component for App {
                         #[watch]
                         set_sensitive: model.word_list.available_word_lengths.l9,
                         #[watch]
-                        set_active: model.width == 9,
+                        set_active: model.number_of_letters == 9,
                         connect_toggled[sender] => move |btn| {
                             if btn.has_focus() {
                                 sender.input(AppMsg::SetLengthTo(9));
@@ -359,7 +359,7 @@ impl Component for App {
                         #[watch]
                         set_sensitive: model.word_list.available_word_lengths.l10,
                         #[watch]
-                        set_active: model.width == 10,
+                        set_active: model.number_of_letters == 10,
                         connect_toggled[sender] => move |btn| {
                             if btn.has_focus() {
                                 sender.input(AppMsg::SetLengthTo(10));
@@ -373,12 +373,13 @@ impl Component for App {
                         #[watch]
                         set_sensitive: model.word_list.available_word_lengths.l11,
                         #[watch]
-                        set_active: model.width == 11,
+                        set_active: model.number_of_letters == 11,
                         connect_toggled[sender] => move |btn| {
                             if btn.has_focus() {
                                 sender.input(AppMsg::SetLengthTo(11));
                             }
-                        }                    },
+                        }
+                    },
                 },
 
             }
@@ -396,8 +397,10 @@ impl Component for App {
             .launch(())
             .detach();
 
-        let last_game = "Deutsch";
-        let last_number_of_letters = 5;
+        let settings = gio::Settings::new(APP_ID);
+
+        let last_game = settings.string("game-name").to_string();
+        let last_number_of_letters = settings.uint("number-of-letters") as usize;
 
         let available_word_lists = get_available_word_lists().unwrap();
 
@@ -408,13 +411,13 @@ impl Component for App {
                 (i, last_game)
             } else {
                 if let Some(i) = get_index(&available_word_lists, &DEFAULT_GAME_NAME) {
-                    (i, "English")
+                    (i, "English".to_owned())
                 } else {
-                    (0, fallback.as_str())
+                    (0, fallback)
                 }
             };
 
-        let word_list = read_word_list(list_name, last_number_of_letters)
+        let word_list = read_word_list(&list_name, last_number_of_letters)
             .unwrap()
             .unwrap();
 
@@ -431,7 +434,7 @@ impl Component for App {
             selected_letter: Coord { column: 0, row: 0 },
             word: String::new(),
             attempts: 0,
-            width: last_number_of_letters,
+            number_of_letters: last_number_of_letters,
             keyboard_rows: create_empty_on_screen_button_rows(&sender),
             current_ui_page: "game",
             game_won: false,
@@ -516,11 +519,11 @@ impl Component for App {
                 dbg!(
                     selected.column,
                     self.index_of_last_entered_letter,
-                    self.width
+                    self.number_of_letters
                 );
                 // if on last position, delete letter under cursor, if there is any
-                if selected.column == self.width - 1 // are we on the last field
-                    && self.index_of_last_entered_letter != self.width - 2 // and we just did not the second last letter
+                if selected.column == self.number_of_letters - 1 // are we on the last field
+                    && self.index_of_last_entered_letter != self.number_of_letters - 2 // and we just did not the second last letter
                     && !self.letters.get(&selected).unwrap().value.is_empty()
                 // and the last letter is not empty
                 {
@@ -540,7 +543,7 @@ impl Component for App {
                     sender.input(AppMsg::GameOver(true));
                     return;
                 }
-                if content_of_current_attempt.chars().count() < self.width {
+                if content_of_current_attempt.chars().count() < self.number_of_letters {
                     return;
                 }
 
@@ -584,7 +587,7 @@ impl Component for App {
             }
 
             AppMsg::SetLengthTo(length) => {
-                if length != self.width {
+                if length != self.number_of_letters {
                     println!(
                         "Current wordlist {}, set length to {length}",
                         &self.current_word_list_name,
@@ -593,18 +596,21 @@ impl Component for App {
                         .unwrap()
                         .unwrap();
 
-                    self.width = length;
+                    self.number_of_letters = length;
 
                     sender.input(AppMsg::StartNewGame);
                 }
             }
             AppMsg::SwitchToWordList(name) => {
-                self.word_list = if let Some(word_list) = read_word_list(&name, self.width).unwrap()
+                self.word_list = if let Some(word_list) =
+                    read_word_list(&name, self.number_of_letters).unwrap()
                 {
                     word_list
                 } else {
-                    self.width = 5;
-                    read_word_list(&name, self.width).unwrap().unwrap()
+                    self.number_of_letters = 5;
+                    read_word_list(&name, self.number_of_letters)
+                        .unwrap()
+                        .unwrap()
                 };
                 self.current_word_list_name = name;
                 sender.input(AppMsg::StartNewGame);
@@ -625,6 +631,15 @@ impl Component for App {
 
     fn shutdown(&mut self, widgets: &mut Self::Widgets, _output: relm4::Sender<Self::Output>) {
         widgets.save_window_size().unwrap();
+
+        let settings = gio::Settings::new(APP_ID);
+
+        settings
+            .set_string("game-name", &self.current_word_list_name)
+            .expect("Failed to save last-game");
+        settings
+            .set_uint("number-of-letters", self.number_of_letters as u32)
+            .expect("Failed to save number-of-letters");
     }
 }
 
@@ -648,10 +663,12 @@ fn create_empty_on_screen_button_rows(
 impl App {
     fn create_empty_field(&mut self) {
         self.letters.clear();
-        for column in 0..self.width {
+        for column in 0..self.number_of_letters {
             for row in 0..TRIES {
-                self.letters
-                    .insert(Coord { column, row }, (self.width, Format::NotUsed));
+                self.letters.insert(
+                    Coord { column, row },
+                    (self.number_of_letters, Format::NotUsed),
+                );
             }
         }
     }
@@ -667,7 +684,7 @@ impl App {
     fn move_selection_by(&mut self, step: isize) {
         let new_column: isize = self.selected_letter.column as isize + step;
 
-        if new_column >= 0 && new_column < self.width as isize {
+        if new_column >= 0 && new_column < self.number_of_letters as isize {
             let new_selected_letter = Coord {
                 column: new_column as usize,
                 row: self.selected_letter.row,
@@ -678,7 +695,7 @@ impl App {
 
     fn get_entered_word(&self) -> Option<String> {
         let mut content_of_current_attempt = String::new();
-        for column in 0..self.width {
+        for column in 0..self.number_of_letters {
             let c_u = self
                 .letters
                 .get(&Coord {
@@ -733,7 +750,7 @@ impl App {
     }
 
     fn set_word_to_incorrect(&mut self, v: bool) {
-        for column in 0..self.width {
+        for column in 0..self.number_of_letters {
             self.letters.send(
                 &Coord {
                     column,
