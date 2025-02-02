@@ -41,11 +41,4 @@ remove-incorrect-words name:
     awk 'length($0) >= 4 && length($0) <= 11' "data/resources/word-lists/{{ name }}" > "data/resources/word-lists/tmp.txt"
     mv data/resources/word-lists/tmp.txt "data/resources/word-lists/{{ name }}"
 
-# Freshly build and install Flatpak on machine
-install:
-    flatpak-builder --user --force-clean --install build-dir page.codeberg.petsoi.words.json
-
-# Run program inside Flatpak
-run:
-    flatpak-builder --run build-dir page.codeberg.petsoi.words.json words
 
