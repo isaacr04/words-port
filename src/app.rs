@@ -238,8 +238,8 @@ impl Component for App {
 
         #[local_ref]
         game_menu -> gtk::Popover {
-            set_parent: &new_button,
             set_autohide: true,
+            set_cascade_popdown: true,
             gtk::Box {
                 set_orientation: gtk::Orientation::Vertical,
                 set_margin_all: 10,
