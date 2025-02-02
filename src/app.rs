@@ -12,8 +12,8 @@ use crate::{
 };
 use crate::{letter::Letter, modals::about::AboutDialog};
 use gtk::prelude::{
-    ApplicationExt, ApplicationWindowExt, ButtonExt, GtkWindowExt, OrientableExt, SettingsExt,
-    WidgetExt,
+    ApplicationExt, ApplicationWindowExt, ButtonExt, GtkWindowExt, OrientableExt, PopoverExt,
+    SettingsExt, WidgetExt,
 };
 use gtk::{gio, glib};
 use rand::seq::IteratorRandom;
@@ -130,11 +130,13 @@ impl Component for App {
             set_vexpand: true,
 
             adw::HeaderBar {
+                #[name = "new_button"]
                 pack_start = &adw::SplitButton {
                     set_label: "New",
                     set_hexpand: true,
                     connect_clicked => AppMsg::StartNewGame,
                     set_popover: Some(&game_menu),
+                    set_can_focus: false,
                 },
                 pack_end = &gtk::MenuButton {
                     set_icon_name: "open-menu-symbolic",
@@ -236,6 +238,8 @@ impl Component for App {
 
         #[local_ref]
         game_menu -> gtk::Popover {
+            set_parent: &new_button,
+            set_autohide: true,
             gtk::Box {
                 set_orientation: gtk::Orientation::Vertical,
                 set_margin_all: 10,
@@ -244,6 +248,8 @@ impl Component for App {
                     set_label: "Language:",
                     set_align: Align::Start,
                 },
+
+                #[name = "dropdown"]
                 gtk::DropDown::from_strings(model.available_word_lists.iter().map(|s| s.as_str()).collect::<Vec<&str>>().iter().as_slice()) {
                     set_selected: model.index_of_currently_selected_word_list as u32,
                     connect_selected_notify[sender] => move |dropdown| {
@@ -273,7 +279,7 @@ impl Component for App {
                         #[watch]
                         set_active: model.number_of_letters == 4,
                         connect_toggled[sender] => move |btn| {
-                            if btn.has_focus() {
+                            if btn.is_active() {
                                 sender.input(AppMsg::SetLengthTo(4));
                             }
                         }
@@ -288,7 +294,7 @@ impl Component for App {
                         #[watch]
                         set_active: model.number_of_letters == 5,
                         connect_toggled[sender] => move |btn| {
-                            if btn.has_focus() {
+                            if btn.is_active() {
                                 sender.input(AppMsg::SetLengthTo(5));
                             }
                         }
@@ -303,7 +309,7 @@ impl Component for App {
                         #[watch]
                         set_active: model.number_of_letters == 6,
                         connect_toggled[sender] => move |btn| {
-                            if btn.has_focus() {
+                            if btn.is_active() {
                                 sender.input(AppMsg::SetLengthTo(6));
                             }
                         }                    },
@@ -317,7 +323,7 @@ impl Component for App {
                         #[watch]
                         set_active: model.number_of_letters == 7,
                         connect_toggled[sender] => move |btn| {
-                            if btn.has_focus() {
+                            if btn.is_active() {
                                 sender.input(AppMsg::SetLengthTo(7));
                             }
                         }                    },
@@ -331,7 +337,7 @@ impl Component for App {
                         #[watch]
                         set_active: model.number_of_letters == 8,
                         connect_toggled[sender] => move |btn| {
-                            if btn.has_focus() {
+                            if btn.is_active() {
                                 sender.input(AppMsg::SetLengthTo(8));
                             }
                         }                    },
@@ -345,7 +351,7 @@ impl Component for App {
                         #[watch]
                         set_active: model.number_of_letters == 9,
                         connect_toggled[sender] => move |btn| {
-                            if btn.has_focus() {
+                            if btn.is_active() {
                                 sender.input(AppMsg::SetLengthTo(9));
                             }
                         }                    },
@@ -359,7 +365,7 @@ impl Component for App {
                         #[watch]
                         set_active: model.number_of_letters == 10,
                         connect_toggled[sender] => move |btn| {
-                            if btn.has_focus() {
+                            if btn.is_active() {
                                 sender.input(AppMsg::SetLengthTo(10));
                             }
                         }                    },
@@ -373,13 +379,13 @@ impl Component for App {
                         #[watch]
                         set_active: model.number_of_letters == 11,
                         connect_toggled[sender] => move |btn| {
-                            if btn.has_focus() {
+                            if btn.is_active() {
                                 sender.input(AppMsg::SetLengthTo(11));
                             }
                         }
                     },
                 }
-            }
+            },
         }
 
     }
