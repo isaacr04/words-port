@@ -12,6 +12,8 @@
   <description>
     <p>Words is a popular word puzzle game, similar to Wordle, where players try to guess a hidden word within six attempts.</p>
     <p>It's simple yet addictive, combining logic, vocabulary, and deduction.</p>
+    <p>The game supports different word lists and lengths in multiple languages. Currently, English and German are available.</p>
+    <p>Want to see your language in the game? Feel free to send me a word list!</p>
   </description>
 
   <screenshots>
@@ -88,6 +90,12 @@
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   
   <releases>
+    <release version="0.3.1" date="2025-03-03">
+      <description>
+        <p>Fine tune colors.</p>
+        <p>Improve German word list.</p>
+      </description>
+    </release>  
     <release version="0.3.0" date="2025-03-03">
       <description>
         <p>Enable changing word list and word length.</p>
