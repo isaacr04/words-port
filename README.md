@@ -9,7 +9,7 @@
 
 </div>
 
-## Gameplay
+## Game Play
 1. **Objective**:
    - Guess the secret word (set by the game) in six or fewer tries.
 
