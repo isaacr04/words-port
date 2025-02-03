@@ -25,8 +25,12 @@ clean-words name:
         echo "Error: File '{{ name }}' does not exist!" >&2
         exit 1
     fi
-    tr a-z A-Z < data/resources/word-lists/{{name}} | sort | uniq > data/resources/word-lists/words_new.txt
-    mv data/resources/word-lists/words_new.txt data/resources/word-lists/{{name}}
+    tr a-z A-Z < "data/resources/word-lists/{{name}}" | sort | uniq > data/resources/word-lists/words_new.txt
+    mv data/resources/word-lists/words_new.txt "data/resources/word-lists/{{name}}"
+
+# Get Word length of for file, consider header
+word-lengths name:
+    awk 'NR >= 5 {for (i=1; i<=NF; i++) print length($i)}' "data/resources/word-lists/{{ name }}" | sort -n | uniq | paste -sd,
 
 # Freshly build and install Flatpak on machine
 install:
