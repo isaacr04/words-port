@@ -172,7 +172,10 @@ fn line_to_keys(line: &str) -> anyhow::Result<(usize, Vec<Key>)> {
 }
 
 fn get_allowed_words(lines: io::Lines<io::BufReader<File>>, length: usize) -> HashSet<String> {
-    lines.flatten().filter(|w| w.len() == length).collect()
+    lines
+        .flatten()
+        .filter(|w| w.chars().count() == length)
+        .collect()
 }
 
 #[cfg(test)]
@@ -183,7 +186,7 @@ mod tests {
     fn test() {
         let actual_word_list = read_word_list_from_path("src/app/test.txt", 4).unwrap();
         let expected_word_list = WordList {
-            allowed_words: vec!["AARE".to_owned(), "AALE".to_owned()]
+            allowed_words: vec!["AARE".to_owned(), "ÄALE".to_owned()]
                 .into_iter()
                 .collect(),
             allowed_letters: vec!['W', 'Y', 'Q', 'T', 'D', 'E', 'A', 'S', 'F', 'R']
