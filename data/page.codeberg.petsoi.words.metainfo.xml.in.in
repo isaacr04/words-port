@@ -18,19 +18,19 @@
 
   <screenshots>
     <screenshot type="default">
-      <image type="source">https://codeberg.org/petsoi/words/raw/commit/0ea1be78ecdb298dd47f7cd25c133e2e8efa7583/data/resources/screenshots/main_light.png</image>
+      <image type="source">https://codeberg.org/petsoi/words/raw/commit/e49c838f709743721649abe922ca2999b6487585/data/resources/screenshots/main_light.png</image>
       <caption>Main Window, light</caption>
     </screenshot>
     <screenshot>
-      <image type="source">https://codeberg.org/petsoi/words/raw/commit/0ea1be78ecdb298dd47f7cd25c133e2e8efa7583/data/resources/screenshots/main_dark.png</image>
+      <image type="source">https://codeberg.org/petsoi/words/raw/commit/e49c838f709743721649abe922ca2999b6487585/data/resources/screenshots/main_dark.png</image>
       <caption>Main Window, dark</caption>
     </screenshot>
     <screenshot>
-      <image type="source">https://codeberg.org/petsoi/words/raw/commit/0ea1be78ecdb298dd47f7cd25c133e2e8efa7583/data/resources/screenshots/gameover_light.png</image>
+      <image type="source">https://codeberg.org/petsoi/words/raw/commit/e49c838f709743721649abe922ca2999b6487585/data/resources/screenshots/gameover_light.png</image>
       <caption>Game Over, light</caption>
     </screenshot>
     <screenshot>
-      <image type="source">https://codeberg.org/petsoi/words/raw/commit/0ea1be78ecdb298dd47f7cd25c133e2e8efa7583/data/resources/screenshots/gameover_dark.png</image>
+      <image type="source">https://codeberg.org/petsoi/words/raw/commit/e49c838f709743721649abe922ca2999b6487585/data/resources/screenshots/gameover_dark.png</image>
       <caption>Game Over, dark</caption>
     </screenshot>
   </screenshots>
