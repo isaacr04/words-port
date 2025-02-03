@@ -1,7 +1,7 @@
 project(
   'words',
   'rust',
-  version: '0.3.2',
+  version: '0.3.3',
   meson_version: '>= 1.1.0',
   license: 'GPL-3',
 )
