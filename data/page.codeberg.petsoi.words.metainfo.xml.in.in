@@ -81,8 +81,8 @@
     https://docs.flathub.org/docs/for-app-authors/metainfo-guidelines/#brand-color
   -->
   <branding>
-    <color type="primary" scheme_preference="light">#2EC27E</color>
-    <color type="primary" scheme_preference="dark">#2EC27E</color>
+    <color type="primary" scheme_preference="light">#9C9C9C</color>
+    <color type="primary" scheme_preference="dark">#5A5A5A</color>
   </branding>  
 
   <update_contact>peter@sonniger-tag.eu</update_contact>
@@ -90,6 +90,11 @@
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   
   <releases>
+    <release version="0.3.4" date="2025-03-05">
+      <description>
+        <p>Fix error in German word list.</p>
+      </description>
+    </release>  
     <release version="0.3.3" date="2025-03-03">
       <description>
         <p>Fix error in German word list.</p>
