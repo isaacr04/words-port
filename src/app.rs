@@ -132,10 +132,11 @@ impl Component for App {
             adw::HeaderBar {
                 #[name = "new_button"]
                 pack_start = &adw::SplitButton {
-                    set_label: "New",
+                    set_label: "_New",
                     set_hexpand: true,
                     connect_clicked => AppMsg::StartNewGame,
                     set_popover: Some(&game_menu),
+                    set_use_underline: true,
                     set_can_focus: false,
                 },
                 pack_end = &gtk::MenuButton {
