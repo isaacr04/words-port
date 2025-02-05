@@ -92,7 +92,8 @@
   <releases>
     <release version="0.3.4" date="2025-03-05">
       <description>
-        <p>Fix error in German word list.</p>
+        <p>Reenable Alt+N for new.</p>
+        <p>Improve Desktop File.</p>
       </description>
     </release>  
     <release version="0.3.3" date="2025-03-03">
