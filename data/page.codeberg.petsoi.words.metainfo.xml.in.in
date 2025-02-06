@@ -94,6 +94,11 @@
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   
   <releases>
+    <release version="0.3.5" date="2025-02-06">
+      <description>
+        <p>Add Ctrl+N short cut for new game.</p>
+      </description>
+    </release>  
     <release version="0.3.4" date="2025-02-05">
       <description>
         <p>Reenable Alt+N for new.</p>
