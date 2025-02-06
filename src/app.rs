@@ -803,7 +803,8 @@ fn keyboard_events_controller(sender: ComponentSender<App>) -> EventControllerKe
 }
 
 fn register_actions(sender: ComponentSender<App>, widgets: &AppWidgets, model: &App) {
-    let mut actions = RelmActionGroup::<WindowActionGroup>::new();
+    let mut window_actions = RelmActionGroup::<WindowActionGroup>::new();
+    let mut game_actions = RelmActionGroup::<GameActionGroup>::new();
 
     let shortcuts_action = {
         let shortcuts = widgets.shortcuts.clone();
@@ -825,10 +826,11 @@ fn register_actions(sender: ComponentSender<App>, widgets: &AppWidgets, model: &
         })
     };
 
-    actions.add_action(shortcuts_action);
-    actions.add_action(about_action);
-    actions.add_action(new_game_action);
-    actions.register_for_widget(&widgets.main_window);
+    window_actions.add_action(shortcuts_action);
+    window_actions.add_action(about_action);
+    game_actions.add_action(new_game_action);
+    window_actions.register_for_widget(&widgets.main_window);
+    game_actions.register_for_widget(&widgets.main_window);
 }
 
 impl AppWidgets {
