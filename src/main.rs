@@ -14,7 +14,7 @@ use relm4::{
     gtk, main_application, RelmApp,
 };
 
-use app::App;
+use app::{App, NewGameAction};
 
 relm4::new_action_group!(AppActionGroup, "app");
 relm4::new_stateless_action!(QuitAction, AppActionGroup, "quit");
@@ -56,6 +56,7 @@ fn main() {
     actions.register_for_main_application();
 
     app.set_accelerators_for_action::<QuitAction>(&["<Control>q"]);
+    app.set_accelerators_for_action::<NewGameAction>(&["<Control>n"]);
 
     let app = RelmApp::from_app(app);
 

@@ -19,7 +19,6 @@ use gtk::{gio, glib};
 use rand::seq::IteratorRandom;
 use read_word_list::{get_available_word_lists, read_word_list, WordList};
 use relm4::abstractions::Toaster;
-use relm4::actions::AccelsPlus;
 use relm4::adw::Toast;
 use relm4::factory::FactoryHashMap;
 use relm4::gtk::glib::object::Cast;
@@ -79,9 +78,10 @@ pub(super) enum CommandMsg {
 }
 
 relm4::new_action_group!(pub(super) WindowActionGroup, "win");
+relm4::new_action_group!(pub(super) GameActionGroup, "game");
 relm4::new_stateless_action!(pub(super) ShortcutsAction, WindowActionGroup, "show-help-overlay");
 relm4::new_stateless_action!(AboutAction, WindowActionGroup, "about");
-relm4::new_stateless_action!(NewAction, WindowActionGroup, "new");
+relm4::new_stateless_action!(pub(super) NewGameAction, GameActionGroup, "new");
 
 #[relm4::component(pub)]
 impl Component for App {
@@ -468,13 +468,6 @@ impl Component for App {
 
         register_actions(sender.clone(), &widgets, &model);
 
-        root.application()
-            .unwrap()
-            .set_accelerators_for_action::<NewAction>(&["<Control>n"]);
-
-        let group = RelmActionGroup::<WindowActionGroup>::new();
-        group.register_for_widget(&widgets.main_window);
-
         widgets.load_window_size();
 
         sender.input(AppMsg::StartNewGame);
@@ -826,15 +819,15 @@ fn register_actions(sender: ComponentSender<App>, widgets: &AppWidgets, model: &
         })
     };
 
-    let new_action = {
-        RelmAction::<NewAction>::new_stateless(move |_| {
+    let new_game_action = {
+        RelmAction::<NewGameAction>::new_stateless(move |_| {
             sender.input(AppMsg::StartNewGame);
         })
     };
 
     actions.add_action(shortcuts_action);
     actions.add_action(about_action);
-    actions.add_action(new_action);
+    actions.add_action(new_game_action);
     actions.register_for_widget(&widgets.main_window);
 }
 
