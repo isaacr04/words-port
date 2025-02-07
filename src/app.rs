@@ -236,6 +236,20 @@ impl Component for App {
                             set_css_classes: &["title-3"],
                             set_wrap: true,
                             set_justify: gtk::Justification::Center,
+                        },
+                        gtk::Label {
+                            #[watch]
+                            set_label: &format!("You have won {} out of {} games.", model.game_statistics.games_won, model.game_statistics.total_games),
+                            set_margin_top: 40,
+                            set_wrap: true,
+                            set_justify: gtk::Justification::Center,
+                        },
+                        gtk::Label {
+                            #[watch]
+                            set_label: &format!("The current streak is {}.", model.game_statistics.current_streak),
+                            set_margin_top: 5,
+                            set_wrap: true,
+                            set_justify: gtk::Justification::Center,
                         }
                     } -> { set_name: "game_over" }
                 }
