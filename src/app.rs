@@ -1,3 +1,4 @@
+mod game_statistics;
 mod read_word_list;
 
 use std::collections::{HashMap, HashSet};
@@ -11,6 +12,7 @@ use crate::{
     letter::LetterMsgOut,
 };
 use crate::{letter::Letter, modals::about::AboutDialog};
+use game_statistics::{GameStatistics, Outcome};
 use gtk::prelude::{
     ApplicationExt, ApplicationWindowExt, ButtonExt, GtkWindowExt, OrientableExt, PopoverExt,
     SettingsExt, WidgetExt,
@@ -54,6 +56,7 @@ pub(super) struct App {
     available_word_lists: Vec<String>,
     index_of_currently_selected_word_list: usize,
     current_word_list_name: String,
+    game_statistics: GameStatistics,
 }
 
 #[derive(Debug)]
@@ -427,6 +430,9 @@ impl Component for App {
             .unwrap()
             .unwrap();
 
+        let game_statistics =
+            GameStatistics::load_game_statistics(&list_name, last_number_of_letters);
+
         let letters =
             FactoryHashMap::builder()
                 .launch_default()
@@ -451,6 +457,7 @@ impl Component for App {
             available_word_lists,
             index_of_currently_selected_word_list,
             current_word_list_name: list_name.to_owned(),
+            game_statistics,
         };
 
         root.add_controller(keyboard_events_controller(sender.clone()));
@@ -546,6 +553,13 @@ impl Component for App {
                 };
                 if content_of_current_attempt == self.word {
                     self.attempts += 1;
+                    self.game_statistics
+                        .update_game_statistics(
+                            Outcome::Won(self.attempts),
+                            &self.current_word_list_name,
+                            self.number_of_letters,
+                        )
+                        .expect("Error while saving game stats");
                     sender.input(AppMsg::GameOver(true));
                     return;
                 }
@@ -577,6 +591,13 @@ impl Component for App {
                 self.attempts += 1;
 
                 if self.attempts >= TRIES {
+                    self.game_statistics
+                        .update_game_statistics(
+                            Outcome::Lost,
+                            &self.current_word_list_name,
+                            self.number_of_letters,
+                        )
+                        .expect("Error while saving game stats");
                     sender.input(AppMsg::GameOver(false));
                     return;
                 }
@@ -600,6 +621,10 @@ impl Component for App {
 
                     self.number_of_letters = length;
 
+                    self.game_statistics = GameStatistics::load_game_statistics(
+                        &self.current_word_list_name,
+                        self.number_of_letters,
+                    );
                     sender.input(AppMsg::StartNewGame);
                 }
             }
@@ -615,6 +640,10 @@ impl Component for App {
                         .unwrap()
                 };
                 self.current_word_list_name = name;
+                self.game_statistics = GameStatistics::load_game_statistics(
+                    &self.current_word_list_name,
+                    self.number_of_letters,
+                );
                 sender.input(AppMsg::StartNewGame);
             }
         }
