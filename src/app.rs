@@ -529,10 +529,10 @@ impl Component for App {
                 self.move_selection_by(1);
             }
             AppMsg::Backspace => {
-                dbg!(
+                (
                     selected.column,
                     self.index_of_last_entered_letter,
-                    self.number_of_letters
+                    self.number_of_letters,
                 );
                 // if on last position, delete letter under cursor, if there is any
                 if selected.column == self.number_of_letters - 1 // are we on the last field
