@@ -594,10 +594,6 @@ impl Component for App {
 
             AppMsg::SetLengthTo(length) => {
                 if length != self.number_of_letters {
-                    println!(
-                        "Current wordlist {}, set length to {length}",
-                        &self.current_word_list_name,
-                    );
                     self.word_list = read_word_list(&self.current_word_list_name, length)
                         .unwrap()
                         .unwrap();
