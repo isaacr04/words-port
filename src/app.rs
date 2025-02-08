@@ -6,6 +6,7 @@ use std::time::Duration;
 use std::{char, usize};
 
 use crate::letter::{Coord, Format, LetterMsgIn};
+use crate::modals::statistics::StatisticsDialog;
 use crate::onscreen_button::{self, Key, OnScreenButton, OnScreenButtonMsgIn};
 use crate::{
     config::{APP_ID, PROFILE},
@@ -21,6 +22,7 @@ use gtk::{gio, glib};
 use rand::seq::IteratorRandom;
 use read_word_list::{get_available_word_lists, read_word_list, WordList};
 use relm4::abstractions::Toaster;
+use relm4::adw::prelude::AdwDialogExt;
 use relm4::adw::Toast;
 use relm4::factory::FactoryHashMap;
 use relm4::gtk::glib::object::Cast;
@@ -41,6 +43,7 @@ static DEFAULT_GAME_NAME: &str = "English";
 pub(super) struct App {
     letters: FactoryHashMap<Coord, Letter>,
     about_dialog: Controller<AboutDialog>,
+    statistics_dialog: Controller<StatisticsDialog>,
     selected_letter: Coord,
     word: String,
     number_of_letters: usize,
@@ -64,14 +67,15 @@ pub(super) enum AppMsg {
     SelectField(Coord),
     GameOver(bool),
     StartNewGame,
-    EnterLetter(char),
     MoveCursor(isize),
     SetLengthTo(usize),
     SwitchToWordList(String),
+    EnterLetter(char),
     EnterWord,
-    Delete,
-    Backspace,
+    EnterDelete,
+    EnterBackspace,
     Space,
+    ShowStatistics,
     Quit,
 }
 
@@ -85,6 +89,7 @@ relm4::new_action_group!(pub(super) GameActionGroup, "game");
 relm4::new_stateless_action!(pub(super) ShortcutsAction, WindowActionGroup, "show-help-overlay");
 relm4::new_stateless_action!(AboutAction, WindowActionGroup, "about");
 relm4::new_stateless_action!(pub(super) NewGameAction, GameActionGroup, "new");
+relm4::new_stateless_action!(pub(super) StatisticsAction, GameActionGroup, "statistics");
 
 #[relm4::component(pub)]
 impl Component for App {
@@ -97,6 +102,7 @@ impl Component for App {
     menu! {
         main_menu: {
             section! {
+                "_Statistics" => StatisticsAction,
                 "_Keyboard" => ShortcutsAction,
                 "_About Words!" => AboutAction,
             }
@@ -246,7 +252,7 @@ impl Component for App {
                         },
                         gtk::Label {
                             #[watch]
-                            set_label: &format!("The current streak is {}.", model.game_statistics.current_streak),
+                            set_label: &format!("Current streak is {}.", model.game_statistics.current_streak),
                             set_margin_top: 5,
                             set_wrap: true,
                             set_justify: gtk::Justification::Center,
@@ -420,6 +426,8 @@ impl Component for App {
             .launch(())
             .detach();
 
+        let statistics_dialog = StatisticsDialog::builder().launch(()).detach();
+
         let settings = gio::Settings::new(APP_ID);
 
         let last_game = settings.string("game-name").to_string();
@@ -456,6 +464,7 @@ impl Component for App {
 
         let model = Self {
             about_dialog,
+            statistics_dialog,
             letters,
             selected_letter: Coord { column: 0, row: 0 },
             word: String::new(),
@@ -496,7 +505,13 @@ impl Component for App {
         ComponentParts { model, widgets }
     }
 
-    fn update(&mut self, message: Self::Input, sender: ComponentSender<Self>, _: &Self::Root) {
+    fn update_with_view(
+        &mut self,
+        widgets: &mut AppWidgets,
+        message: Self::Input,
+        sender: ComponentSender<Self>,
+        _: &Self::Root,
+    ) {
         let selected = self.selected_letter;
 
         match message {
@@ -537,12 +552,12 @@ impl Component for App {
                     self.move_selection_by(1);
                 }
             }
-            AppMsg::Delete => self.letters.send(&selected, LetterMsgIn::SetContent(None)),
+            AppMsg::EnterDelete => self.letters.send(&selected, LetterMsgIn::SetContent(None)),
             AppMsg::Space => {
                 self.letters.send(&selected, LetterMsgIn::SetContent(None));
                 self.move_selection_by(1);
             }
-            AppMsg::Backspace => {
+            AppMsg::EnterBackspace => {
                 (
                     selected.column,
                     self.index_of_last_entered_letter,
@@ -554,7 +569,7 @@ impl Component for App {
                     && !self.letters.get(&selected).unwrap().value.is_empty()
                 // and the last letter is not empty
                 {
-                    sender.input(AppMsg::Delete);
+                    sender.input(AppMsg::EnterDelete);
                     return;
                 }
                 self.move_selection_by(-1);
@@ -660,6 +675,11 @@ impl Component for App {
                 );
                 sender.input(AppMsg::StartNewGame);
             }
+            AppMsg::ShowStatistics => {
+                self.statistics_dialog
+                    .widget()
+                    .present(Some(&widgets.main_window));
+            }
         }
     }
 
@@ -699,7 +719,7 @@ fn create_empty_on_screen_button_rows(
                 .forward(sender.input_sender(), |msg| match msg {
                     Key::Letter(c) => AppMsg::EnterLetter(c),
                     Key::Enter => AppMsg::EnterWord,
-                    Key::Del => AppMsg::Backspace,
+                    Key::Del => AppMsg::EnterBackspace,
                 })
         })
         .collect()
@@ -828,8 +848,8 @@ fn keyboard_events_controller(sender: ComponentSender<App>) -> EventControllerKe
         if let Some(c) = keyval.to_unicode() {
             match c {
                 ' ' => sender.input(AppMsg::Space),
-                '\u{8}' => sender.input(AppMsg::Backspace),
-                '\u{7f}' => sender.input(AppMsg::Delete),
+                '\u{8}' => sender.input(AppMsg::EnterBackspace),
+                '\u{7f}' => sender.input(AppMsg::EnterDelete),
                 '\r' => sender.input(AppMsg::EnterWord),
                 c => sender.input(AppMsg::EnterLetter(c)),
             }
@@ -860,14 +880,22 @@ fn register_actions(sender: ComponentSender<App>, widgets: &AppWidgets, model: &
     };
 
     let new_game_action = {
+        let sender = sender.clone();
         RelmAction::<NewGameAction>::new_stateless(move |_| {
             sender.input(AppMsg::StartNewGame);
+        })
+    };
+
+    let show_statistics_action = {
+        RelmAction::<StatisticsAction>::new_stateless(move |_| {
+            sender.input(AppMsg::ShowStatistics);
         })
     };
 
     window_actions.add_action(shortcuts_action);
     window_actions.add_action(about_action);
     game_actions.add_action(new_game_action);
+    game_actions.add_action(show_statistics_action);
     window_actions.register_for_widget(&widgets.main_window);
     game_actions.register_for_widget(&widgets.main_window);
 }
