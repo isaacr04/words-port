@@ -1,2 +1,2 @@
 pub mod about;
-pub mod statistics;
+pub mod statistics_dialog;

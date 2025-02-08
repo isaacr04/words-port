@@ -1,4 +1,4 @@
-mod game_statistics;
+pub mod game_statistics;
 mod read_word_list;
 
 use std::collections::{HashMap, HashSet};
@@ -6,7 +6,7 @@ use std::time::Duration;
 use std::{char, usize};
 
 use crate::letter::{Coord, Format, LetterMsgIn};
-use crate::modals::statistics::StatisticsDialog;
+use crate::modals::statistics_dialog::{StatisticsDialog, StatisticsMsg};
 use crate::onscreen_button::{self, Key, OnScreenButton, OnScreenButtonMsgIn};
 use crate::{
     config::{APP_ID, PROFILE},
@@ -426,8 +426,6 @@ impl Component for App {
             .launch(())
             .detach();
 
-        let statistics_dialog = StatisticsDialog::builder().launch(()).detach();
-
         let settings = gio::Settings::new(APP_ID);
 
         let last_game = settings.string("game-name").to_string();
@@ -454,6 +452,14 @@ impl Component for App {
 
         let game_statistics =
             GameStatistics::load_game_statistics(&list_name, last_number_of_letters);
+
+        let statistics_dialog = StatisticsDialog::builder()
+            .launch(StatisticsDialog {
+                number_of_letters: last_number_of_letters,
+                statistic: game_statistics.clone(),
+                word_list_name: list_name.clone(),
+            })
+            .detach();
 
         let letters =
             FactoryHashMap::builder()
@@ -676,6 +682,14 @@ impl Component for App {
                 sender.input(AppMsg::StartNewGame);
             }
             AppMsg::ShowStatistics => {
+                self.statistics_dialog
+                    .sender()
+                    .send(StatisticsMsg::Update(StatisticsDialog {
+                        statistic: self.game_statistics.clone(),
+                        word_list_name: self.current_word_list_name.clone(),
+                        number_of_letters: self.number_of_letters,
+                    }))
+                    .unwrap();
                 self.statistics_dialog
                     .widget()
                     .present(Some(&widgets.main_window));

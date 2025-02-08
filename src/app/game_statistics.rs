@@ -8,8 +8,8 @@ use serde::{Deserialize, Serialize};
 
 use super::TRIES;
 
-#[derive(Serialize, Deserialize, Default)]
-pub struct GameStatistics {
+#[derive(Serialize, Deserialize, Default, Clone, Debug)]
+pub(crate) struct GameStatistics {
     pub total_games: usize,
     pub games_won: usize,
     pub current_streak: usize,
