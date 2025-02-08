@@ -6,8 +6,10 @@ use std::{
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Default)]
-pub struct GameStatistics {
+use super::TRIES;
+
+#[derive(Serialize, Deserialize, Default, Clone, Debug)]
+pub(crate) struct GameStatistics {
     pub total_games: usize,
     pub games_won: usize,
     pub current_streak: usize,
@@ -44,7 +46,7 @@ impl GameStatistics {
         let file = get_path() + name + "_" + &number_of_letters.to_string();
 
         let mut output = File::create(file)?;
-        output.write_all(dbg!(serde_json::to_string_pretty(self)?).as_bytes())?;
+        output.write_all(serde_json::to_string_pretty(self)?.as_bytes())?;
         Ok(())
     }
 
@@ -55,7 +57,7 @@ impl GameStatistics {
             statistics
         } else {
             GameStatistics {
-                games_won_tries: vec![0; 6],
+                games_won_tries: vec![0; TRIES],
                 ..Default::default()
             }
         }
@@ -71,9 +73,5 @@ fn load_statistics_from_file(name: String) -> Result<GameStatistics, anyhow::Err
 }
 
 fn get_path() -> String {
-    if env::var("FLATPAK_ID").is_ok() {
-        env::var("XDG_DATA_HOME").expect("XDG_DATA_HOME not found") + "/"
-    } else {
-        "data/resources/game_statistics/".to_owned()
-    }
+    env::var("XDG_DATA_HOME").expect("XDG_DATA_HOME not found") + "/"
 }

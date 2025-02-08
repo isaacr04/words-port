@@ -2,20 +2,16 @@
 <!-- Peter Sonntag 2019 <peter@sonniger-tag.eu> -->
 <component type="desktop-application">
   <id>@app-id@</id>
-
   <metadata_license>CC0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
-
   <name>Words!</name>
   <summary>Have fun guessing Words</summary>
-
   <description>
     <p>Words is a popular word puzzle game, similar to Wordle, where players try to guess a hidden word within six attempts.</p>
     <p>It's simple yet addictive, combining logic, vocabulary, and deduction.</p>
     <p>The game supports different word lists and lengths in multiple languages. Currently, English and German are available.</p>
     <p>Want to see your language in the game? Feel free to send me a word list!</p>
   </description>
-
   <screenshots>
     <screenshot type="default">
       <image type="source">https://codeberg.org/petsoi/words/raw/commit/e49c838f709743721649abe922ca2999b6487585/data/resources/screenshots/main_light.png</image>
@@ -34,7 +30,6 @@
       <caption>Game Over, dark</caption>
     </screenshot>
   </screenshots>
-
   <url type="homepage">https://codeberg.org/petsoi/words</url>
   <url type="bugtracker">https://codeberg.org/petsoi/words/issues</url>
   <!-- Source code repository -->
@@ -45,33 +40,28 @@
        https://hughsie.github.io/oars/generate.html
   -->
   <content_rating type="oars-1.1" />
-
   <recommends>
     <control>pointing</control>
     <control>touch</control>
     <control>keyboard</control>
     <control>tablet</control>
   </recommends>
-
   <categories>
     <category>Game</category>
   </categories>
-
   <requires>
     <display_length compare="ge">360</display_length>
   </requires>
-
   <keywords>
     <keyword>wordle</keyword>
   </keywords>
-
   <kudos>
-     <!--
+    <!--
        GNOME Software kudos:
        https://gitlab.gnome.org/GNOME/gnome-software/-/blob/main/doc/kudos.md
      -->
-     <kudo>ModernToolkit</kudo>
-     <kudo>HiDpiIcon</kudo>
+    <kudo>ModernToolkit</kudo>
+    <kudo>HiDpiIcon</kudo>
   </kudos>
   <!-- developer_name tag deprecated with Appstream 1.0 -->
   <developer_name translate="no">Peter Sonntag</developer_name>
@@ -87,46 +77,49 @@
   <branding>
     <color type="primary" scheme_preference="light">#9C9C9C</color>
     <color type="primary" scheme_preference="dark">#5A5A5A</color>
-  </branding>  
-
+  </branding>
   <update_contact>peter@sonniger-tag.eu</update_contact>
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
-  
   <releases>
+    <release version="0.4.0" date="2025-02-06">
+      <description>
+        <p>Add statistics.</p>
+      </description>
+    </release>
     <release version="0.3.5" date="2025-02-06">
       <description>
         <p>Add Ctrl+N short cut for new game.</p>
       </description>
-    </release>  
+    </release>
     <release version="0.3.4" date="2025-02-05">
       <description>
         <p>Reenable Alt+N for new.</p>
         <p>Improve Desktop File.</p>
       </description>
-    </release>  
+    </release>
     <release version="0.3.3" date="2025-02-03">
       <description>
         <p>Fix error in German word list.</p>
       </description>
-    </release>  
+    </release>
     <release version="0.3.2" date="2025-02-03">
       <description>
         <p>Fix handling unicode word lists.</p>
         <p>Improve German word list.</p>
       </description>
-    </release>  
+    </release>
     <release version="0.3.1" date="2025-02-03">
       <description>
         <p>Fine tune colors.</p>
         <p>Improve German word list.</p>
       </description>
-    </release>  
+    </release>
     <release version="0.3.0" date="2025-02-03">
       <description>
         <p>Enable changing word list and word length.</p>
       </description>
-    </release>  
+    </release>
     <release version="0.2.3" date="2025-01-29">
       <description>
         <p>Improve deleting behavior of letters.</p>
@@ -167,7 +160,7 @@
         </ul>
       </description>
     </release>
-      <release version="0.1.4" date="2025-01-24">
+    <release version="0.1.4" date="2025-01-24">
       <description>
         <p>Changes:</p>
         <ul>

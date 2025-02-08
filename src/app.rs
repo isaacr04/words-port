@@ -1,4 +1,4 @@
-mod game_statistics;
+pub mod game_statistics;
 mod read_word_list;
 
 use std::collections::{HashMap, HashSet};
@@ -6,6 +6,7 @@ use std::time::Duration;
 use std::{char, usize};
 
 use crate::letter::{Coord, Format, LetterMsgIn};
+use crate::modals::statistics_dialog::{StatisticsDialog, StatisticsMsg};
 use crate::onscreen_button::{self, Key, OnScreenButton, OnScreenButtonMsgIn};
 use crate::{
     config::{APP_ID, PROFILE},
@@ -21,6 +22,7 @@ use gtk::{gio, glib};
 use rand::seq::IteratorRandom;
 use read_word_list::{get_available_word_lists, read_word_list, WordList};
 use relm4::abstractions::Toaster;
+use relm4::adw::prelude::AdwDialogExt;
 use relm4::adw::Toast;
 use relm4::factory::FactoryHashMap;
 use relm4::gtk::glib::object::Cast;
@@ -41,6 +43,7 @@ static DEFAULT_GAME_NAME: &str = "English";
 pub(super) struct App {
     letters: FactoryHashMap<Coord, Letter>,
     about_dialog: Controller<AboutDialog>,
+    statistics_dialog: Controller<StatisticsDialog>,
     selected_letter: Coord,
     word: String,
     number_of_letters: usize,
@@ -64,14 +67,15 @@ pub(super) enum AppMsg {
     SelectField(Coord),
     GameOver(bool),
     StartNewGame,
-    EnterLetter(char),
     MoveCursor(isize),
     SetLengthTo(usize),
     SwitchToWordList(String),
+    EnterLetter(char),
     EnterWord,
-    Delete,
-    Backspace,
+    EnterDelete,
+    EnterBackspace,
     Space,
+    ShowStatistics,
     Quit,
 }
 
@@ -85,6 +89,7 @@ relm4::new_action_group!(pub(super) GameActionGroup, "game");
 relm4::new_stateless_action!(pub(super) ShortcutsAction, WindowActionGroup, "show-help-overlay");
 relm4::new_stateless_action!(AboutAction, WindowActionGroup, "about");
 relm4::new_stateless_action!(pub(super) NewGameAction, GameActionGroup, "new");
+relm4::new_stateless_action!(pub(super) StatisticsAction, GameActionGroup, "statistics");
 
 #[relm4::component(pub)]
 impl Component for App {
@@ -97,6 +102,7 @@ impl Component for App {
     menu! {
         main_menu: {
             section! {
+                "_Statistics" => StatisticsAction,
                 "_Keyboard" => ShortcutsAction,
                 "_About Words!" => AboutAction,
             }
@@ -234,6 +240,20 @@ impl Component for App {
                                     "Good luck next time!".to_owned()
                                 },
                             set_css_classes: &["title-3"],
+                            set_wrap: true,
+                            set_justify: gtk::Justification::Center,
+                        },
+                        gtk::Label {
+                            #[watch]
+                            set_label: &format!("You have won {} out of {} games.", model.game_statistics.games_won, model.game_statistics.total_games),
+                            set_margin_top: 40,
+                            set_wrap: true,
+                            set_justify: gtk::Justification::Center,
+                        },
+                        gtk::Label {
+                            #[watch]
+                            set_label: &format!("Current streak is {}.", model.game_statistics.current_streak),
+                            set_margin_top: 5,
                             set_wrap: true,
                             set_justify: gtk::Justification::Center,
                         }
@@ -433,6 +453,14 @@ impl Component for App {
         let game_statistics =
             GameStatistics::load_game_statistics(&list_name, last_number_of_letters);
 
+        let statistics_dialog = StatisticsDialog::builder()
+            .launch(StatisticsDialog {
+                number_of_letters: last_number_of_letters,
+                statistic: game_statistics.clone(),
+                word_list_name: list_name.clone(),
+            })
+            .detach();
+
         let letters =
             FactoryHashMap::builder()
                 .launch_default()
@@ -442,6 +470,7 @@ impl Component for App {
 
         let model = Self {
             about_dialog,
+            statistics_dialog,
             letters,
             selected_letter: Coord { column: 0, row: 0 },
             word: String::new(),
@@ -482,7 +511,13 @@ impl Component for App {
         ComponentParts { model, widgets }
     }
 
-    fn update(&mut self, message: Self::Input, sender: ComponentSender<Self>, _: &Self::Root) {
+    fn update_with_view(
+        &mut self,
+        widgets: &mut AppWidgets,
+        message: Self::Input,
+        sender: ComponentSender<Self>,
+        _: &Self::Root,
+    ) {
         let selected = self.selected_letter;
 
         match message {
@@ -523,16 +558,16 @@ impl Component for App {
                     self.move_selection_by(1);
                 }
             }
-            AppMsg::Delete => self.letters.send(&selected, LetterMsgIn::SetContent(None)),
+            AppMsg::EnterDelete => self.letters.send(&selected, LetterMsgIn::SetContent(None)),
             AppMsg::Space => {
                 self.letters.send(&selected, LetterMsgIn::SetContent(None));
                 self.move_selection_by(1);
             }
-            AppMsg::Backspace => {
-                dbg!(
+            AppMsg::EnterBackspace => {
+                (
                     selected.column,
                     self.index_of_last_entered_letter,
-                    self.number_of_letters
+                    self.number_of_letters,
                 );
                 // if on last position, delete letter under cursor, if there is any
                 if selected.column == self.number_of_letters - 1 // are we on the last field
@@ -540,7 +575,7 @@ impl Component for App {
                     && !self.letters.get(&selected).unwrap().value.is_empty()
                 // and the last letter is not empty
                 {
-                    sender.input(AppMsg::Delete);
+                    sender.input(AppMsg::EnterDelete);
                     return;
                 }
                 self.move_selection_by(-1);
@@ -646,6 +681,19 @@ impl Component for App {
                 );
                 sender.input(AppMsg::StartNewGame);
             }
+            AppMsg::ShowStatistics => {
+                self.statistics_dialog
+                    .sender()
+                    .send(StatisticsMsg::Update(StatisticsDialog {
+                        statistic: self.game_statistics.clone(),
+                        word_list_name: self.current_word_list_name.clone(),
+                        number_of_letters: self.number_of_letters,
+                    }))
+                    .unwrap();
+                self.statistics_dialog
+                    .widget()
+                    .present(Some(&widgets.main_window));
+            }
         }
     }
 
@@ -685,7 +733,7 @@ fn create_empty_on_screen_button_rows(
                 .forward(sender.input_sender(), |msg| match msg {
                     Key::Letter(c) => AppMsg::EnterLetter(c),
                     Key::Enter => AppMsg::EnterWord,
-                    Key::Del => AppMsg::Backspace,
+                    Key::Del => AppMsg::EnterBackspace,
                 })
         })
         .collect()
@@ -814,8 +862,8 @@ fn keyboard_events_controller(sender: ComponentSender<App>) -> EventControllerKe
         if let Some(c) = keyval.to_unicode() {
             match c {
                 ' ' => sender.input(AppMsg::Space),
-                '\u{8}' => sender.input(AppMsg::Backspace),
-                '\u{7f}' => sender.input(AppMsg::Delete),
+                '\u{8}' => sender.input(AppMsg::EnterBackspace),
+                '\u{7f}' => sender.input(AppMsg::EnterDelete),
                 '\r' => sender.input(AppMsg::EnterWord),
                 c => sender.input(AppMsg::EnterLetter(c)),
             }
@@ -846,14 +894,22 @@ fn register_actions(sender: ComponentSender<App>, widgets: &AppWidgets, model: &
     };
 
     let new_game_action = {
+        let sender = sender.clone();
         RelmAction::<NewGameAction>::new_stateless(move |_| {
             sender.input(AppMsg::StartNewGame);
+        })
+    };
+
+    let show_statistics_action = {
+        RelmAction::<StatisticsAction>::new_stateless(move |_| {
+            sender.input(AppMsg::ShowStatistics);
         })
     };
 
     window_actions.add_action(shortcuts_action);
     window_actions.add_action(about_action);
     game_actions.add_action(new_game_action);
+    game_actions.add_action(show_statistics_action);
     window_actions.register_for_widget(&widgets.main_window);
     game_actions.register_for_widget(&widgets.main_window);
 }
