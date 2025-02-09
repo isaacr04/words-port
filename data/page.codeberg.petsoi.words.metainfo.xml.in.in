@@ -14,20 +14,20 @@
   </description>
   <screenshots>
     <screenshot type="default">
-      <image type="source">https://codeberg.org/petsoi/words/raw/commit/e49c838f709743721649abe922ca2999b6487585/data/resources/screenshots/main_light.png</image>
-      <caption>Main Window, light</caption>
+      <image type="source">https://codeberg.org/petsoi/words/raw/branch/main/data/resources/screenshots/main_light.png</image>
+      <caption>Main Window</caption>
     </screenshot>
     <screenshot>
-      <image type="source">https://codeberg.org/petsoi/words/raw/commit/e49c838f709743721649abe922ca2999b6487585/data/resources/screenshots/main_dark.png</image>
-      <caption>Main Window, dark</caption>
+      <image type="source">https://codeberg.org/petsoi/words/raw/branch/main/data/resources/screenshots/main_dark.png</image>
+      <caption>Main Window</caption>
     </screenshot>
     <screenshot>
-      <image type="source">https://codeberg.org/petsoi/words/raw/commit/e49c838f709743721649abe922ca2999b6487585/data/resources/screenshots/gameover_light.png</image>
-      <caption>Game Over, light</caption>
+      <image type="source">https://codeberg.org/petsoi/words/raw/branch/main/data/resources/screenshots/gameover_light.png</image>
+      <caption>Game Over</caption>
     </screenshot>
     <screenshot>
-      <image type="source">https://codeberg.org/petsoi/words/raw/commit/e49c838f709743721649abe922ca2999b6487585/data/resources/screenshots/gameover_dark.png</image>
-      <caption>Game Over, dark</caption>
+      <image type="source">https://codeberg.org/petsoi/words/raw/branch/main/data/resources/screenshots/statistics_light.png</image>
+      <caption>Game Statisics</caption>
     </screenshot>
   </screenshots>
   <url type="homepage">https://codeberg.org/petsoi/words</url>
@@ -82,6 +82,11 @@
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   <releases>
+    <release version="0.4.1" date="2025-02-06">
+      <description>
+        <p>Fixes bug where game was not terminated properly.</p>
+      </description>
+    </release>
     <release version="0.4.0" date="2025-02-06">
       <description>
         <p>Add statistics.</p>
