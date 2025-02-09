@@ -3,7 +3,7 @@ import json
 # value from 0 - 5
 min_frequency = 2
 # min and max length for words
-min_length = 3
+min_length = 4
 max_length = 11
 
 # function for removing all words that contain non alphabetical chars and convering all to uppercase
@@ -37,4 +37,4 @@ for entry in data:
 
 file = open("wordlist.txt", "w")
 file.write(wordlist)
-print(length) 
+print(length)
