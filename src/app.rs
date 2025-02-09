@@ -541,6 +541,7 @@ impl Component for App {
                 self.current_ui_page = "game";
                 self.create_empty_field();
                 self.create_new_keyboard();
+                self.update_view(widgets, sender);
             }
             AppMsg::EnterLetter(c) => {
                 let upper_case = c.to_uppercase().to_string(); // TODO: Logic needs to be improved if we want to support e.g. ß => SS
@@ -645,7 +646,8 @@ impl Component for App {
 
             AppMsg::GameOver(won) => {
                 self.game_won = won;
-                self.current_ui_page = "game_over"
+                self.current_ui_page = "game_over";
+                self.update_view(widgets, sender);
             }
 
             AppMsg::SetLengthTo(length) => {
