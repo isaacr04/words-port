@@ -35,4 +35,4 @@ Now comes the word list. All words have to be in upper case.
 ## German word list
 
 The file "dwds_lemmata_2025-02-09.json" is from [dwds](https://www.dwds.de/lemma/list). Its licenced under  the [Creative Commons BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.de) licence.
-The file "Deutsch.txt" is generated based on "dwds_lemmata_2025-02-09.json". The same licens applies.
+The file "Deutsch.txt" is generated based on "dwds_lemmata_2025-02-09.json". The same licence applies.
