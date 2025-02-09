@@ -66,7 +66,7 @@ impl SimpleComponent for StatisticsDialog {
                         set_margin_top: 10,
                     },
                     gtk::Label {
-                        set_label: "Distribution by Trials",
+                        set_label: "Distribution by Trials:",
                         set_wrap: true,
                         set_css_classes: &["title-3"],
                         set_margin_top: 20,
