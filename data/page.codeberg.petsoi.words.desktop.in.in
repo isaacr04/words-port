@@ -5,8 +5,8 @@ Comment=Guess Words
 Type=Application
 Exec=words
 Terminal=false
-Categories=Game;LogicGame
+Categories=Game;LogicGame;
 # Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
-Keywords=Game;Word;Puzzle;wordle;Gnome
+Keywords=Game;Word;Puzzle;wordle;Gnome;
 Icon=@icon@
 StartupNotify=false
