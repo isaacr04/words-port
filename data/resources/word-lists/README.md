@@ -24,7 +24,7 @@ All letters have to be in upper case.
 
 ## Available Word lengths (Line 4)
 
-The line has to start with `4LENGTHS:`, then comma separated the available lengths of words. The list provided to the user will be empty if there is no word with a matching length in the list.
+The line has to start with `4LENGTHS:`, then comma separated the available lengths of words. The list provided to the user will be empty if there is no word with a matching length in the list. Note that currently only word lengths from 4 to 11 are possible.
 
 ## Word List
 
