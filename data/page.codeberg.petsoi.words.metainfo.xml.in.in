@@ -13,19 +13,19 @@
     <p>Want to see your language in the game? Feel free to send me a word list!</p>
   </description>
   <screenshots>
-    <screenshot type="default">
+    <screenshot environment="gnome:light">
       <image type="source">https://codeberg.org/petsoi/words/raw/branch/main/data/resources/screenshots/main_light.png</image>
       <caption>Main Window</caption>
     </screenshot>
-    <screenshot>
+    <screenshot environment="gnome:dark">
       <image type="source">https://codeberg.org/petsoi/words/raw/branch/main/data/resources/screenshots/main_dark.png</image>
       <caption>Main Window</caption>
     </screenshot>
-    <screenshot>
+    <screenshot environment="gnome:light">
       <image type="source">https://codeberg.org/petsoi/words/raw/branch/main/data/resources/screenshots/gameover_light.png</image>
       <caption>Game Over</caption>
     </screenshot>
-    <screenshot>
+    <screenshot environment="gnome:light">
       <image type="source">https://codeberg.org/petsoi/words/raw/branch/main/data/resources/screenshots/statistics_light.png</image>
       <caption>Game Statisics</caption>
     </screenshot>
@@ -82,12 +82,12 @@
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   <releases>
-    <release version="0.4.1" date="2025-02-06">
+    <release version="0.4.1" date="2025-02-09">
       <description>
         <p>Fixes bug where game was not terminated properly.</p>
       </description>
     </release>
-    <release version="0.4.0" date="2025-02-06">
+    <release version="0.4.0" date="2025-02-08">
       <description>
         <p>Add statistics.</p>
       </description>
