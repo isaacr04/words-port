@@ -30,10 +30,11 @@ for entry in data:
         if int(entry["freq"]) >= min_frequency:
             word =  entry["lemma"]
             if len(word) >= min_length and len(word) <= max_length:
-                word = check_chars(word)
-                if word:
-                    wordlist += "\n" + word
-                    length += 1
+                if not entry["pos"] == "":
+                    word = check_chars(word)
+                    if word:
+                        wordlist += "\n" + word
+                        length += 1
 
 file = open("wordlist.txt", "w")
 file.write(wordlist)
