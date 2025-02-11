@@ -1,34 +1,38 @@
-# Word List Specification
+# Word List Specification  
 
 ```
-1Q,W,E,R,T,Y,U,I,O,P
-2A,S,D,F,G,H,J,K,L,DEL
-3Z,X,C,V,B,N,M,SEND
-4LENGTHS:4,5,6,7,8,9,10,11
-AAHED
-AAHING
-AAHS
+1Q,W,E,R,T,Y,U,I,O,P  
+2A,S,D,F,G,H,J,K,L,DEL  
+3Z,X,C,V,B,N,M,SEND  
+4LENGTHS:4,5,6,7,8,9,10,11  
+AAHED  
+AAHING  
+AAHS  
 ```
 
-## Keyboard Spec (Line 1-3)
+## Keyboard Layout (Lines 1-3)  
 
-Prefix number, then the keys separated by a comma.
+Each line starts with a **row number**, followed by a comma-separated list of keys.  
 
-**Important:** only characters which are listed here can be used to guess words. Therefore check, none of the words in your word list contain those.
+- **Only the listed characters** can be used to guess words. Ensure that no words in your list contain **other characters**.  
+- The keyboard consists of **exactly three rows**.  
+- **All letters must be uppercase**.  
+- `DEL` and `SEND` are **special placeholders**. These will be replaced accordingly and **cannot be modified**.  
 
-The key board will be built up according to this. There must be exactly three rows.
+## Word Lengths (Line 4)  
 
-All letters have to be in upper case.
+This line must start with `4LENGTHS:`, followed by a comma-separated list of **allowed word lengths**.  
 
-`DEL` and `SEND` are special placeholders and will be replaced accordingly. You cannot do any translations here.
+- Only words with the specified lengths will be available to users.  
+- If no words match a given length, the list will appear **empty**.  
+- Supported word lengths: **4 to 11 characters**.  
 
-## Available Word lengths (Line 4)
+## Word List (Starting from Line 5)  
 
-The line has to start with `4LENGTHS:`, then comma separated the available lengths of words. The list provided to the user will be empty if there is no word with a matching length in the list. Note that currently only word lengths from 4 to 11 are possible.
+The word list follows.  
 
-## Word List
-
-Now comes the word list. All words have to be in upper case.
+- **All words must be uppercase**.  
+- Words should only contain characters from the **Keyboard Layout** section.  
 
 # Licences and attribution
 
