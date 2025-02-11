@@ -32,6 +32,19 @@ Now comes the word list. All words have to be in upper case.
 
 # Licences and attribution
 
+## English word list
+
+Source [Wordnik](https://www.wordnik.com/)
+
+> You are free to use this list in any way you'd like. This includes
+> commercial uses, though I'd appreciate it if you didn't just turn
+> around and try to sell it (but I mean, I'll still offer it for free
+> to anyone so that wouldn't be a smart business venture anyway).
+
+The wordnik list is available under the terms of the MIT license, and its license file is included unmodified in this directory in
+`LICENSE.wordnik`
+
+
 ## German word list
 
 The file "dwds_lemmata_2025-02-09.json" is from [dwds](https://www.dwds.de/lemma/list). Its licenced under  the [Creative Commons BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.de) licence.

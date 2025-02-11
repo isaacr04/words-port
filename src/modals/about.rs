@@ -13,7 +13,7 @@ impl SimpleComponent for AboutDialog {
     type Root = adw::AboutWindow;
 
     fn init_root() -> Self::Root {
-        adw::AboutWindow::builder()
+        let dialog = adw::AboutWindow::builder()
             .application_icon(APP_ID)
             // Insert your license of choice here
             .license_type(gtk::License::Gpl30)
@@ -27,9 +27,10 @@ impl SimpleComponent for AboutDialog {
             // .translator_credits("translator-credits")
             .copyright("© 2025 Peter Sonntag")
             .developers(vec!["Peter Sonntag"])
-            .designers(vec!["Peter Sonntag"])
             .hide_on_close(true)
-            .build()
+            .build();
+        dialog.add_credit_section(Some(&"Word Lists"), &["Wordnik", "DWDS", "Definitiv"]);
+        dialog
     }
 
     fn init(
