@@ -16,6 +16,7 @@ use crate::{
     letter::LetterMsgOut,
 };
 use game_statistics::{GameStatistics, Outcome};
+use gettextrs::gettext;
 use gtk::prelude::{
     ApplicationExt, ApplicationWindowExt, ButtonExt, GtkWindowExt, OrientableExt, PopoverExt,
     SettingsExt, WidgetExt,
@@ -261,11 +262,11 @@ impl Component for App {
                         gtk::Label {
                             #[watch]
                             set_label: &if model.game_statistics.current_streak > 0
-                                    { format!("Current streak is {}.", model.game_statistics.current_streak) }
+                                    { &gettext!("Current streak is {}.", model.game_statistics.current_streak) }
                                 else
                                     if model.game_statistics.last_streak == 1 { "Your streak lasted 1 game.".to_owned() }
                                         else
-                                    { format!("Your streak lasted {} games.", model.game_statistics.last_streak) },
+                                    { &gettext!("Your streak lasted {} games.", model.game_statistics.last_streak) },
                             set_margin_top: 5,
                             set_wrap: true,
                             set_justify: gtk::Justification::Center,
@@ -284,7 +285,7 @@ impl Component for App {
                 set_margin_all: 10,
 
                 gtk::Label {
-                    set_label: "Word List:",
+                    set_label: &gettext("Word List:"),
                     set_align: Align::Start,
                 },
 
