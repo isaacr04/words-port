@@ -84,7 +84,7 @@
   <releases>
     <release version="0.4.2" date="2025-02-11">
       <description>
-        <p>Fix Garman word list</p>
+        <p>Improve German word list</p>
         <p>Remove word list 'English reduced"</p>
       </description>
     </release>
