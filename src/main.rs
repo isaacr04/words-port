@@ -22,12 +22,6 @@ relm4::new_stateless_action!(QuitAction, AppActionGroup, "quit");
 fn main() {
     gtk::init().unwrap();
 
-    // Enable logging
-    tracing_subscriber::fmt()
-        .with_span_events(tracing_subscriber::fmt::format::FmtSpan::FULL)
-        .with_max_level(tracing::Level::INFO)
-        .init();
-
     // setup gettext
     gettextrs::setlocale(LocaleCategory::LcAll, "");
     gettextrs::bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR).expect("Unable to bind the text domain");
