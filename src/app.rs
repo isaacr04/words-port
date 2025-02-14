@@ -60,6 +60,7 @@ pub(super) struct App {
     index_of_currently_selected_word_list: usize,
     current_word_list_name: String,
     game_statistics: GameStatistics,
+    last_action_letter_selected: bool,
 }
 
 #[derive(Debug)]
@@ -74,6 +75,7 @@ pub(super) enum AppMsg {
     EnterWord,
     EnterDelete,
     EnterBackspace,
+    EnterOnScreenClear,
     Space,
     ShowStatistics,
     Quit,
@@ -487,6 +489,7 @@ impl Component for App {
             index_of_currently_selected_word_list,
             current_word_list_name: list_name.to_owned(),
             game_statistics,
+            last_action_letter_selected: false,
         };
 
         root.add_controller(keyboard_events_controller(sender.clone()));
@@ -527,6 +530,7 @@ impl Component for App {
                 if index.row == self.attempts {
                     self.select_field(index)
                 }
+                self.last_action_letter_selected = true;
             }
             AppMsg::MoveCursor(step) => {
                 self.index_of_last_entered_letter = 0;
@@ -542,6 +546,7 @@ impl Component for App {
                 self.create_empty_field();
                 self.create_new_keyboard();
                 self.update_view(widgets, sender);
+                self.last_action_letter_selected = false;
             }
             AppMsg::EnterLetter(c) => {
                 let upper_case = c.to_uppercase().to_string(); // TODO: Logic needs to be improved if we want to support e.g. ß => SS
@@ -557,9 +562,13 @@ impl Component for App {
                     );
                     self.index_of_last_entered_letter = self.selected_letter.column;
                     self.move_selection_by(1);
+                    self.last_action_letter_selected = false;
                 }
             }
-            AppMsg::EnterDelete => self.letters.send(&selected, LetterMsgIn::SetContent(None)),
+            AppMsg::EnterDelete => {
+                self.letters.send(&selected, LetterMsgIn::SetContent(None));
+                self.last_action_letter_selected = false;
+            }
             AppMsg::Space => {
                 self.letters.send(&selected, LetterMsgIn::SetContent(None));
                 self.move_selection_by(1);
@@ -581,7 +590,16 @@ impl Component for App {
                 }
                 self.move_selection_by(-1);
                 self.letters
-                    .send(&self.selected_letter, LetterMsgIn::SetContent(None))
+                    .send(&self.selected_letter, LetterMsgIn::SetContent(None));
+                self.last_action_letter_selected = false;
+            }
+            AppMsg::EnterOnScreenClear => {
+                if self.last_action_letter_selected {
+                    sender.input(AppMsg::EnterDelete);
+                } else {
+                    sender.input(AppMsg::EnterBackspace);
+                }
+                self.last_action_letter_selected = false;
             }
             AppMsg::EnterWord => {
                 let Some(content_of_current_attempt) = self.get_entered_word() else {
@@ -648,6 +666,7 @@ impl Component for App {
                 self.game_won = won;
                 self.current_ui_page = "game_over";
                 self.update_view(widgets, sender);
+                self.last_action_letter_selected = false;
             }
 
             AppMsg::SetLengthTo(length) => {
@@ -735,7 +754,7 @@ fn create_empty_on_screen_button_rows(
                 .forward(sender.input_sender(), |msg| match msg {
                     Key::Letter(c) => AppMsg::EnterLetter(c),
                     Key::Enter => AppMsg::EnterWord,
-                    Key::Del => AppMsg::EnterBackspace,
+                    Key::Del => AppMsg::EnterOnScreenClear,
                 })
         })
         .collect()
