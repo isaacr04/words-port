@@ -70,7 +70,7 @@ impl SimpleComponent for HelpDialog {
                             set_align: Align::Center,
                             set_margin_all: 10,
                             set_row_homogeneous: true,
-                            set_column_spacing: 5,
+                            set_column_spacing: 10,
 
                             attach[1, 1, 1, 1] = &gtk::Button {
                                 set_label: &"A",
@@ -91,6 +91,8 @@ impl SimpleComponent for HelpDialog {
                                 set_css_classes: &["match"],
                                 set_halign: Align::End,
                                 set_valign: Align::Center,
+                                set_margin_top: 2,
+                                set_margin_bottom: 2,
                             },
                             attach[2, 2, 1, 1] =  &gtk::Label {
                                 set_label: "The letter is correct but in the wrong position.",
@@ -119,7 +121,7 @@ impl SimpleComponent for HelpDialog {
                             set_label: "Use this feedback to refine your subsequent guesses and solve the puzzle within six attempts.",
                             set_justify: gtk::Justification::Center,
                             set_margin_top: 5,
-                            set_margin_bottom: 5,
+                            set_margin_bottom: 20,
                             set_wrap: true,
                         }
                     }
