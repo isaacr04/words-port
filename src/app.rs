@@ -6,6 +6,7 @@ use std::time::Duration;
 use std::{char, usize};
 
 use crate::letter::{Coord, Format, LetterMsgIn};
+use crate::modals::help_dialog::HelpDialog;
 use crate::modals::statistics_dialog::{StatisticsDialog, StatisticsMsg};
 use crate::onscreen_button::{self, Key, OnScreenButton, OnScreenButtonMsgIn};
 use crate::{
@@ -44,6 +45,7 @@ pub(super) struct App {
     letters: FactoryHashMap<Coord, Letter>,
     about_dialog: Controller<AboutDialog>,
     statistics_dialog: Controller<StatisticsDialog>,
+    help_dialog: Controller<HelpDialog>,
     selected_letter: Coord,
     word: String,
     number_of_letters: usize,
@@ -78,6 +80,7 @@ pub(super) enum AppMsg {
     EnterOnScreenClear,
     Space,
     ShowStatistics,
+    ShowHelp,
     Quit,
 }
 
@@ -92,6 +95,7 @@ relm4::new_stateless_action!(pub(super) ShortcutsAction, WindowActionGroup, "sho
 relm4::new_stateless_action!(AboutAction, WindowActionGroup, "about");
 relm4::new_stateless_action!(pub(super) NewGameAction, GameActionGroup, "new");
 relm4::new_stateless_action!(pub(super) StatisticsAction, GameActionGroup, "statistics");
+relm4::new_stateless_action!(pub(super) HelpAction, GameActionGroup, "help");
 
 #[relm4::component(pub)]
 impl Component for App {
@@ -105,6 +109,7 @@ impl Component for App {
         main_menu: {
             section! {
                 "_Statistics" => StatisticsAction,
+                "_Help" => HelpAction,
                 "_Keyboard" => ShortcutsAction,
                 "_About Words!" => AboutAction,
             }
@@ -463,6 +468,8 @@ impl Component for App {
             })
             .detach();
 
+        let help_dialog = HelpDialog::builder().launch(HelpDialog {}).detach();
+
         let letters =
             FactoryHashMap::builder()
                 .launch_default()
@@ -473,6 +480,7 @@ impl Component for App {
         let model = Self {
             about_dialog,
             statistics_dialog,
+            help_dialog,
             letters,
             selected_letter: Coord { column: 0, row: 0 },
             word: String::new(),
@@ -715,6 +723,11 @@ impl Component for App {
                     .widget()
                     .present(Some(&widgets.main_window));
             }
+            AppMsg::ShowHelp => {
+                self.help_dialog
+                    .widget()
+                    .present(Some(&widgets.main_window));
+            }
         }
     }
 
@@ -922,8 +935,15 @@ fn register_actions(sender: ComponentSender<App>, widgets: &AppWidgets, model: &
     };
 
     let show_statistics_action = {
+        let sender = sender.clone();
         RelmAction::<StatisticsAction>::new_stateless(move |_| {
             sender.input(AppMsg::ShowStatistics);
+        })
+    };
+
+    let show_help_action = {
+        RelmAction::<HelpAction>::new_stateless(move |_| {
+            sender.input(AppMsg::ShowHelp);
         })
     };
 
@@ -931,6 +951,7 @@ fn register_actions(sender: ComponentSender<App>, widgets: &AppWidgets, model: &
     window_actions.add_action(about_action);
     game_actions.add_action(new_game_action);
     game_actions.add_action(show_statistics_action);
+    game_actions.add_action(show_help_action);
     window_actions.register_for_widget(&widgets.main_window);
     game_actions.register_for_widget(&widgets.main_window);
 }
