@@ -14,12 +14,16 @@
       <summary>Window maximized state</summary>
     </key>
     <key name="game-name" type="s">
-        <default>"English"</default>
-        <summary>File name of the last selected word list</summary>
+      <default>"English"</default>
+      <summary>File name of the last selected word list</summary>
     </key>
     <key name="number-of-letters" type="u">
-        <default>5</default>
-        <summary>The number of letters of the last game</summary>
+      <default>5</default>
+      <summary>The number of letters of the last game</summary>
+    </key>
+    <key name="help-displayed" type="b">
+      <default>false</default>
+      <summary>Have we already displayed the help dialog to the user</summary>
     </key>
   </schema>
 </schemalist>

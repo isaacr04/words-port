@@ -437,6 +437,7 @@ impl Component for App {
 
         let last_game = settings.string("game-name").to_string();
         let last_number_of_letters = settings.uint("number-of-letters") as usize;
+        let help_dialog_displayed = settings.boolean("help-displayed") as bool;
 
         let available_word_lists = get_available_word_lists().unwrap();
 
@@ -518,6 +519,10 @@ impl Component for App {
         widgets.load_window_size();
 
         sender.input(AppMsg::StartNewGame);
+        if !help_dialog_displayed {
+            sender.input(AppMsg::ShowHelp);
+            let _ = settings.set_boolean("help-displayed", true);
+        }
 
         ComponentParts { model, widgets }
     }

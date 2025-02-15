@@ -64,7 +64,7 @@ impl SimpleComponent for HelpDialog {
                             set_margin_end: 5,
                             set_wrap: true,
                             set_justify: gtk::Justification::Center,
-                            set_markup: "After each guess, the game provides feedback with <b>color-coded</b> hints",
+                            set_markup: "After each guess, the game provides feedback with <b>color-coded</b> hints:",
                         },
                         gtk::Grid {
                             set_align: Align::Center,
