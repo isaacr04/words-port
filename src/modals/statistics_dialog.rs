@@ -61,7 +61,7 @@ impl SimpleComponent for StatisticsDialog {
                     },
                     gtk::Label {
                         #[watch]
-                        set_label: &format!("Streaks: Current: {}, Longest: {}", model.statistic.current_streak,  model.statistic.longest_streak),
+                        set_markup: &format!("<b>Streaks:</b> Current: {}, Longest: {}", model.statistic.current_streak,  model.statistic.longest_streak),
                         set_wrap: true,
                         set_margin_top: 10,
                     },

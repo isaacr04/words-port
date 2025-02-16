@@ -50,7 +50,6 @@ impl SimpleComponent for HelpDialog {
                             set_markup: "<b>Words!</b> is a word puzzle where you have <b>six</b> tries to guess a hidden word.",
                         },
                         gtk::Label {
-                            #[watch]
                             set_margin_top: 10,
                             set_margin_start: 5,
                             set_margin_end: 5,
