@@ -108,7 +108,7 @@ fn get_available_word_lengths(line: String) -> anyhow::Result<WordLengths> {
 
     let (prefix, numbers) = line
         .split_at_checked(9)
-        .ok_or_else(|| anyhow!("String too short {line}"))?;
+        .ok_or_else(|| anyhow!("String too short for getting word lengths: '{line}'"))?;
     if prefix != "4LENGTHS:" {
         Err(anyhow!("Expected prefix '4LENGTHS:', got '{}'", line))
     } else {
@@ -159,7 +159,7 @@ fn line_to_keys(line: &str) -> anyhow::Result<(usize, Vec<Key>)> {
 
     let (number, line) = line
         .split_at_checked(1)
-        .ok_or_else(|| anyhow!("String too short {line}"))?;
+        .ok_or_else(|| anyhow!("String too short when getting Keys: '{line}'"))?;
 
     for key in line.split(',') {
         match key {
