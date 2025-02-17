@@ -73,5 +73,7 @@ fn load_statistics_from_file(name: String) -> Result<GameStatistics, anyhow::Err
 }
 
 fn get_path() -> String {
-    env::var("XDG_DATA_HOME").expect("XDG_DATA_HOME not found") + "/"
+    env::var("XDG_DATA_HOME")
+        .unwrap_or(env::var("HOME").expect("HOME is not defined") + "/.local/share")
+        + "/"
 }
