@@ -11,6 +11,7 @@ use crate::onscreen_button::Key;
 
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) struct WordList {
+    pub secret_words: HashSet<String>,
     pub allowed_words: HashSet<String>,
     pub allowed_letters: HashSet<char>,
     pub keys: Vec<Vec<Key>>,
@@ -72,10 +73,11 @@ pub(crate) fn read_word_list(
 }
 
 fn get_path() -> &'static str {
+    println!("XDG_DATA_DIRS: {:?}", env::var("XDG_DATA_DIRS"));
     if env::var("FLATPAK_ID").is_ok() {
         "/app/share/word-lists/"
     } else {
-        "data/resources/word-lists/"
+        panic!("jjj");
     }
 }
 
@@ -93,10 +95,11 @@ fn read_word_list_from_path(path: &str, length: usize) -> anyhow::Result<Option<
         return Ok(None);
     }
 
-    let allowed_words = get_allowed_words(lines, length);
+    let (allowed_words, secret_words) = get_allowed_words(lines, length);
 
     Ok(Some(WordList {
         allowed_words,
+        secret_words,
         allowed_letters,
         keys,
         available_word_lengths,
@@ -171,11 +174,28 @@ fn line_to_keys(line: &str) -> anyhow::Result<(usize, Vec<Key>)> {
     Ok((number.parse::<usize>()?, keys))
 }
 
-fn get_allowed_words(lines: io::Lines<io::BufReader<File>>, length: usize) -> HashSet<String> {
-    lines
-        .flatten()
-        .filter(|w| w.chars().count() == length)
-        .collect()
+fn get_allowed_words(
+    mut lines: io::Lines<io::BufReader<File>>,
+    length: usize,
+) -> (HashSet<String>, HashSet<String>) {
+    let mut secrets = true;
+    let mut allowed_words = HashSet::new();
+    let mut secret_words = HashSet::new();
+
+    while let Some(Ok(line)) = lines.next() {
+        if secrets == true && line.chars().next() == Some('-') {
+            secrets = false;
+            continue;
+        }
+        if line.chars().count() != length {
+            continue;
+        }
+        allowed_words.insert(line.clone());
+        if secrets {
+            secret_words.insert(line);
+        }
+    }
+    (allowed_words, secret_words)
 }
 
 #[cfg(test)]
@@ -186,7 +206,8 @@ mod tests {
     fn test() {
         let actual_word_list = read_word_list_from_path("src/app/test.txt", 4).unwrap();
         let expected_word_list = WordList {
-            allowed_words: vec!["AARE".to_owned(), "ÄALE".to_owned()]
+            secret_words: vec!["ÄALE".to_owned()].into_iter().collect(),
+            allowed_words: vec!["ÄALE".to_owned(), "AARE".to_owned(), "BUCH".to_owned()]
                 .into_iter()
                 .collect(),
             allowed_letters: vec!['W', 'Y', 'Q', 'T', 'D', 'E', 'A', 'S', 'F', 'R']

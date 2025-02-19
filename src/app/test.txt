@@ -6,6 +6,9 @@
 AALFANG
 AALKORB
 AALNETZ
-AARE
 AAREAL
 ABAKUS
+----^^^^^-secret-^^^^----vvvv-public-vvvv----
+AARE
+BUCH
+PLANAR

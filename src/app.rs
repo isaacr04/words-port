@@ -550,7 +550,7 @@ impl Component for App {
                 self.move_selection_by(step)
             }
             AppMsg::StartNewGame => {
-                self.word = pick_random_word(&self.word_list.allowed_words);
+                self.word = pick_random_word(&self.word_list);
                 println!("New Word: {}", self.word);
                 self.attempts = 0;
                 self.index_of_last_entered_letter = 0;
@@ -880,8 +880,22 @@ impl App {
     }
 }
 
-fn pick_random_word(words: &HashSet<String>) -> String {
-    words.iter().choose(&mut rand::rng()).unwrap().clone()
+fn pick_random_word(words: &WordList) -> String {
+    if words.secret_words.is_empty() {
+        words
+            .allowed_words
+            .iter()
+            .choose(&mut rand::rng())
+            .unwrap()
+            .clone()
+    } else {
+        words
+            .secret_words
+            .iter()
+            .choose(&mut rand::rng())
+            .unwrap()
+            .clone()
+    }
 }
 
 fn keyboard_events_controller(sender: ComponentSender<App>) -> EventControllerKey {

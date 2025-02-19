@@ -7,7 +7,14 @@
 4LENGTHS:4,5,6,7,8,9,10,11  
 AAHED  
 AAHING  
-AAHS  
+AAHS
+----^^^^^-secret-^^^^----vvvv-public-vvvv----
+ABAKAS
+ABALONE
+ABALONES
+ABAMP
+ABAMPERE
+ABAMPERES
 ```
 
 ## Keyboard Layout (Lines 1-3)  
@@ -29,10 +36,24 @@ This line must start with `4LENGTHS:`, followed by a comma-separated list of **a
 
 ## Word List (Starting from Line 5)  
 
-The word list follows.  
+The word list follows containing two sections, the secret words and the none secret words.
 
 - **All words must be uppercase**.  
 - Words should only contain characters from the **Keyboard Layout** section.  
+
+### Secret Words
+
+The first part of the wordlist are the secret words.
+Those words are the pool for selecing the secret word but are also part of the allowed list, the user can pick from for guessing.
+When there are no matching secret words with the correct wordlength, the program will fallback to the allowed word list.
+
+### Separator
+
+The separator has to start with '-' and separates the section of the secret words to the normal allowed words.
+
+### Non Secret Words
+
+Now follows words from which the user can pick for guessing, but which will never show up as a secret word.
 
 # Licences and attribution
 
