@@ -73,11 +73,10 @@ pub(crate) fn read_word_list(
 }
 
 fn get_path() -> &'static str {
-    println!("XDG_DATA_DIRS: {:?}", env::var("XDG_DATA_DIRS"));
     if env::var("FLATPAK_ID").is_ok() {
         "/app/share/word-lists/"
     } else {
-        panic!("jjj");
+        panic!("Schould not happen");
     }
 }
 
