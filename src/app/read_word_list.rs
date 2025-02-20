@@ -12,7 +12,7 @@ use crate::onscreen_button::Key;
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) struct WordList {
     pub secret_words: HashSet<String>,
-    pub allowed_words: HashSet<String>,
+    pub none_secret_words: HashSet<String>,
     pub allowed_letters: HashSet<char>,
     pub keys: Vec<Vec<Key>>,
     pub available_word_lengths: WordLengths,
@@ -94,10 +94,10 @@ fn read_word_list_from_path(path: &str, length: usize) -> anyhow::Result<Option<
         return Ok(None);
     }
 
-    let (allowed_words, secret_words) = get_allowed_words(lines, length);
+    let (none_secret_words, secret_words) = get_words(lines, length);
 
     Ok(Some(WordList {
-        allowed_words,
+        none_secret_words,
         secret_words,
         allowed_letters,
         keys,
@@ -173,12 +173,12 @@ fn line_to_keys(line: &str) -> anyhow::Result<(usize, Vec<Key>)> {
     Ok((number.parse::<usize>()?, keys))
 }
 
-fn get_allowed_words(
+fn get_words(
     mut lines: io::Lines<io::BufReader<File>>,
     length: usize,
 ) -> (HashSet<String>, HashSet<String>) {
     let mut secrets = true;
-    let mut allowed_words = HashSet::new();
+    let mut none_secret_words = HashSet::new();
     let mut secret_words = HashSet::new();
 
     while let Some(Ok(line)) = lines.next() {
@@ -189,12 +189,13 @@ fn get_allowed_words(
         if line.chars().count() != length {
             continue;
         }
-        allowed_words.insert(line.clone());
         if secrets {
             secret_words.insert(line);
+        } else {
+            none_secret_words.insert(line.clone());
         }
     }
-    (allowed_words, secret_words)
+    (none_secret_words, secret_words)
 }
 
 #[cfg(test)]
@@ -206,7 +207,7 @@ mod tests {
         let actual_word_list = read_word_list_from_path("src/app/test.txt", 4).unwrap();
         let expected_word_list = WordList {
             secret_words: vec!["ÄALE".to_owned()].into_iter().collect(),
-            allowed_words: vec!["ÄALE".to_owned(), "AARE".to_owned(), "BUCH".to_owned()]
+            none_secret_words: vec!["AARE".to_owned(), "BUCH".to_owned()]
                 .into_iter()
                 .collect(),
             allowed_letters: vec!['W', 'Y', 'Q', 'T', 'D', 'E', 'A', 'S', 'F', 'R']

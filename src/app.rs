@@ -634,10 +634,14 @@ impl Component for App {
                     return;
                 }
 
-                if !self
+                if !(self
                     .word_list
-                    .allowed_words
+                    .none_secret_words
                     .contains(content_of_current_attempt.as_str())
+                    || self
+                        .word_list
+                        .secret_words
+                        .contains(content_of_current_attempt.as_str()))
                 {
                     if !self.toast_words_in_dictionary_displayed {
                         let toast = Toast::new("Words have to be in the dictionary.");
@@ -883,7 +887,7 @@ impl App {
 fn pick_random_word(words: &WordList) -> String {
     if words.secret_words.is_empty() {
         words
-            .allowed_words
+            .none_secret_words
             .iter()
             .choose(&mut rand::rng())
             .unwrap()
