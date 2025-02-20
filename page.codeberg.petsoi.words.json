@@ -10,7 +10,9 @@
     "command": "words",
     "finish-args": [
         "--socket=fallback-x11",
-        "--socket=wayland"
+        "--share=ipc",
+        "--socket=wayland",
+        "--device=dri"
     ],
     "build-options": {
         "append-ld-library-path": "/usr/lib/sdk/llvm18/lib",
