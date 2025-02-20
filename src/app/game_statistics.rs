@@ -13,6 +13,8 @@ pub(crate) struct GameStatistics {
     pub total_games: usize,
     pub games_won: usize,
     pub current_streak: usize,
+    #[serde(skip)]
+    pub last_streak: usize,
     pub longest_streak: usize,
     pub games_won_tries: Vec<usize>,
 }
@@ -36,6 +38,7 @@ impl GameStatistics {
             self.longest_streak = self.longest_streak.max(self.current_streak);
             self.games_won_tries[tries - 1] += 1;
         } else {
+            self.last_streak = self.current_streak;
             self.current_streak = 0;
         }
         self.save_statistics(game_name, number_of_letters)?;
