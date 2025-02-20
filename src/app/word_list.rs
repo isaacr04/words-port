@@ -18,6 +18,12 @@ pub(crate) struct WordList {
     pub available_word_lengths: WordLengths,
 }
 
+impl WordList {
+    pub fn contains(&self, word: &str) -> bool {
+        self.none_secret_words.contains(word) || self.secret_words.contains(word)
+    }
+}
+
 #[derive(Debug, PartialEq, Eq, Default)]
 pub(crate) struct WordLengths {
     pub l4: bool,

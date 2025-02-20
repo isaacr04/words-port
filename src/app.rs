@@ -1,5 +1,5 @@
 pub mod game_statistics;
-mod read_word_list;
+mod word_list;
 
 use std::collections::{HashMap, HashSet};
 use std::time::Duration;
@@ -21,7 +21,6 @@ use gtk::prelude::{
 };
 use gtk::{gio, glib};
 use rand::seq::IteratorRandom;
-use read_word_list::{get_available_word_lists, read_word_list, WordList};
 use relm4::abstractions::Toaster;
 use relm4::adw::prelude::AdwDialogExt;
 use relm4::adw::Toast;
@@ -37,6 +36,7 @@ use relm4::{
     gtk::{self, prelude::GridExt},
     main_application, Component, ComponentController, ComponentParts, ComponentSender, Controller,
 };
+use word_list::{get_available_word_lists, read_word_list, WordList};
 
 static TRIES: usize = 6;
 static DEFAULT_GAME_NAME: &str = "English";
@@ -615,10 +615,10 @@ impl Component for App {
                 self.last_action_letter_selected = false;
             }
             AppMsg::EnterWord => {
-                let Some(content_of_current_attempt) = self.get_entered_word() else {
+                let Some(entered_word) = self.get_entered_word() else {
                     return;
                 };
-                if content_of_current_attempt == self.word {
+                if entered_word == self.word {
                     self.attempts += 1;
                     self.game_statistics
                         .update_game_statistics(
@@ -630,19 +630,11 @@ impl Component for App {
                     sender.input(AppMsg::GameOver(true));
                     return;
                 }
-                if content_of_current_attempt.chars().count() < self.number_of_letters {
+                if entered_word.chars().count() < self.number_of_letters {
                     return;
                 }
 
-                if !(self
-                    .word_list
-                    .none_secret_words
-                    .contains(content_of_current_attempt.as_str())
-                    || self
-                        .word_list
-                        .secret_words
-                        .contains(content_of_current_attempt.as_str()))
-                {
+                if !(self.word_list.contains(&entered_word)) {
                     if !self.toast_words_in_dictionary_displayed {
                         let toast = Toast::new("Words have to be in the dictionary.");
                         self.toaster.add_toast(toast);
@@ -657,7 +649,7 @@ impl Component for App {
                     return;
                 }
 
-                self.set_color_of_letters_according_matching(&content_of_current_attempt);
+                self.set_color_of_letters_according_matching(&entered_word);
 
                 self.attempts += 1;
 
