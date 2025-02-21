@@ -49,7 +49,7 @@ impl SimpleComponent for StatisticsDialog {
 
                     gtk::Label {
                         #[watch]
-                        set_label: &format!("{} - Word Length: {}", model.word_list_name, model.number_of_letters),
+                        set_label: &format!("{} - {} Letters", model.word_list_name, model.number_of_letters),
                         set_css_classes: &["title-3"],
                         set_wrap: true,
                     },

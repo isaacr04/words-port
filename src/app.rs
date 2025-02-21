@@ -259,8 +259,10 @@ impl Component for App {
                         },
                         gtk::Label {
                             #[watch]
-                            set_label: &if model.game_statistics.current_streak > 0 {format!("Current streak is {}.", model.game_statistics.current_streak)}
-                                else {format!("This streak was {} long.", model.game_statistics.last_streak)},
+                            set_label: &if model.game_statistics.current_streak > 0
+                                    { format!("Current streak is {}.", model.game_statistics.current_streak) }
+                                else
+                                    { format!("Your streak lasted {} games.", model.game_statistics.last_streak) },
                             set_margin_top: 5,
                             set_wrap: true,
                             set_justify: gtk::Justification::Center,
