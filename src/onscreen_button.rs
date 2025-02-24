@@ -38,7 +38,7 @@ impl Key {
         match self {
             Key::Letter(c) => c.to_uppercase().to_string(),
             Key::Enter => "Enter".to_owned(),
-            Key::Del => "Delete".to_owned(),
+            Key::Del => "Del".to_owned(),
         }
     }
 }
