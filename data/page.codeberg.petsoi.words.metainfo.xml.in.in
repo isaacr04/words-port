@@ -22,11 +22,15 @@
       <caption>Main Window</caption>
     </screenshot>
     <screenshot>
-      <image type="source">https://codeberg.org/petsoi/words/raw/branch/main/data/resources/screenshots/gameover_light.png</image>
+      <image type="source">https://codeberg.org/petsoi/words/raw/branch/main/data/resources/screenshots/select_game.png</image>
+      <caption>Select Game</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source">https://codeberg.org/petsoi/words/raw/branch/main/data/resources/screenshots/game_over.png</image>
       <caption>Game Over</caption>
     </screenshot>
     <screenshot>
-      <image type="source">https://codeberg.org/petsoi/words/raw/branch/main/data/resources/screenshots/statistics_light.png</image>
+      <image type="source">https://codeberg.org/petsoi/words/raw/branch/main/data/resources/screenshots/statistic.png</image>
       <caption>Game Statisics</caption>
     </screenshot>
   </screenshots>
