@@ -1,11 +1,11 @@
 use relm4::{
-    factory::{positions::GridPosition, Position},
+    FactorySender, RelmWidgetExt,
+    factory::{Position, positions::GridPosition},
     gtk::{
         self,
         prelude::{ButtonExt, WidgetExt},
     },
     prelude::FactoryComponent,
-    FactorySender, RelmWidgetExt,
 };
 
 #[derive(Debug, PartialEq, Copy, Clone)]

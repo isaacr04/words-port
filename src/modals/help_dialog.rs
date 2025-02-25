@@ -1,11 +1,10 @@
 use relm4::{
+    ComponentParts, ComponentSender, RelmWidgetExt, SimpleComponent,
     adw::{self, prelude::AdwDialogExt},
     gtk::{
-        self,
+        self, Align,
         prelude::{ButtonExt, GridExt, OrientableExt, WidgetExt},
-        Align,
     },
-    ComponentParts, ComponentSender, RelmWidgetExt, SimpleComponent,
 };
 
 #[derive(Debug, Clone)]

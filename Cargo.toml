@@ -2,7 +2,7 @@
 name = "words"
 version = "0.5.1"
 authors = ["Peter Sonntag <peter@sonniger-tag.eu>"]
-edition = "2021"
+edition = "2024"
 publish = false
 
 [profile.release]

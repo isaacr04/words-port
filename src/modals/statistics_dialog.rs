@@ -1,10 +1,10 @@
 use relm4::{
+    ComponentParts, ComponentSender, RelmWidgetExt, SimpleComponent,
     adw::{self, prelude::AdwDialogExt},
     gtk::{
         self,
         prelude::{OrientableExt, WidgetExt},
     },
-    ComponentParts, ComponentSender, RelmWidgetExt, SimpleComponent,
 };
 
 pub(crate) use crate::app::game_statistics::GameStatistics;

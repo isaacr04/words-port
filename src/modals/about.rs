@@ -1,5 +1,5 @@
 use gtk::prelude::GtkWindowExt;
-use relm4::{adw, gtk, ComponentParts, ComponentSender, SimpleComponent};
+use relm4::{ComponentParts, ComponentSender, SimpleComponent, adw, gtk};
 
 use crate::config::{APP_ID, VERSION};
 

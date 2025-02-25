@@ -1,10 +1,10 @@
 use relm4::{
+    FactorySender, RelmWidgetExt,
     gtk::{
         self,
         prelude::{ButtonExt, WidgetExt},
     },
     prelude::FactoryComponent,
-    FactorySender, RelmWidgetExt,
 };
 
 #[derive(Debug, PartialEq, Copy, Clone, PartialOrd)]

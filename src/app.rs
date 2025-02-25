@@ -21,22 +21,23 @@ use gtk::prelude::{
 };
 use gtk::{gio, glib};
 use rand::seq::IteratorRandom;
+use relm4::RelmWidgetExt;
 use relm4::abstractions::Toaster;
-use relm4::adw::prelude::AdwDialogExt;
 use relm4::adw::Toast;
+use relm4::adw::prelude::AdwDialogExt;
 use relm4::factory::FactoryHashMap;
 use relm4::gtk::glib::object::Cast;
 use relm4::gtk::glib::{GString, Propagation};
 use relm4::gtk::prelude::ToggleButtonExt;
 use relm4::gtk::{Align, EventControllerKey};
-use relm4::RelmWidgetExt;
 use relm4::{
+    Component, ComponentController, ComponentParts, ComponentSender, Controller,
     actions::{RelmAction, RelmActionGroup},
     adw,
     gtk::{self, prelude::GridExt},
-    main_application, Component, ComponentController, ComponentParts, ComponentSender, Controller,
+    main_application,
 };
-use word_list::{get_available_word_lists, read_word_list, WordList};
+use word_list::{WordList, get_available_word_lists, read_word_list};
 
 static TRIES: usize = 6;
 static DEFAULT_GAME_NAME: &str = "English";

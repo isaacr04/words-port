@@ -5,7 +5,7 @@ use std::{
     io::{self, BufRead, BufReader},
 };
 
-use anyhow::{anyhow, Context};
+use anyhow::{Context, anyhow};
 
 use crate::onscreen_button::Key;
 
