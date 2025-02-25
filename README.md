@@ -5,7 +5,7 @@
 <div align="center">
 
 ![Main window](data/resources/screenshots/main_light.png "Main window Light")
-![Main window](data/resources/screenshots/gameover_light.png "Main window Dark")
+![Main window](data/resources/screenshots/gameover.png "Main window Dark")
 
 </div>
 
