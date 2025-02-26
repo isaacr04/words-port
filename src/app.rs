@@ -263,6 +263,8 @@ impl Component for App {
                             set_label: &if model.game_statistics.current_streak > 0
                                     { format!("Current streak is {}.", model.game_statistics.current_streak) }
                                 else
+                                    if model.game_statistics.last_streak == 1 { "Your streak lasted 1 game.".to_owned() }
+                                        else
                                     { format!("Your streak lasted {} games.", model.game_statistics.last_streak) },
                             set_margin_top: 5,
                             set_wrap: true,
