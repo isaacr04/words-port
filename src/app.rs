@@ -907,10 +907,10 @@ fn keyboard_events_controller(sender: ComponentSender<App>) -> EventControllerKe
 
     controller.connect_key_pressed(move |_, keyval, _, _| {
         if let Some(name) = keyval.name() {
-            if name == right {
+            if name == right || name == "Tab" {
                 sender.input(AppMsg::MoveCursor(1))
             };
-            if name == left {
+            if name == left || name == "ISO_Left_Tab" {
                 sender.input(AppMsg::MoveCursor(-1))
             };
         };
