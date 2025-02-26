@@ -902,26 +902,21 @@ fn pick_random_word(words: &WordList) -> String {
 
 fn keyboard_events_controller(sender: ComponentSender<App>) -> EventControllerKey {
     let controller = EventControllerKey::new();
-    let right = GString::from("Right");
-    let left = GString::from("Left");
 
     controller.connect_key_pressed(move |_, keyval, _, _| {
         if let Some(name) = keyval.name() {
-            if name == right || name == "Tab" {
-                sender.input(AppMsg::MoveCursor(1))
-            };
-            if name == left || name == "ISO_Left_Tab" {
-                sender.input(AppMsg::MoveCursor(-1))
-            };
+            match name.as_str() {
+                "Right" | "Tab" => sender.input(AppMsg::MoveCursor(1)),
+                "Left" | "ISO_Left_Tab" => sender.input(AppMsg::MoveCursor(-1)),
+                "BackSpace" => sender.input(AppMsg::EnterBackspace),
+                "Delete" => sender.input(AppMsg::EnterDelete),
+                "Return" => sender.input(AppMsg::EnterWord),
+                "space" => sender.input(AppMsg::Space),
+                _ => {}
+            }
         };
         if let Some(c) = keyval.to_unicode() {
-            match c {
-                ' ' => sender.input(AppMsg::Space),
-                '\u{8}' => sender.input(AppMsg::EnterBackspace),
-                '\u{7f}' => sender.input(AppMsg::EnterDelete),
-                '\r' => sender.input(AppMsg::EnterWord),
-                c => sender.input(AppMsg::EnterLetter(c)),
-            }
+            sender.input(AppMsg::EnterLetter(c));
             Propagation::Stop
         } else {
             Propagation::Proceed
