@@ -77,8 +77,8 @@ pub(super) enum AppMsg {
     EnterLetter(char),
     EnterWord,
     EnterDelete,
+    Backspace,
     EnterBackspace,
-    EnterOnScreenClear,
     Space,
     ShowStatistics,
     ShowHelp,
@@ -592,7 +592,7 @@ impl Component for App {
                 self.letters.send(&selected, LetterMsgIn::SetContent(None));
                 self.move_selection_by(1);
             }
-            AppMsg::EnterBackspace => {
+            AppMsg::Backspace => {
                 (
                     selected.column,
                     self.index_of_last_entered_letter,
@@ -612,11 +612,11 @@ impl Component for App {
                     .send(&self.selected_letter, LetterMsgIn::SetContent(None));
                 self.last_action_letter_selected = false;
             }
-            AppMsg::EnterOnScreenClear => {
+            AppMsg::EnterBackspace => {
                 if self.last_action_letter_selected {
                     sender.input(AppMsg::EnterDelete);
                 } else {
-                    sender.input(AppMsg::EnterBackspace);
+                    sender.input(AppMsg::Backspace);
                 }
                 self.last_action_letter_selected = false;
             }
@@ -774,7 +774,7 @@ fn create_empty_on_screen_button_rows(
                 .forward(sender.input_sender(), |msg| match msg {
                     Key::Letter(c) => AppMsg::EnterLetter(c),
                     Key::Enter => AppMsg::EnterWord,
-                    Key::Del => AppMsg::EnterOnScreenClear,
+                    Key::Del => AppMsg::EnterBackspace,
                 })
         })
         .collect()
