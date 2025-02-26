@@ -26,8 +26,8 @@ use relm4::abstractions::Toaster;
 use relm4::adw::Toast;
 use relm4::adw::prelude::AdwDialogExt;
 use relm4::factory::FactoryHashMap;
+use relm4::gtk::glib::Propagation;
 use relm4::gtk::glib::object::Cast;
-use relm4::gtk::glib::{GString, Propagation};
 use relm4::gtk::prelude::ToggleButtonExt;
 use relm4::gtk::{Align, EventControllerKey};
 use relm4::{
