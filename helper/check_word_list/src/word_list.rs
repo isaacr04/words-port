@@ -64,6 +64,11 @@ impl WordList {
                 word_counter_secret.get(&length).unwrap_or(&0)
             );
         }
+        println!(
+            "In total {} words",
+            word_counter_none_secret.values().sum::<usize>()
+                + word_counter_secret.values().sum::<usize>()
+        );
     }
 
     pub(crate) fn store(&self, name_of_word_list: &str) {

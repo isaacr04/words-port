@@ -27,9 +27,9 @@
 
 ## Current State of Development
 
-The word list has room for improvements. Help is welcome.
+The word lists have room for improvements. Help is welcome.
 
-Currently it's my first app and I'm also still learning. Some things are missing ([See issues](https://codeberg.org/petsoi/words/issues)).
+Some things are missing ([See issues](https://codeberg.org/petsoi/words/issues)).
 
 Help is always welcome!
 
