@@ -1,3 +1,5 @@
+use std::ffi::OsStr;
+use std::path::Path;
 use std::{
     collections::HashSet,
     env,
@@ -54,8 +56,8 @@ impl WordLengths {
 
 pub(crate) fn get_available_word_lists() -> anyhow::Result<Vec<String>> {
     let mut files = vec![];
-    for entry in
-        fs::read_dir(get_path()).map_err(|_| anyhow!("Could read directory '{}'", get_path()))?
+    for entry in fs::read_dir(get_path()?)
+        .map_err(|_| anyhow!("Could read directory '{}'", get_path().unwrap()))?
     {
         if let Ok(entry) = entry {
             if entry.path().is_file() {
@@ -75,15 +77,32 @@ pub(crate) fn read_word_list(
 ) -> anyhow::Result<Option<WordList>> {
     let path = get_path();
 
-    read_word_list_from_path(&(path.to_owned() + name_of_word_list + ".txt"), word_length)
+    read_word_list_from_path(
+        &(path?.to_owned() + name_of_word_list + ".txt"),
+        word_length,
+    )
 }
 
-fn get_path() -> &'static str {
-    if env::var("FLATPAK_ID").is_ok() {
-        "/app/share/word-lists/"
-    } else {
-        panic!("Schould not happen");
+fn get_path() -> anyhow::Result<String> {
+    if let Ok(paths) = env::var("XDG_DATA_DIRS") {
+        let folder_name = "word-lists";
+        let paths = paths.split(":");
+
+        for path in paths {
+            for entry in fs::read_dir(Path::new(path))
+                .map_err(|_| anyhow!("Could read directory '{:?}'", get_path()))?
+            {
+                if let Ok(entry) = entry {
+                    if entry.path().is_dir() {
+                        if Some(OsStr::new(folder_name)) == entry.path().file_name() {
+                            return Ok(path.to_owned() + "/" + folder_name + "/");
+                        }
+                    }
+                }
+            }
+        }
     }
+    panic!("Word-list folder not found");
 }
 
 fn read_word_list_from_path(path: &str, length: usize) -> anyhow::Result<Option<WordList>> {
