@@ -89,20 +89,20 @@ fn get_path() -> anyhow::Result<String> {
         let paths = paths.split(":");
 
         for path in paths {
-            for entry in fs::read_dir(Path::new(path))
-                .map_err(|_| anyhow!("Could read directory '{:?}'", get_path()))?
-            {
-                if let Ok(entry) = entry {
-                    if entry.path().is_dir() {
-                        if Some(OsStr::new(folder_name)) == entry.path().file_name() {
-                            return Ok(path.to_owned() + "/" + folder_name + "/");
+            if let Ok(directory) = fs::read_dir(Path::new(path)) {
+                for entry in directory {
+                    if let Ok(entry) = entry {
+                        if entry.path().is_dir() {
+                            if Some(OsStr::new(folder_name)) == entry.path().file_name() {
+                                return Ok(path.to_owned() + "/" + folder_name + "/");
+                            }
                         }
                     }
                 }
             }
         }
     }
-    panic!("Word-list folder not found");
+    Err(anyhow!("Word-list folder not found"))
 }
 
 fn read_word_list_from_path(path: &str, length: usize) -> anyhow::Result<Option<WordList>> {
