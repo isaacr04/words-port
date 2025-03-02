@@ -46,6 +46,7 @@ impl SimpleComponent for StatisticsDialog {
                 gtk::Box {
                     set_margin_all: 20,
                     set_orientation: gtk::Orientation::Vertical,
+                    set_hexpand: true,
 
                     gtk::Label {
                         #[watch]

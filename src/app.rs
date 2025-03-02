@@ -5,6 +5,8 @@ use std::collections::{HashMap, HashSet};
 use std::time::Duration;
 use std::{char, usize};
 
+use crate::config::VERSION;
+use crate::letter::Letter;
 use crate::letter::{Coord, Format, LetterMsgIn};
 use crate::modals::help_dialog::HelpDialog;
 use crate::modals::statistics_dialog::{StatisticsDialog, StatisticsMsg};
@@ -13,7 +15,6 @@ use crate::{
     config::{APP_ID, PROFILE},
     letter::LetterMsgOut,
 };
-use crate::{letter::Letter, modals::about::AboutDialog};
 use game_statistics::{GameStatistics, Outcome};
 use gtk::prelude::{
     ApplicationExt, ApplicationWindowExt, ButtonExt, GtkWindowExt, OrientableExt, PopoverExt,
@@ -44,7 +45,6 @@ static DEFAULT_GAME_NAME: &str = "English";
 
 pub(super) struct App {
     letters: FactoryHashMap<Coord, Letter>,
-    about_dialog: Controller<AboutDialog>,
     statistics_dialog: Controller<StatisticsDialog>,
     help_dialog: Controller<HelpDialog>,
     selected_letter: Coord,
@@ -434,11 +434,6 @@ impl Component for App {
         root: Self::Root,
         sender: ComponentSender<Self>,
     ) -> ComponentParts<Self> {
-        let about_dialog = AboutDialog::builder()
-            .transient_for(&root)
-            .launch(())
-            .detach();
-
         let settings = gio::Settings::new(APP_ID);
 
         let last_game = settings.string("game-name").to_string();
@@ -485,7 +480,6 @@ impl Component for App {
                 });
 
         let model = Self {
-            about_dialog,
             statistics_dialog,
             help_dialog,
             letters,
@@ -925,7 +919,7 @@ fn keyboard_events_controller(sender: ComponentSender<App>) -> EventControllerKe
     controller
 }
 
-fn register_actions(sender: ComponentSender<App>, widgets: &AppWidgets, model: &App) {
+fn register_actions(sender: ComponentSender<App>, widgets: &AppWidgets, _model: &App) {
     let mut window_actions = RelmActionGroup::<WindowActionGroup>::new();
     let mut game_actions = RelmActionGroup::<GameActionGroup>::new();
 
@@ -937,9 +931,27 @@ fn register_actions(sender: ComponentSender<App>, widgets: &AppWidgets, model: &
     };
 
     let about_action = {
-        let sender = model.about_dialog.sender().clone();
+        let parent = widgets.main_window.clone();
         RelmAction::<AboutAction>::new_stateless(move |_| {
-            sender.send(()).unwrap();
+            let dialog = adw::AboutDialog::builder()
+                .application_icon(APP_ID)
+                // Insert your license of choice here
+                .license_type(gtk::License::Gpl30)
+                // Insert your website here
+                .website("https://codeberg.org/petsoi/words")
+                // Insert your Issues page
+                .issue_url("https://codeberg.org/petsoi/words/issues")
+                // Insert your application name here
+                .application_name("Words!")
+                .version(VERSION)
+                // .translator_credits("translator-credits")
+                .copyright("© 2025 Peter Sonntag")
+                .developers(vec!["Peter Sonntag"])
+                .can_close(true)
+                .build();
+            dialog.add_credit_section(Some(&"Word Lists"), &["Wordnik", "DWDS", "Definitiv"]);
+            // Present the dialog, optionally passing the parent window
+            dialog.present(Some(&parent));
         })
     };
 
