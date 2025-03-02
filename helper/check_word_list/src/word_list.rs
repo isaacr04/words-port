@@ -24,8 +24,8 @@ pub(crate) struct WordList {
 
 impl WordList {
     pub fn upper_case_lists(&mut self) {
-        self.secret_words = capitalize_list(&self.secret_words);
-        self.none_secret_words = capitalize_list(&self.none_secret_words);
+        self.secret_words = trim_and_capitalize_list(&self.secret_words);
+        self.none_secret_words = trim_and_capitalize_list(&self.none_secret_words);
     }
 
     pub fn remove_duplicates(&mut self) {
@@ -266,8 +266,8 @@ fn get_words(mut lines: io::Lines<io::BufReader<File>>) -> (HashSet<String>, Has
     (none_secret_words, secret_words)
 }
 
-fn capitalize_list(list: &HashSet<String>) -> HashSet<String> {
-    list.iter().map(|word| word.to_uppercase()).collect()
+fn trim_and_capitalize_list(list: &HashSet<String>) -> HashSet<String> {
+    list.iter().map(|word| word.trim().to_uppercase()).collect()
 }
 
 fn check_list_letters(letters: &HashSet<char>, list: &HashSet<String>) {
@@ -289,7 +289,16 @@ mod tests {
     fn test() {
         let actual_word_list = read_word_list_from_path("../../src/app/test.txt").unwrap();
         let expected_word_list = WordList {
-            secret_words: vec!["ÄALE".to_owned()].into_iter().collect(),
+            secret_words: vec![
+                "ÄALE".to_owned(),
+                "AAREAL".to_owned(),
+                "AALFANG".to_owned(),
+                "ABAKUS".to_owned(),
+                "AALNETZ".to_owned(),
+                "AALKORB".to_owned(),
+            ]
+            .into_iter()
+            .collect(),
             none_secret_words: vec!["AARE".to_owned(), "BUCH".to_owned()]
                 .into_iter()
                 .collect(),
