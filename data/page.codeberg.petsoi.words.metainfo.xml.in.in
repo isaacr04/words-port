@@ -86,133 +86,139 @@
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   <releases>
+    <release version="0.5.4" date="2025-03-03">
+      <description>
+        Improve secret words for English 4 and 6 letter lists.
+      </description>
+    </release>
     <release version="0.5.3" date="2025-03-01">
       <description>
-        <p>Back space key behavior improved.</p>
-        <p>Add tab key for naviagtion between letters.</p>
+        <ul>
+          <li>Back space key behavior improved.</li>
+          <li>Add tab key for naviagtion between letters.</li>
+        </ul>
       </description>
     </release>
     <release version="0.5.2" date="2025-02-25">
       <description>
-        <p>Smaller improvements.</p>
-      </description>
+        Smaller improvements.
+        </description>
     </release>
     <release version="0.5.1" date="2025-02-19">
       <description>
-        <p>Enable curated secret word lists.</p>
-        <p>Add secret word list for English 5 letters</p>
+        <ul>
+          <li>Enable curated secret word lists.</li>
+          <li>Add secret word list for English 5 letters</li>
+        </ul>
       </description>
     </release>
     <release version="0.5.0" date="2025-02-15">
       <description>
-        <p>Add help</p>
+        Add help
       </description>
     </release>
     <release version="0.4.3" date="2025-02-14">
       <description>
-        <p>Improve deletion behavior via touch</p>
+        Improve deletion behavior via touch
       </description>
     </release>
     <release version="0.4.2" date="2025-02-11">
       <description>
-        <p>Improve German word list</p>
-        <p>Remove word list 'English reduced"</p>
+        <ul>
+          <li>Improve German word list</li>
+          <li>Remove word list 'English reduced"</li>
+        </ul>
       </description>
     </release>
     <release version="0.4.1" date="2025-02-09">
       <description>
-        <p>Fixes bug where game was not terminated properly.</p>
+        Fixes bug where game was not terminated properly.
       </description>
     </release>
     <release version="0.4.0" date="2025-02-08">
       <description>
-        <p>Add statistics.</p>
+        Add statistics.
       </description>
     </release>
     <release version="0.3.5" date="2025-02-06">
       <description>
-        <p>Add Ctrl+N short cut for new game.</p>
+        Add Ctrl+N short cut for new game.
       </description>
     </release>
     <release version="0.3.4" date="2025-02-05">
       <description>
-        <p>Reenable Alt+N for new.</p>
-        <p>Improve Desktop File.</p>
+        <ul>
+          <li>Reenable Alt+N for new.</li>
+          <li>Improve Desktop File.</li>
+        </ul>
       </description>
     </release>
     <release version="0.3.3" date="2025-02-03">
       <description>
-        <p>Fix error in German word list.</p>
+        Fix error in German word list.
       </description>
     </release>
     <release version="0.3.2" date="2025-02-03">
       <description>
-        <p>Fix handling unicode word lists.</p>
-        <p>Improve German word list.</p>
+        <lu>
+          <li>Fix handling unicode word lists.</li>
+          <li>Improve German word list.</li>
+        </lu>
       </description>
     </release>
     <release version="0.3.1" date="2025-02-03">
       <description>
-        <p>Fine tune colors.</p>
-        <p>Improve German word list.</p>
+        <lu>
+          <li>Fine tune colors.</li>
+          <li>Improve German word list.</li>
+        </lu>
       </description>
     </release>
     <release version="0.3.0" date="2025-02-03">
       <description>
-        <p>Enable changing word list and word length.</p>
-      </description>
+          Enable changing word list and word length.
+        </description>
     </release>
     <release version="0.2.3" date="2025-01-29">
       <description>
-        <p>Improve deleting behavior of letters.</p>
-        <p>Fix typo 'Congratulations'.</p>
+        <lu>
+          <li>Improve deleting behavior of letters.</li>
+          <li>Fix typo 'Congratulations'.</li>
+        </lu>
       </description>
     </release>
     <release version="0.2.2" date="2025-01-27">
       <description>
-        <p>Improve word list.</p>
-      </description>
+          Improve word list.
+          </description>
     </release>
     <release version="0.2.1" date="2025-01-26">
       <description>
-        <p>Add toast which explains that words need to be in dictionary.</p>
-      </description>
+          Add toast which explains that words need to be in dictionary.
+       </description>
     </release>
     <release version="0.2.0" date="2025-01-25">
       <description>
-        <p>Changes:</p>
-        <ul>
-          <li>Give feedback if word is not in dictionary.</li>
-        </ul>
-      </description>
+            Give feedback if word is not in dictionary.
+        </description>
     </release>
     <release version="0.1.6" date="2025-01-24">
       <description>
-        <p>Changes:</p>
-        <ul>
-          <li>Fix colors of letters.</li>
-        </ul>
-      </description>
+          Fix colors of letters.
+        </description>
     </release>
     <release version="0.1.5" date="2025-01-24">
       <description>
-        <p>Changes:</p>
-        <ul>
-          <li>Improve keyboard navigation</li>
-        </ul>
-      </description>
+          Improve keyboard navigation
+        </description>
     </release>
     <release version="0.1.4" date="2025-01-24">
       <description>
-        <p>Changes:</p>
-        <ul>
-          <li>Improve word list</li>
-        </ul>
-      </description>
+            Improve word list
+        </description>
     </release>
     <release version="0.1.3" date="2025-01-23">
       <description>
-        <p>Changes:</p>
         <ul>
           <li>Fix bug of incorrect on-screen key color.</li>
           <li>No unwanted change in column width for wide letters.</li>
@@ -221,7 +227,6 @@
     </release>
     <release version="0.1.2" date="2025-01-22">
       <description>
-        <p>Changes:</p>
         <ul>
           <li>Improve wording.</li>
           <li>Enable smaller screensizes.</li>
@@ -230,7 +235,6 @@
     </release>
     <release version="0.1.1" date="2025-01-21">
       <description>
-        <p>Changes:</p>
         <ul>
           <li>Fix keyboard (Z was missing).</li>
           <li>Make the default size more narrow.</li>
@@ -239,7 +243,7 @@
     </release>
     <release version="0.1.0" date="2025-01-19">
       <description>
-        <p>First simple release.</p>
+        First simple release.
       </description>
     </release>
   </releases>
