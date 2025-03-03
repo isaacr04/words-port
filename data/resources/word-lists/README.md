@@ -44,16 +44,16 @@ The word list follows containing two sections, the secret words and the none sec
 ### Secret Words
 
 The first part of the wordlist are the secret words.
-Those words are the pool for selecing the secret word but are also part of the allowed list, the user can pick from for guessing.
-When there are no matching secret words with the correct wordlength, the program will fallback to the allowed word list.
+Those words are the pool for selecting the secret word, but are also part of the allowed list, the user can pick from for guessing.
+When there are no matching secret words with the correct wordlength, the program will fallback to the allowed word list and pick from there.
 
 ### Separator
 
-The separator has to start with '-' and separates the section of the secret words to the normal allowed words.
+The separator has to start with '-' and separates the section of the secret words to the general allowed words.
 
 ### Non Secret Words
 
-Now follows words from which the user can pick for guessing, but which will never show up as a secret word.
+Now follows words from which the user can pick from for guessing, but which will never show up as a secret word.
 
 # Licences and attribution
 
