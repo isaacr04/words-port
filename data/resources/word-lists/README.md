@@ -39,7 +39,7 @@ This line must start with `4LENGTHS:`, followed by a comma-separated list of **a
 The word list follows containing two sections, the secret words and the none secret words.
 
 - **All words must be uppercase**.  
-- Words should only contain characters from the **Keyboard Layout** section.  
+- Words must only contain characters from the **Keyboard Layout** section.  
 
 ### Secret Words
 
