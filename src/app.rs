@@ -695,16 +695,7 @@ impl Component for App {
                 }
             }
             AppMsg::SwitchToWordList(name) => {
-                self.word_list = if let Some(word_list) =
-                    read_word_list(&name, self.number_of_letters).unwrap()
-                {
-                    word_list
-                } else {
-                    self.number_of_letters = 5;
-                    read_word_list(&name, self.number_of_letters)
-                        .unwrap()
-                        .unwrap()
-                };
+                self.word_list = get_wordlist(&name, &mut self.number_of_letters);
                 self.current_word_list_name = name;
                 self.game_statistics = GameStatistics::load_game_statistics(
                     &self.current_word_list_name,
@@ -761,6 +752,17 @@ impl Component for App {
         settings
             .set_uint("number-of-letters", self.number_of_letters as u32)
             .expect("Failed to save number-of-letters");
+    }
+}
+
+fn get_wordlist(name: &str, number_of_letters: &mut usize) -> WordList {
+    // fallback to 5 letters in case this list does not support it any more
+    // 5 letters is always expected
+    if let Some(word_list) = read_word_list(&name, *number_of_letters).unwrap() {
+        word_list
+    } else {
+        *number_of_letters = 5;
+        read_word_list(&name, *number_of_letters).unwrap().unwrap()
     }
 }
 
