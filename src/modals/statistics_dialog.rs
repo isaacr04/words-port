@@ -19,6 +19,9 @@ pub(crate) struct StatisticsDialog {
     pub statistic: GameStatistics,
     pub word_list_name: String,
     pub number_of_letters: usize,
+    /// Nummer of games wone with this number of tries.
+    /// Used for scaling the statistics bars so the one with the max wins is on 100%
+    pub games_won_tries_max: usize,
 }
 
 #[relm4::component(pub)]
@@ -84,7 +87,7 @@ impl SimpleComponent for StatisticsDialog {
                         gtk::ProgressBar {
                             set_align: gtk::Align::BaselineCenter,
                             #[watch]
-                            set_fraction: model.statistic.games_won_tries[0] as f64 / model.statistic.games_won as f64
+                            set_fraction: model.statistic.games_won_tries[0] as f64 / model.games_won_tries_max as f64
                         }
 
                     },
@@ -100,7 +103,7 @@ impl SimpleComponent for StatisticsDialog {
                         gtk::ProgressBar {
                             set_align: gtk::Align::BaselineCenter,
                             #[watch]
-                            set_fraction: model.statistic.games_won_tries[1] as f64 / model.statistic.games_won as f64
+                            set_fraction: model.statistic.games_won_tries[1] as f64 / model.games_won_tries_max as f64
                         }
 
                     },
@@ -116,7 +119,7 @@ impl SimpleComponent for StatisticsDialog {
                         gtk::ProgressBar {
                             set_align: gtk::Align::BaselineCenter,
                             #[watch]
-                            set_fraction: model.statistic.games_won_tries[2] as f64 / model.statistic.games_won as f64
+                            set_fraction: model.statistic.games_won_tries[2] as f64 / model.games_won_tries_max as f64
                         }
 
                     },
@@ -132,7 +135,7 @@ impl SimpleComponent for StatisticsDialog {
                         gtk::ProgressBar {
                             set_align: gtk::Align::BaselineCenter,
                             #[watch]
-                            set_fraction: model.statistic.games_won_tries[3] as f64 / model.statistic.games_won as f64
+                            set_fraction: model.statistic.games_won_tries[3] as f64 / model.games_won_tries_max as f64
                         }
 
                     },
@@ -148,7 +151,7 @@ impl SimpleComponent for StatisticsDialog {
                         gtk::ProgressBar {
                             set_align: gtk::Align::BaselineCenter,
                             #[watch]
-                            set_fraction: model.statistic.games_won_tries[4] as f64 / model.statistic.games_won as f64
+                            set_fraction: model.statistic.games_won_tries[4] as f64 / model.games_won_tries_max as f64
                         }
 
                     },
@@ -163,7 +166,7 @@ impl SimpleComponent for StatisticsDialog {
                         gtk::ProgressBar {
                             set_align: gtk::Align::BaselineCenter,
                             #[watch]
-                            set_fraction: model.statistic.games_won_tries[5] as f64 / model.statistic.games_won as f64
+                            set_fraction: model.statistic.games_won_tries[5] as f64 / model.games_won_tries_max as f64
                         }
                     },
                 }

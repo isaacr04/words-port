@@ -467,6 +467,7 @@ impl Component for App {
                 number_of_letters: last_number_of_letters,
                 statistic: game_statistics.clone(),
                 word_list_name: list_name.clone(),
+                games_won_tries_max: *game_statistics.games_won_tries.iter().max().unwrap(),
             })
             .detach();
 
@@ -718,6 +719,12 @@ impl Component for App {
                         statistic: self.game_statistics.clone(),
                         word_list_name: self.current_word_list_name.clone(),
                         number_of_letters: self.number_of_letters,
+                        games_won_tries_max: *self
+                            .game_statistics
+                            .games_won_tries
+                            .iter()
+                            .max()
+                            .unwrap(),
                     }))
                     .unwrap();
                 self.statistics_dialog
