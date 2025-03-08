@@ -102,6 +102,27 @@ impl WordList {
             }
         }
     }
+
+    pub(crate) fn check_secret_words_with_leo(&mut self) {
+        let mut new_secret_words = HashSet::new();
+        for word in &self.secret_words {
+            print!("Checking word {word}: ");
+            let response = reqwest::blocking::get(format!(
+                "https://dict.leo.org/englisch-deutsch/{word}?side=left"
+            ))
+            .unwrap()
+            .text()
+            .unwrap();
+            println!("{response}");
+            if !response.contains("Es existiert derzeit auch keine Diskussion") {
+                println!("Ok");
+                new_secret_words.insert(word.clone());
+            } else {
+                println!("Not founs");
+            }
+        }
+        self.secret_words = new_secret_words;
+    }
 }
 
 fn count_word_length(list: &HashSet<String>) -> HashMap<usize, usize> {
