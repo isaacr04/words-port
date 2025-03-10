@@ -1,7 +1,9 @@
 use std::{
     collections::{HashMap, HashSet},
-    fs::File,
+    fs::{File, OpenOptions, read_to_string},
     io::{self, BufRead, BufReader, BufWriter, Write},
+    thread::sleep,
+    time::Duration,
 };
 
 use anyhow::{Context, anyhow};
@@ -103,26 +105,74 @@ impl WordList {
         }
     }
 
-    pub(crate) fn check_secret_words_with_leo(&mut self) {
-        let mut new_secret_words = HashSet::new();
-        for word in &self.secret_words {
-            print!("Checking word {word}: ");
-            let response = reqwest::blocking::get(format!(
-                "https://dict.leo.org/englisch-deutsch/{word}?side=left"
-            ))
-            .unwrap()
-            .text()
+    pub(crate) fn check_secret_words_with_leo(&mut self, name: &str) {
+        let file_name_ok_words = format!("{name}-found-words.txt");
+        let file_name_incorrect_words = format!("{name}-incorrect-words.txt");
+
+        let ok_words = read_classified_words(&file_name_ok_words);
+        let incorrect_words = read_classified_words(&file_name_incorrect_words);
+
+        let mut file_ok_words = OpenOptions::new()
+            .create(true)
+            .write(true)
+            .append(true)
+            .open(file_name_ok_words)
             .unwrap();
-            println!("{response}");
-            if !response.contains("Es existiert derzeit auch keine Diskussion") {
-                println!("Ok");
-                new_secret_words.insert(word.clone());
-            } else {
-                println!("Not founs");
+        let mut file_incorrect_words = OpenOptions::new()
+            .create(true)
+            .write(true)
+            .append(true)
+            .open(file_name_incorrect_words)
+            .unwrap();
+
+        let mut new_secret_words = HashSet::new();
+
+        for word in &self.secret_words {
+            if ok_words.contains(word) || incorrect_words.contains(word) {
+                println!("{word} already classified");
+                continue;
             }
+            let mut rate_factor = 1;
+            let text = loop {
+                if let Ok(response) = reqwest::blocking::get(format!(
+                    "https://dict.leo.org/englisch-deutsch/{word}?side=left"
+                )) {
+                    let text = response.text().unwrap();
+                    if text.contains("rate limits") {
+                        let pause = 60 * rate_factor;
+                        println!("Waiting {pause}s to avoid rate limiting");
+                        sleep(Duration::from_secs(pause));
+                        rate_factor += 1;
+                    } else {
+                        break text;
+                    }
+                } else {
+                    sleep(Duration::from_secs(10));
+                };
+            };
+            // println!("{text}");
+            if text.contains("Es existiert derzeit auch keine Diskussion") {
+                println!("{word} not found");
+                writeln!(file_incorrect_words, "{}", word).unwrap();
+            } else {
+                println!("{word} is ok");
+                writeln!(file_ok_words, "{}", word).unwrap();
+                new_secret_words.insert(word.clone());
+            }
+            sleep(Duration::from_secs(5));
         }
         self.secret_words = new_secret_words;
     }
+}
+
+fn read_classified_words(name: &str) -> HashSet<String> {
+    let mut words = HashSet::new();
+    if let Ok(content) = read_to_string(name) {
+        for line in content.lines() {
+            words.insert(line.to_string().clone());
+        }
+    }
+    words
 }
 
 fn count_word_length(list: &HashSet<String>) -> HashMap<usize, usize> {
