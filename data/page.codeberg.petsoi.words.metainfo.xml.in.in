@@ -86,14 +86,19 @@
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   <releases>
+    <release version="0.5.6" date="2025-03-12">
+      <description>
+        <p>Major improvements to the English 6 letter lists.</p>
+      </description>
+    </release>
     <release version="0.5.5" date="2025-03-09">
       <description>
-        <p>Some further improvements of the English 4 and 6 letter lists.</p>
+        <p>Some further improvements to the English 4 and 6 letter lists.</p>
       </description>
     </release>
     <release version="0.5.4" date="2025-03-03">
       <description>
-        <p>Improve secret words for English 4 and 6 letter lists.</p>
+        <p>Improve secret words to English 4 and 6 letter lists.</p>
       </description>
     </release>
     <release version="0.5.3" date="2025-03-01">
