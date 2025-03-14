@@ -547,6 +547,7 @@ impl Component for App {
                 self.last_action_letter_selected = true;
             }
             AppMsg::MoveCursor(step) => {
+                self.last_action_letter_selected = true;
                 self.index_of_last_entered_letter = 0;
                 self.move_selection_by(step)
             }
