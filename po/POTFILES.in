@@ -2,5 +2,4 @@ data/page.codeberg.petsoi.words.desktop.in
 data/page.codeberg.petsoi.words.gschema.xml.in
 data/page.codeberg.petsoi.words.metainfo.xml.in
 data/resources/ui/shortcuts.ui
-data/resources/wordlists/words.txt
-src/application.rs
+src/app.rs

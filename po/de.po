@@ -1,0 +1,75 @@
+# Translation of Words!.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR peter@sonniger-tag.eu, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-04-18 09:32+0000\n"
+"PO-Revision-Date: 2025-04-18 11:38+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.4\n"
+
+#: src/app.rs:113
+msgid "_Statistics"
+msgstr "_Statistik"
+
+#: src/app.rs:114
+msgid "_Help"
+msgstr "_Hilfe"
+
+#: src/app.rs:115
+msgid "_Keyboard"
+msgstr "_Tastatur"
+
+#: src/app.rs:116
+msgid "_About Words!"
+msgstr "Über _Words!"
+
+#: src/app.rs:155
+msgid "_New"
+msgstr "_Neu"
+
+#: src/app.rs:229
+msgid "Congratulations!"
+msgstr "Gratulation!"
+
+#: src/app.rs:229
+msgid "Game Over"
+msgstr "Das Spiel ist aus"
+
+#: src/app.rs:234
+msgid "The word we were looking for was {}."
+msgstr "Das Wort, dass wir gesucht haben was {}."
+
+#: src/app.rs:244
+msgid "You only needed one attempt!!"
+msgstr "Du hast nur einen Versuch benötigt!!"
+
+#: src/app.rs:246
+msgid "You needed {} attempts."
+msgstr "Du hast {} Versuche benötigt."
+
+#: src/app.rs:265
+msgid "Current streak is {}."
+msgstr "Die aktuelle Strähne ist {}."
+
+#: src/app.rs:269
+msgid "Your streak lasted {} games."
+msgstr "Deine Strähne dauerte {} Spiele an."
+
+#: src/app.rs:288
+msgid "Word List:"
+msgstr "Wörter Liste:"
+
+#: src/main.rs:31
+msgid "Words!"
+msgstr "Wörter!"

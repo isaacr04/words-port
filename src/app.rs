@@ -15,6 +15,7 @@ use crate::{
     config::{APP_ID, PROFILE},
     letter::LetterMsgOut,
 };
+use formatx::formatx;
 use game_statistics::{GameStatistics, Outcome};
 use gettextrs::gettext;
 use gtk::prelude::{
@@ -110,10 +111,10 @@ impl Component for App {
     menu! {
         main_menu: {
             section! {
-                "_Statistics" => StatisticsAction,
-                "_Help" => HelpAction,
-                "_Keyboard" => ShortcutsAction,
-                "_About Words!" => AboutAction,
+                &gettext("_Statistics") => StatisticsAction,
+                &gettext("_Help") => HelpAction,
+                &gettext("_Keyboard") => ShortcutsAction,
+                &gettext("_About Words!") => AboutAction,
             }
         }
     }
@@ -152,7 +153,7 @@ impl Component for App {
             adw::HeaderBar {
                 #[name = "new_button"]
                 pack_start = &adw::SplitButton {
-                    set_label: "_New",
+                    set_label: &gettext("_New"),
                     set_hexpand: true,
                     connect_clicked => AppMsg::StartNewGame,
                     set_popover: Some(&game_menu),
@@ -226,12 +227,12 @@ impl Component for App {
                         set_valign: Align::Center,
                         gtk::Label {
                             #[watch]
-                            set_label: if model.game_won {"Congratulations!"} else {"Game Over"},
+                            set_label: &if model.game_won {gettext("Congratulations!")} else {gettext("Game Over")},
                             set_css_classes: &["title-1"],
                         },
                         gtk::Label {
                             #[watch]
-                            set_label: &format!("The word we were looking for was {}.", model.word ),
+                            set_label: &formatx!(gettext("The word we were looking for was {}."), &model.word ).unwrap(),
                             set_css_classes: &["title-3"],
                             set_margin_all: 20,
                             set_wrap: true,
@@ -241,9 +242,9 @@ impl Component for App {
                             #[watch]
                             set_label: &if model.game_won {
                                     if model.attempts == 1 {
-                                        "You only needed one attempt!!".to_owned()
+                                        gettext("You only needed one attempt!!").to_owned()
                                     } else {
-                                        format!("You needed {} attempts.", model.attempts)
+                                        formatx!(gettext("You needed {} attempts."), model.attempts).unwrap()
                                     }
                                 } else {
                                     "Good luck next time!".to_owned()
@@ -262,11 +263,11 @@ impl Component for App {
                         gtk::Label {
                             #[watch]
                             set_label: &if model.game_statistics.current_streak > 0
-                                    { &gettext!("Current streak is {}.", model.game_statistics.current_streak) }
+                                    { formatx!(gettext("Current streak is {}."), model.game_statistics.current_streak).unwrap() }
                                 else
                                     if model.game_statistics.last_streak == 1 { "Your streak lasted 1 game.".to_owned() }
                                         else
-                                    { &gettext!("Your streak lasted {} games.", model.game_statistics.last_streak) },
+                                    { formatx!(gettext("Your streak lasted {} games."), model.game_statistics.last_streak).unwrap() },
                             set_margin_top: 5,
                             set_wrap: true,
                             set_justify: gtk::Justification::Center,

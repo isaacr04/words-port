@@ -45,4 +45,5 @@ remove-incorrect-words name:
     awk 'length($0) >= 4 && length($0) <= 11' "data/resources/word-lists/{{ name }}" > "data/resources/word-lists/tmp.txt"
     mv data/resources/word-lists/tmp.txt "data/resources/word-lists/{{ name }}"
 
-
+update_pot_file:
+    xtr src/main.rs -o po/words.pot

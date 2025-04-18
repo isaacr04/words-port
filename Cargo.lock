@@ -150,6 +150,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "formatx"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fa6f3b9014e23925937fbf4d05f27a6f4efe42545f98690b94f193bdb3f1959e"
+
+[[package]]
 name = "fragile"
 version = "2.0.1"
 version = "2.0.1"
@@ -1417,9 +1423,10 @@ dependencies = [
 
 [[package]]
 name = "words"
-version = "0.5.7"
+version = "0.5.6"
 dependencies = [
  "anyhow",
+ "formatx",
  "gettext-rs",
  "rand",
  "relm4",
