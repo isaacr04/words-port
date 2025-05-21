@@ -544,12 +544,12 @@ impl Component for App {
                 if index.row == self.attempts {
                     self.select_field(index)
                 }
-                self.last_action_letter_selected = true;
+                self.set_last_action_letter_selected(true);
             }
             AppMsg::MoveCursor(step) => {
-                self.last_action_letter_selected = true;
                 self.index_of_last_entered_letter = 0;
-                self.move_selection_by(step)
+                self.move_selection_by(step);
+                self.set_last_action_letter_selected(true);
             }
             AppMsg::StartNewGame => {
                 self.word = pick_random_word(&self.word_list);
@@ -561,7 +561,7 @@ impl Component for App {
                 self.create_empty_field();
                 self.create_new_keyboard();
                 self.update_view(widgets, sender);
-                self.last_action_letter_selected = false;
+                self.set_last_action_letter_selected(false);
             }
             AppMsg::EnterLetter(c) => {
                 let upper_case = c.to_uppercase().to_string(); // TODO: Logic needs to be improved if we want to support e.g. ß => SS
@@ -577,12 +577,12 @@ impl Component for App {
                     );
                     self.index_of_last_entered_letter = self.selected_letter.column;
                     self.move_selection_by(1);
-                    self.last_action_letter_selected = false;
+                    self.set_last_action_letter_selected(false);
                 }
             }
             AppMsg::EnterDelete => {
                 self.letters.send(&selected, LetterMsgIn::SetContent(None));
-                self.last_action_letter_selected = false;
+                self.set_last_action_letter_selected(false);
             }
             AppMsg::Space => {
                 self.letters.send(&selected, LetterMsgIn::SetContent(None));
@@ -606,7 +606,7 @@ impl Component for App {
                 self.move_selection_by(-1);
                 self.letters
                     .send(&self.selected_letter, LetterMsgIn::SetContent(None));
-                self.last_action_letter_selected = false;
+                self.set_last_action_letter_selected(false);
             }
             AppMsg::EnterBackspace => {
                 if self.last_action_letter_selected {
@@ -614,7 +614,7 @@ impl Component for App {
                 } else {
                     sender.input(AppMsg::Backspace);
                 }
-                self.last_action_letter_selected = false;
+                self.set_last_action_letter_selected(false);
             }
             AppMsg::EnterWord => {
                 let Some(entered_word) = self.get_entered_word() else {
@@ -677,7 +677,7 @@ impl Component for App {
                 self.game_won = won;
                 self.current_ui_page = "game_over";
                 self.update_view(widgets, sender);
-                self.last_action_letter_selected = false;
+                self.set_last_action_letter_selected(false);
             }
 
             AppMsg::SetLengthTo(length) => {
@@ -882,6 +882,20 @@ impl App {
                 },
                 LetterMsgIn::SetIncorrect(v),
             );
+        }
+    }
+
+    fn set_last_action_letter_selected(&mut self, v: bool) {
+        if v {
+            if let Some(l) = self.letters.get(&self.selected_letter) {
+                if l.contains_value() {
+                    self.last_action_letter_selected = true;
+                } else {
+                    self.last_action_letter_selected = false;
+                }
+            }
+        } else {
+            self.last_action_letter_selected = false;
         }
     }
 }

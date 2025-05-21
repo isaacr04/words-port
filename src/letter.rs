@@ -41,6 +41,12 @@ pub struct Letter {
     incorrect: bool,
 }
 
+impl Letter {
+    pub fn contains_value(&self) -> bool {
+        !self.value.is_empty()
+    }
+}
+
 #[derive(Debug)]
 pub enum LetterMsgOut {
     Selected(Coord),
