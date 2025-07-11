@@ -1,7 +1,9 @@
 [Desktop Entry]
 Name=Words!
+Name[de]=Wörter!
 GenericName=Word Game
 Comment=Guess Words
+Comment[de]=Rate Wörter
 Type=Application
 Exec=words
 Terminal=false

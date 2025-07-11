@@ -8,15 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-18 09:32+0000\n"
-"PO-Revision-Date: 2025-04-18 11:38+0200\n"
+"POT-Creation-Date: 2025-07-11 14:44+0000\n"
+"PO-Revision-Date: 2025-07-11 17:21+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.6\n"
 
 #: src/app.rs:113
 msgid "_Statistics"
@@ -32,7 +32,7 @@ msgstr "_Tastatur"
 
 #: src/app.rs:116
 msgid "_About Words!"
-msgstr "Über _Words!"
+msgstr "Über _Wörter!"
 
 #: src/app.rs:155
 msgid "_New"
@@ -58,9 +58,17 @@ msgstr "Du hast nur einen Versuch benötigt!!"
 msgid "You needed {} attempts."
 msgstr "Du hast {} Versuche benötigt."
 
+#: src/app.rs:249
+msgid "Good luck next time!"
+msgstr "Viel Glück beim nächsten Mal!"
+
+#: src/app.rs:257
+msgid "You have won {} out of {} games."
+msgstr "Sie haben {} von {} Spielen gewonnen."
+
 #: src/app.rs:265
 msgid "Current streak is {}."
-msgstr "Die aktuelle Strähne ist {}."
+msgstr "Die aktuelle Strähne ist {} Spiele."
 
 #: src/app.rs:269
 msgid "Your streak lasted {} games."
@@ -70,6 +78,69 @@ msgstr "Deine Strähne dauerte {} Spiele an."
 msgid "Word List:"
 msgstr "Wörter Liste:"
 
-#: src/main.rs:31
+#: src/app.rs:306
+msgid "Number of Letters:"
+msgstr "Anzahl der Buchstaben:"
+
+#: src/modals/help_dialog.rs:50
+msgid ""
+"<b>Words!</b> is a word puzzle where you have <b>six</b> tries to guess a "
+"hidden word."
+msgstr ""
+"<b>Wörter!</b> ist ein Worträtsel, bei dem man <b>sechs</b> Versuche hat, "
+"ein unbekanntes Wort zu erraten."
+
+#: src/modals/help_dialog.rs:58
+msgid "Each guess must be a <b>valid</b> word."
+msgstr "Jeder Versuch muss ein <b>gültiges</b> Wort sein."
+
+#: src/modals/help_dialog.rs:66
+msgid ""
+"After each guess, the game provides feedback with <b>color-coded</b> hints:"
+msgstr ""
+"Nach jedem Versuch, gibt das Spiel mit <b>farbigen</b> Buchstaben "
+"Rückmeldung:"
+
+#: src/modals/help_dialog.rs:81
+msgid "The letter is correct and in the right position."
+msgstr "Der Buchstabe ist korrekt und an der richtigen Position."
+
+#: src/modals/help_dialog.rs:97
+msgid "The letter is correct but in the wrong position."
+msgstr "Der Buchstabe ist korrekt, aber an der falschen Position."
+
+#: src/modals/help_dialog.rs:111
+msgid "The letter isn’t in the word."
+msgstr "Der Buchstabe kommt nicht im gesuchten Wort vor."
+
+#: src/modals/help_dialog.rs:120
+msgid ""
+"Use this feedback to refine your subsequent guesses and solve the puzzle "
+"within six attempts."
+msgstr ""
+"Nutzen Sie die Rückmeldungen um Ihre folgenden Versuche zu verbessern und "
+"lösen Sie das Puzzle mit sechs Versuchen."
+
+#: src/modals/statistics_dialog.rs:46
+msgid "Statistics"
+msgstr "Statistik"
+
+#: src/modals/statistics_dialog.rs:57
+msgid "{} - {} Letters"
+msgstr "{} - {} Buchstaben"
+
+#: src/modals/statistics_dialog.rs:63
+msgid "You won {} out of {} games."
+msgstr "Sie haben {} von {} Spielen gewonnen."
+
+#: src/modals/statistics_dialog.rs:69
+msgid "<b>Streaks:</b> Current: {}, Longest: {}"
+msgstr "<b>Glückssträhnen:</b> Aktuelle: {}, Längste: {}"
+
+#: src/modals/statistics_dialog.rs:74
+msgid "Distribution by Trials:"
+msgstr "Verteilung nach Versuchen:"
+
+#: src/main.rs:34
 msgid "Words!"
 msgstr "Wörter!"

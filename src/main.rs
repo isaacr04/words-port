@@ -4,8 +4,10 @@ mod letter;
 mod modals;
 mod onscreen_button;
 
-use config::{APP_ID, GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
-use gettextrs::{LocaleCategory, gettext};
+use crate::config::{GETTEXT_PACKAGE, LOCALEDIR};
+use app::{App, HelpAction, NewGameAction, StatisticsAction};
+use config::{APP_ID, RESOURCES_FILE};
+use gettextrs::{LocaleCategory, bindtextdomain, setlocale, textdomain};
 use gtk::prelude::ApplicationExt;
 use gtk::{gio, glib};
 use relm4::set_global_css;
@@ -14,8 +16,7 @@ use relm4::{
     actions::{AccelsPlus, RelmAction, RelmActionGroup},
     gtk, main_application,
 };
-
-use app::{App, HelpAction, NewGameAction, StatisticsAction};
+use tr::{tr, tr_init};
 
 relm4::new_action_group!(AppActionGroup, "app");
 relm4::new_stateless_action!(QuitAction, AppActionGroup, "quit");
@@ -23,12 +24,12 @@ relm4::new_stateless_action!(QuitAction, AppActionGroup, "quit");
 fn main() {
     gtk::init().unwrap();
 
-    // setup gettext
-    gettextrs::setlocale(LocaleCategory::LcAll, "");
-    gettextrs::bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR).expect("Unable to bind the text domain");
-    gettextrs::textdomain(GETTEXT_PACKAGE).expect("Unable to switch to the text domain");
+    tr_init!(LOCALEDIR);
+    setlocale(LocaleCategory::LcAll, "");
+    let _ = bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
+    let _ = textdomain(GETTEXT_PACKAGE);
 
-    glib::set_application_name(&gettext("Words!"));
+    glib::set_application_name(&tr!("Words!"));
 
     let res = gio::Resource::load(RESOURCES_FILE).expect("Could not load gresource file");
     gio::resources_register(&res);

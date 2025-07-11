@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-18 09:32+0000\n"
+"POT-Creation-Date: 2025-07-11 14:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,6 +57,14 @@ msgstr ""
 msgid "You needed {} attempts."
 msgstr ""
 
+#: src/app.rs:249
+msgid "Good luck next time!"
+msgstr ""
+
+#: src/app.rs:257
+msgid "You have won {} out of {} games."
+msgstr ""
+
 #: src/app.rs:265
 msgid "Current streak is {}."
 msgstr ""
@@ -69,6 +77,58 @@ msgstr ""
 msgid "Word List:"
 msgstr ""
 
-#: src/main.rs:31
+#: src/app.rs:306
+msgid "Number of Letters:"
+msgstr ""
+
+#: src/modals/help_dialog.rs:50
+msgid "<b>Words!</b> is a word puzzle where you have <b>six</b> tries to guess a hidden word."
+msgstr ""
+
+#: src/modals/help_dialog.rs:58
+msgid "Each guess must be a <b>valid</b> word."
+msgstr ""
+
+#: src/modals/help_dialog.rs:66
+msgid "After each guess, the game provides feedback with <b>color-coded</b> hints:"
+msgstr ""
+
+#: src/modals/help_dialog.rs:81
+msgid "The letter is correct and in the right position."
+msgstr ""
+
+#: src/modals/help_dialog.rs:97
+msgid "The letter is correct but in the wrong position."
+msgstr ""
+
+#: src/modals/help_dialog.rs:111
+msgid "The letter isn’t in the word."
+msgstr ""
+
+#: src/modals/help_dialog.rs:120
+msgid "Use this feedback to refine your subsequent guesses and solve the puzzle within six attempts."
+msgstr ""
+
+#: src/modals/statistics_dialog.rs:46
+msgid "Statistics"
+msgstr ""
+
+#: src/modals/statistics_dialog.rs:57
+msgid "{} - {} Letters"
+msgstr ""
+
+#: src/modals/statistics_dialog.rs:63
+msgid "You won {} out of {} games."
+msgstr ""
+
+#: src/modals/statistics_dialog.rs:69
+msgid "<b>Streaks:</b> Current: {}, Longest: {}"
+msgstr ""
+
+#: src/modals/statistics_dialog.rs:74
+msgid "Distribution by Trials:"
+msgstr ""
+
+#: src/main.rs:34
 msgid "Words!"
 msgstr ""

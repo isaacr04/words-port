@@ -6,6 +6,7 @@ use relm4::{
         prelude::{OrientableExt, WidgetExt},
     },
 };
+use tr::tr;
 
 pub(crate) use crate::app::game_statistics::GameStatistics;
 
@@ -42,7 +43,7 @@ impl SimpleComponent for StatisticsDialog {
                 adw::HeaderBar {
                     #[wrap(Some)]
                     set_title_widget = &gtk::Label {
-                        set_label: "Statistics",
+                        set_label: &tr!("Statistics"),
                     }
                 },
 
@@ -53,24 +54,24 @@ impl SimpleComponent for StatisticsDialog {
 
                     gtk::Label {
                         #[watch]
-                        set_label: &format!("{} - {} Letters", model.word_list_name, model.number_of_letters),
+                        set_label: &tr!("{} - {} Letters", model.word_list_name, model.number_of_letters),
                         set_css_classes: &["title-3"],
                         set_wrap: true,
                     },
                     gtk::Label {
                         #[watch]
-                        set_label: &format!("You won {} out of {} games.", model.statistic.games_won, model.statistic.total_games),
+                        set_label: &tr!("You won {} out of {} games.", model.statistic.games_won, model.statistic.total_games),
                         set_wrap: true,
                         set_margin_top: 10,
                     },
                     gtk::Label {
                         #[watch]
-                        set_markup: &format!("<b>Streaks:</b> Current: {}, Longest: {}", model.statistic.current_streak,  model.statistic.longest_streak),
+                        set_markup: &tr!("<b>Streaks:</b> Current: {}, Longest: {}", model.statistic.current_streak,  model.statistic.longest_streak),
                         set_wrap: true,
                         set_margin_top: 10,
                     },
                     gtk::Label {
-                        set_label: "Distribution by Trials:",
+                        set_label: &tr!("Distribution by Trials:"),
                         set_wrap: true,
                         set_css_classes: &["title-3"],
                         set_margin_top: 20,

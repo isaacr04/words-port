@@ -6,9 +6,6 @@ project(
   license: 'GPL-3',
 )
 
-i18n = import('i18n')
-gnome = import('gnome')
-
 base_id = 'page.codeberg.petsoi.words'
 
 dependency('glib-2.0', version: '>= 2.66')
@@ -48,6 +45,9 @@ else
   version_suffix = ''
   application_id = base_id
 endif
+
+i18n = import('i18n')
+gnome = import('gnome')
 
 subdir('data')
 subdir('po')

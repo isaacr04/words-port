@@ -1,6 +1,6 @@
 mod word_list;
 use std::{env, process::exit};
-
+use tr::tr_init;
 use word_list::read_word_list;
 
 fn main() {
