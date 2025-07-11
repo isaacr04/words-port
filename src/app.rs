@@ -241,7 +241,7 @@ impl Component for App {
                             #[watch]
                             set_label: &if model.game_won {
                                     if model.attempts == 1 {
-                                        tr!("You only needed one attempt!!").to_owned()
+                                        tr!("You only needed one attempt!!")
                                     } else {
                                         tr!("You needed {} attempts.", model.attempts)
                                     }
@@ -264,7 +264,7 @@ impl Component for App {
                             set_label: &if model.game_statistics.current_streak > 0
                                     { tr!("Current streak is {}.", model.game_statistics.current_streak) }
                                 else
-                                    if model.game_statistics.last_streak == 1 { "Your streak lasted 1 game.".to_owned() }
+                                    if model.game_statistics.last_streak == 1 { tr!("Your streak lasted 1 game.") }
                                         else
                                     { tr!("Your streak lasted {} games.", model.game_statistics.last_streak) },
                             set_margin_top: 5,

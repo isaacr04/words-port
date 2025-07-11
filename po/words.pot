@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-11 14:44+0000\n"
+"POT-Creation-Date: 2025-07-11 15:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -67,6 +67,10 @@ msgstr ""
 
 #: src/app.rs:265
 msgid "Current streak is {}."
+msgstr ""
+
+#: src/app.rs:267
+msgid "Your streak lasted 1 game."
 msgstr ""
 
 #: src/app.rs:269
@@ -129,6 +133,6 @@ msgstr ""
 msgid "Distribution by Trials:"
 msgstr ""
 
-#: src/main.rs:34
+#: src/main.rs:32
 msgid "Words!"
 msgstr ""

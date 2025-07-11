@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-11 14:44+0000\n"
-"PO-Revision-Date: 2025-07-11 17:21+0200\n"
+"POT-Creation-Date: 2025-07-11 15:38+0000\n"
+"PO-Revision-Date: 2025-07-11 17:39+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -69,6 +69,10 @@ msgstr "Sie haben {} von {} Spielen gewonnen."
 #: src/app.rs:265
 msgid "Current streak is {}."
 msgstr "Die aktuelle Strähne ist {} Spiele."
+
+#: src/app.rs:267
+msgid "Your streak lasted 1 game."
+msgstr "Deine Strähne dauerte ein Spiel an."
 
 #: src/app.rs:269
 msgid "Your streak lasted {} games."
@@ -141,6 +145,6 @@ msgstr "<b>Glückssträhnen:</b> Aktuelle: {}, Längste: {}"
 msgid "Distribution by Trials:"
 msgstr "Verteilung nach Versuchen:"
 
-#: src/main.rs:34
+#: src/main.rs:32
 msgid "Words!"
 msgstr "Wörter!"
