@@ -7,7 +7,7 @@ desktop_file = i18n.merge_file(
   type: 'desktop',
   input: configure_file(
     input: '@0@.desktop.in.in'.format(base_id),
-    output: '@BASENAME@',
+    output: '@0@.desktop.in',
     configuration: desktop_conf,
   ),
   output: '@0@.desktop'.format(application_id),

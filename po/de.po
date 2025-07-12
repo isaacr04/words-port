@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-07-11 15:38+0000\n"
-"PO-Revision-Date: 2025-07-11 17:39+0200\n"
+"PO-Revision-Date: 2025-07-12 06:21+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -32,7 +32,7 @@ msgstr "_Tastatur"
 
 #: src/app.rs:116
 msgid "_About Words!"
-msgstr "Über _Wörter!"
+msgstr "Über _Words!"
 
 #: src/app.rs:155
 msgid "_New"
@@ -91,7 +91,7 @@ msgid ""
 "<b>Words!</b> is a word puzzle where you have <b>six</b> tries to guess a "
 "hidden word."
 msgstr ""
-"<b>Wörter!</b> ist ein Worträtsel, bei dem man <b>sechs</b> Versuche hat, "
+"<b>Words!</b> ist ein Worterätsel, bei dem man <b>sechs</b> Versuche hat, "
 "ein unbekanntes Wort zu erraten."
 
 #: src/modals/help_dialog.rs:58
@@ -147,4 +147,4 @@ msgstr "Verteilung nach Versuchen:"
 
 #: src/main.rs:32
 msgid "Words!"
-msgstr "Wörter!"
+msgstr "Words!"

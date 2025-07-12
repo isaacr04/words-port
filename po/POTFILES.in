@@ -1,6 +1,6 @@
-data/page.codeberg.petsoi.words.desktop.in
+data/page.codeberg.petsoi.words.desktop.in.in
 data/page.codeberg.petsoi.words.gschema.xml.in
-data/page.codeberg.petsoi.words.metainfo.xml.in
+data/page.codeberg.petsoi.words.metainfo.xml.in.in
 data/resources/ui/shortcuts.ui
 src/app.rs
 src/main.rs
