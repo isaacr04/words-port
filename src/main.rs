@@ -38,6 +38,7 @@ fn main() {
 
     let app = main_application();
     app.set_resource_base_path(Some("/page/codeberg/petsoi/words/"));
+    app.set_application_id(Some(APP_ID));
 
     let mut actions = RelmActionGroup::<AppActionGroup>::new();
 
