@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-12 04:08+0000\n"
+"POT-Creation-Date: 2025-07-12 05:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -85,6 +85,10 @@ msgstr ""
 msgid "Number of Letters:"
 msgstr ""
 
+#: src/app.rs:642
+msgid "Words have to be in the dictionary."
+msgstr ""
+
 #: src/modals/help_dialog.rs:50
 msgid "<b>Words!</b> is a word puzzle where you have <b>six</b> tries to guess a hidden word."
 msgstr ""
@@ -131,6 +135,14 @@ msgstr ""
 
 #: src/modals/statistics_dialog.rs:74
 msgid "Distribution by Trials:"
+msgstr ""
+
+#: src/onscreen_button.rs:41
+msgid "Enter"
+msgstr ""
+
+#: src/onscreen_button.rs:42
+msgid "Del"
 msgstr ""
 
 #: src/main.rs:32

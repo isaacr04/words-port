@@ -639,7 +639,7 @@ impl Component for App {
 
                 if !(self.word_list.contains(&entered_word)) {
                     if !self.toast_words_in_dictionary_displayed {
-                        let toast = Toast::new("Words have to be in the dictionary.");
+                        let toast = Toast::new(&tr!("Words have to be in the dictionary."));
                         self.toaster.add_toast(toast);
                         self.toast_words_in_dictionary_displayed = true;
                     }

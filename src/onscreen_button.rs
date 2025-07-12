@@ -6,6 +6,7 @@ use relm4::{
     },
     prelude::FactoryComponent,
 };
+use tr::tr;
 
 #[derive(Debug, PartialEq, Copy, Clone, PartialOrd)]
 pub enum Format {
@@ -37,8 +38,8 @@ impl Key {
     fn get_label(&self) -> String {
         match self {
             Key::Letter(c) => c.to_uppercase().to_string(),
-            Key::Enter => "Enter".to_owned(),
-            Key::Del => "Del".to_owned(),
+            Key::Enter => tr!("Enter"),
+            Key::Del => tr!("Del"),
         }
     }
 }
