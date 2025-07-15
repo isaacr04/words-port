@@ -26,6 +26,13 @@
   min-height: 10px;
 }
 
+.command {
+  font-size: x-large;
+  font-family: sans-serif;
+  padding: 0px;
+  margin: 0%;
+}
+
 .numb_letter {
   padding: 5px;
   margin: 1px;

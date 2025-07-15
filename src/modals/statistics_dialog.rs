@@ -54,19 +54,19 @@ impl SimpleComponent for StatisticsDialog {
 
                     gtk::Label {
                         #[watch]
-                        set_label: &tr!("{} - {} Letters", model.word_list_name, model.number_of_letters),
+                        set_label: &tr!("{0} - {1} Letters", model.word_list_name, model.number_of_letters),
                         set_css_classes: &["title-3"],
                         set_wrap: true,
                     },
                     gtk::Label {
                         #[watch]
-                        set_label: &tr!("You won {} out of {} games.", model.statistic.games_won, model.statistic.total_games),
+                        set_label: &tr!("You won {0} out of {1} games.", model.statistic.games_won, model.statistic.total_games),
                         set_wrap: true,
                         set_margin_top: 10,
                     },
                     gtk::Label {
                         #[watch]
-                        set_markup: &tr!("<b>Streaks:</b> Current: {}, Longest: {}", model.statistic.current_streak,  model.statistic.longest_streak),
+                        set_markup: &tr!("<b>Streaks:</b> Current: {0}, Longest: {1}", model.statistic.current_streak,  model.statistic.longest_streak),
                         set_wrap: true,
                         set_margin_top: 10,
                     },

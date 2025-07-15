@@ -254,7 +254,7 @@ impl Component for App {
                         },
                         gtk::Label {
                             #[watch]
-                            set_label: &tr!("You have won {} out of {} games.", model.game_statistics.games_won, model.game_statistics.total_games),
+                            set_label: &tr!("You have won {0} out of {1} games.", model.game_statistics.games_won, model.game_statistics.total_games),
                             set_margin_top: 40,
                             set_wrap: true,
                             set_justify: gtk::Justification::Center,

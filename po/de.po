@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-12 05:10+0000\n"
-"PO-Revision-Date: 2025-07-12 07:12+0200\n"
+"POT-Creation-Date: 2025-07-13 16:55+0000\n"
+"PO-Revision-Date: 2025-07-15 20:15+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -48,27 +48,27 @@ msgstr "Das Spiel ist aus"
 
 #: src/app.rs:234
 msgid "The word we were looking for was {}."
-msgstr "Das Wort, dass wir gesucht haben was {}."
+msgstr "Das Wort, dass wir gesucht haben war {}."
 
 #: src/app.rs:244
 msgid "You only needed one attempt!!"
-msgstr "Du hast nur einen Versuch benötigt!!"
+msgstr "Sie haben nur einen Versuch benötigt!!"
 
 #: src/app.rs:246
 msgid "You needed {} attempts."
-msgstr "Du hast {} Versuche benötigt."
+msgstr "Sie haben {} Versuche benötigt."
 
 #: src/app.rs:249
 msgid "Good luck next time!"
 msgstr "Viel Glück beim nächsten Mal!"
 
 #: src/app.rs:257
-msgid "You have won {} out of {} games."
-msgstr "Sie haben {} von {} Spielen gewonnen."
+msgid "You have won {0} out of {1} games."
+msgstr "Von {1} Spielen haben Sie {0} gewonnen."
 
 #: src/app.rs:265
 msgid "Current streak is {}."
-msgstr "Die aktuelle Strähne ist {} Spiele."
+msgstr "Die aktuelle Glückssträhne ist {} Spiele."
 
 #: src/app.rs:267
 msgid "Your streak lasted 1 game."
@@ -127,36 +127,34 @@ msgid ""
 "within six attempts."
 msgstr ""
 "Nutzen Sie die Rückmeldungen um Ihre folgenden Versuche zu verbessern und "
-"lösen Sie das Puzzle mit sechs Versuchen."
+"lösen Sie das Puzzle innerhalb von sechs Versuchen."
 
 #: src/modals/statistics_dialog.rs:46
 msgid "Statistics"
 msgstr "Statistik"
 
 #: src/modals/statistics_dialog.rs:57
-msgid "{} - {} Letters"
-msgstr "{} - {} Buchstaben"
+msgid "{0} - {1} Letters"
+msgstr "{0} - {1} Buchstaben"
 
 #: src/modals/statistics_dialog.rs:63
-msgid "You won {} out of {} games."
-msgstr "Sie haben {} von {} Spielen gewonnen."
+msgid "You won {0} out of {1} games."
+msgstr "Von {1} Spielen haben Sie {0} gewonnen."
 
 #: src/modals/statistics_dialog.rs:69
-msgid "<b>Streaks:</b> Current: {}, Longest: {}"
-msgstr "<b>Glückssträhnen:</b> Aktuelle: {}, Längste: {}"
+msgid "<b>Streaks:</b> Current: {0}, Longest: {1}"
+msgstr "<b>Glückssträhnen:</b> Aktuelle: {0}, Längste: {1}"
 
 #: src/modals/statistics_dialog.rs:74
 msgid "Distribution by Trials:"
 msgstr "Verteilung nach Versuchen:"
 
-#: src/onscreen_button.rs:41
-msgid "Enter"
-msgstr "Eingabe"
-
-#: src/onscreen_button.rs:42
-msgid "Del"
-msgstr "Löschen"
-
 #: src/main.rs:32
 msgid "Words!"
 msgstr "Words!"
+
+#~ msgid "Enter"
+#~ msgstr "Eing."
+
+#~ msgid "Del"
+#~ msgstr "Löschen"

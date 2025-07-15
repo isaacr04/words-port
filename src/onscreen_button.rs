@@ -6,7 +6,6 @@ use relm4::{
     },
     prelude::FactoryComponent,
 };
-use tr::tr;
 
 #[derive(Debug, PartialEq, Copy, Clone, PartialOrd)]
 pub enum Format {
@@ -14,6 +13,7 @@ pub enum Format {
     NoMatch = 1,
     Match = 2,
     ExactMatch = 3,
+    Command,
 }
 
 #[derive(Debug)]
@@ -38,8 +38,8 @@ impl Key {
     fn get_label(&self) -> String {
         match self {
             Key::Letter(c) => c.to_uppercase().to_string(),
-            Key::Enter => tr!("Enter"),
-            Key::Del => tr!("Del"),
+            Key::Enter => " ⏎ ".to_owned(),
+            Key::Del => " ↤ ".to_owned(),
         }
     }
 }
@@ -67,6 +67,7 @@ impl FactoryComponent for OnScreenButton {
                 Format::NoMatch => &["no_match", "osk"],
                 Format::Match => &["match", "osk"],
                 Format::ExactMatch => &["exact", "osk"],
+                Format::Command => &["command"]
             }},
             connect_clicked[sender, index] =>
                 move |_| {
@@ -77,8 +78,14 @@ impl FactoryComponent for OnScreenButton {
     }
 
     fn init_model(value: Self::Init, _index: &Key, _sender: FactorySender<Self>) -> Self {
+        let format = if let Key::Letter(_) = value {
+            Format::NotUsed
+        } else {
+            Format::Command
+        };
+
         Self {
-            format: Format::NotUsed,
+            format: format,
             trigger: value.into(),
         }
     }

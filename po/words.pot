@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-12 05:10+0000\n"
+"POT-Creation-Date: 2025-07-13 16:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,7 +62,7 @@ msgid "Good luck next time!"
 msgstr ""
 
 #: src/app.rs:257
-msgid "You have won {} out of {} games."
+msgid "You have won {0} out of {1} games."
 msgstr ""
 
 #: src/app.rs:265
@@ -122,27 +122,19 @@ msgid "Statistics"
 msgstr ""
 
 #: src/modals/statistics_dialog.rs:57
-msgid "{} - {} Letters"
+msgid "{0} - {1} Letters"
 msgstr ""
 
 #: src/modals/statistics_dialog.rs:63
-msgid "You won {} out of {} games."
+msgid "You won {0} out of {1} games."
 msgstr ""
 
 #: src/modals/statistics_dialog.rs:69
-msgid "<b>Streaks:</b> Current: {}, Longest: {}"
+msgid "<b>Streaks:</b> Current: {0}, Longest: {1}"
 msgstr ""
 
 #: src/modals/statistics_dialog.rs:74
 msgid "Distribution by Trials:"
-msgstr ""
-
-#: src/onscreen_button.rs:41
-msgid "Enter"
-msgstr ""
-
-#: src/onscreen_button.rs:42
-msgid "Del"
 msgstr ""
 
 #: src/main.rs:32
