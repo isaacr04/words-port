@@ -77,7 +77,7 @@ impl FactoryComponent for OnScreenButton {
                 Format::NoMatch => &["no_match", "osk"],
                 Format::Match => &["match", "osk"],
                 Format::ExactMatch => &["exact", "osk"],
-                Format::Command => &["command"]
+                Format::Command => &["osk"]
             }},
             connect_clicked[sender, index] =>
                 move |_| {
