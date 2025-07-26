@@ -1,6 +1,6 @@
 [package]
 name = "words"
-version = "0.5.9"
+version = "0.6.1"
 authors = ["Peter Sonntag <peter@sonniger-tag.eu>"]
 edition = "2024"
 publish = false
