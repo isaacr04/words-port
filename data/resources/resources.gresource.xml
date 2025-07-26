@@ -7,4 +7,8 @@
         <file compressed="true">style.css</file>
         <file compressed="true">style-dark.css</file>
     </gresource>
+    <gresource prefix="/page/codeberg/petsoi/words/icons/16x16/actions/">
+        <file preprocess="xml-stripblanks" alias="keyboard-enter-symbolic.svg">../icons/keyboard-enter-symbolic.svg</file>
+        <file preprocess="xml-stripblanks" alias="entry-clear-symbolic.svg">../icons/entry-clear-symbolic.svg</file>
+    </gresource>
 </gresources>

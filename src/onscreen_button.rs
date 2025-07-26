@@ -60,7 +60,17 @@ impl FactoryComponent for OnScreenButton {
             set_margin_all: 1,
             set_hexpand: true,
             set_vexpand: true,
-            set_label: &self.trigger.get_label(),
+            match self.trigger {
+                Key::Letter(_) => gtk::Label {
+                    set_text: &self.trigger.get_label(),
+                },
+                Key::Enter => gtk::Image {
+                    set_icon_name: Some("keyboard-enter-symbolic"),
+                },
+                Key::Del => gtk::Image {
+                    set_icon_name: Some("entry-clear-symbolic"),
+                }
+            },
             #[watch]
             set_css_classes: { match &self.format {
                 Format::NotUsed => &["osk"],
