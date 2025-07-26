@@ -44,7 +44,7 @@ msgstr "Gratulation!"
 
 #: src/app.rs:229
 msgid "Game Over"
-msgstr "Das Spiel ist aus"
+msgstr "Spiel vorbei"
 
 #: src/app.rs:234
 msgid "The word we were looking for was {}."
