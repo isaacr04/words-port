@@ -177,45 +177,47 @@ impl Component for App {
 
                         #[local_ref]
                         toast_overlay -> adw::ToastOverlay {
+                            adw::Clamp {
                             #[local_ref]
-                            letter_grid -> gtk::Grid {
-                                set_orientation: gtk::Orientation::Horizontal,
-                                set_column_homogeneous: true,
-                                set_row_homogeneous: true,
-                                set_column_spacing: 0,
-                                set_row_spacing: 0,
-                                // set_halign: Align::Center,
-                                set_hexpand: true,
-                                //set_vexpand: true,
-                                set_row_spacing: 1,
-                                set_column_spacing: 1,
+                                letter_grid -> gtk::Grid {
+                                    set_orientation: gtk::Orientation::Horizontal,
+                                    set_column_homogeneous: true,
+                                    set_row_homogeneous: true,
+                                    set_column_spacing: 0,
+                                    set_row_spacing: 0,
+                                    set_hexpand: true,
+                                    set_row_spacing: 1,
+                                    set_column_spacing: 1,
+                                }
                             }
                         },
-                        gtk::Box {
-                            set_orientation: gtk::Orientation::Vertical,
-                            set_vexpand: true,
-                            set_hexpand: true,
+                        adw::Clamp {
+                            gtk::Box {
+                                set_orientation: gtk::Orientation::Vertical,
+                                set_vexpand: true,
+                                set_hexpand: true,
 
-                            #[local_ref]
-                            keyboard_row_1 -> gtk::Box {
-                                set_orientation: gtk::Orientation::Horizontal,
-                                set_hexpand: true,
-                                set_vexpand: true,
-                                // set_halign: Align::Center,
-                            },
-                            #[local_ref]
-                            keyboard_row_2 -> gtk::Box {
-                                set_orientation: gtk::Orientation::Horizontal,
-                                set_hexpand: true,
-                                set_vexpand: true,
-                                // set_halign: Align::Center,
-                            },
-                            #[local_ref]
-                            keyboard_row_3 -> gtk::Box {
-                                set_orientation: gtk::Orientation::Horizontal,
-                                set_hexpand: true,
-                                set_vexpand: true,
-                                // set_halign: Align::Center,
+                                #[local_ref]
+                                keyboard_row_1 -> gtk::Box {
+                                    set_orientation: gtk::Orientation::Horizontal,
+                                    set_hexpand: true,
+                                    set_vexpand: true,
+                                    // set_halign: Align::Center,
+                                },
+                                #[local_ref]
+                                keyboard_row_2 -> gtk::Box {
+                                    set_orientation: gtk::Orientation::Horizontal,
+                                    set_hexpand: true,
+                                    set_vexpand: true,
+                                    // set_halign: Align::Center,
+                                },
+                                #[local_ref]
+                                keyboard_row_3 -> gtk::Box {
+                                    set_orientation: gtk::Orientation::Horizontal,
+                                    set_hexpand: true,
+                                    set_vexpand: true,
+                                    // set_halign: Align::Center,
+                                }
                             }
                         }
                     } -> { set_name: "game" },

@@ -1,6 +1,5 @@
 mod word_list;
 use std::{env, process::exit};
-use tr::tr_init;
 use word_list::read_word_list;
 
 fn main() {
@@ -23,7 +22,7 @@ fn main() {
     word_list.remove_duplicates();
     word_list.remove_words_with_illegal_word_lengths();
     word_list.check_for_illegal_letters();
-    word_list.check_secret_words_with_leo(&args[1]);
+    // word_list.check_secret_words_with_leo(&args[1]);
     word_list.print_statistics();
     word_list.store(&args[1]);
 }
