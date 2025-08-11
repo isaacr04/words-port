@@ -319,6 +319,7 @@ impl Component for App {
 
                 gtk::Box {
                     set_orientation: gtk::Orientation::Horizontal,
+                    set_align: Align::Center,
 
                     #[name = "toggle_button_4"]
                     gtk::ToggleButton {
