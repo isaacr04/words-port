@@ -1,10 +1,13 @@
 package com.words.domain.model
 
+import kotlinx.serialization.Serializable
+
 /**
  * Represents a coordinate position in the game grid.
  * @property column The horizontal position (0-based index)
  * @property row The vertical position (0-based index, 0 = top row)
  */
+@Serializable
 data class Coord(
     val column: Int,
     val row: Int

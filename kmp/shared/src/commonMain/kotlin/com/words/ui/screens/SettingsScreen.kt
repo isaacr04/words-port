@@ -14,7 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.words.domain.model.GameState
+import com.words.presentation.GameState
 import com.words.presentation.GameIntent
 
 @OptIn(ExperimentalMaterial3Api::class)

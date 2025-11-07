@@ -10,7 +10,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.words.domain.model.GameState
+import com.words.presentation.GameState
 import com.words.presentation.GameIntent
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,12 +94,12 @@ fun GameOverScreen(
                     ) {
                         StatItem(
                             label = "Played",
-                            value = state.statistics.gamesPlayed.toString()
+                            value = state.statistics.totalGames.toString()
                         )
                         StatItem(
                             label = "Win %",
-                            value = if (state.statistics.gamesPlayed > 0) {
-                                "${(state.statistics.gamesWon * 100 / state.statistics.gamesPlayed)}%"
+                            value = if (state.statistics.totalGames > 0) {
+                                "${(state.statistics.gamesWon * 100 / state.statistics.totalGames)}%"
                             } else {
                                 "0%"
                             }

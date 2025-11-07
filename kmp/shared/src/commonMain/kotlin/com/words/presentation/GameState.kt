@@ -55,6 +55,64 @@ data class GameState(
         get() = !gameOver && currentPage == GamePage.Game
 
     /**
+     * Compatibility property for screen code - word list name.
+     */
+    val wordListName: String
+        get() = wordList.name
+
+    /**
+     * Compatibility property for screen code - word length.
+     */
+    val wordLength: Int
+        get() = numberOfLetters
+
+    /**
+     * Compatibility property for screen code - available word lengths.
+     */
+    val availableWordLengths: List<Int>
+        get() = listOf(4, 5, 6, 7, 8)
+
+    /**
+     * Compatibility property for screen code - whether game was won.
+     */
+    val won: Boolean
+        get() = gameWon
+
+    /**
+     * Compatibility property for screen code - total games played.
+     */
+    val gamesPlayed: Int
+        get() = statistics.totalGames
+
+    /**
+     * Compatibility property for screen code - longest win streak.
+     */
+    val maxStreak: Int
+        get() = statistics.longestStreak
+
+    /**
+     * Compatibility property for screen code - guess distribution.
+     */
+    val guessDistribution: List<Int>
+        get() = statistics.winDistribution
+
+    /**
+     * Compatibility property for screen code - game grid (letters) as 2D list.
+     */
+    val grid: List<List<Letter>>
+        get() = (0 until 6).map { row ->
+            (0 until numberOfLetters).map { col ->
+                letters[Coord(col, row)] ?: Letter.empty()
+            }
+        }
+
+    /**
+     * Compatibility property for screen code - keyboard keys layout.
+     */
+    val keys: List<List<Key>>
+        get() = wordList.keyboardLayout
+
+    /**
      * Gets all letters in the current row.
      */
     fun getRowLetters(row: Int): List<Letter> {

@@ -56,6 +56,7 @@ class GameViewModel(
             is GameIntent.DismissInvalidWordAnimation -> dismissInvalidWordAnimation()
             is GameIntent.LoadStatistics -> loadStatistics()
             is GameIntent.SaveStatistics -> saveStatistics()
+            is GameIntent.ClearStatistics -> clearStatistics()
         }
     }
 
@@ -435,5 +436,13 @@ class GameViewModel(
                 currentState.statistics
             )
         }
+    }
+
+    /**
+     * Clears all statistics.
+     */
+    private fun clearStatistics() {
+        _state.update { it.copy(statistics = GameStatistics()) }
+        saveStatistics()
     }
 }

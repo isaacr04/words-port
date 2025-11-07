@@ -17,7 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.words.domain.game.GameEngine
-import com.words.domain.model.GameState
+import com.words.presentation.GameState
 import com.words.presentation.GameIntent
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,12 +76,12 @@ fun StatisticsScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        StatColumn("Played", state.statistics.gamesPlayed.toString())
+                        StatColumn("Played", state.statistics.totalGames.toString())
                         StatColumn("Won", state.statistics.gamesWon.toString())
                         StatColumn(
                             "Win %",
-                            if (state.statistics.gamesPlayed > 0) {
-                                "${(state.statistics.gamesWon * 100 / state.statistics.gamesPlayed)}%"
+                            if (state.statistics.totalGames > 0) {
+                                "${(state.statistics.gamesWon * 100 / state.statistics.totalGames)}%"
                             } else "0%"
                         )
                     }
@@ -93,7 +93,7 @@ fun StatisticsScreen(
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         StatColumn("Current Streak", state.statistics.currentStreak.toString())
-                        StatColumn("Max Streak", state.statistics.maxStreak.toString())
+                        StatColumn("Max Streak", state.statistics.longestStreak.toString())
                         StatColumn("Lost", state.statistics.gamesLost.toString())
                     }
                 }
@@ -120,9 +120,9 @@ fun StatisticsScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    val maxCount = state.statistics.guessDistribution.maxOrNull() ?: 1
+                    val maxCount = state.statistics.winDistribution.maxOrNull() ?: 1
 
-                    state.statistics.guessDistribution.forEachIndexed { index, count ->
+                    state.statistics.winDistribution.forEachIndexed { index, count ->
                         GuessDistributionBar(
                             attempt = index + 1,
                             count = count,

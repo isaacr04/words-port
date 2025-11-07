@@ -7,9 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Help
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,7 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.words.domain.model.GameState
+import com.words.presentation.GameState
 import com.words.domain.model.Key
 import com.words.domain.model.KeyFormat
 import com.words.domain.model.Letter
@@ -45,10 +43,10 @@ fun GameScreen(
                 },
                 actions = {
                     IconButton(onClick = { onIntent(GameIntent.ShowStatistics) }) {
-                        Icon(Icons.Default.BarChart, contentDescription = "Statistics")
+                        Icon(Icons.Default.Info, contentDescription = "Statistics")
                     }
                     IconButton(onClick = { onIntent(GameIntent.ShowHelp) }) {
-                        Icon(Icons.Default.Help, contentDescription = "Help")
+                        Icon(Icons.Default.Info, contentDescription = "Help")
                     }
                     IconButton(onClick = { onIntent(GameIntent.ShowSettings) }) {
                         Icon(Icons.Default.Settings, contentDescription = "Settings")

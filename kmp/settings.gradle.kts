@@ -2,9 +2,9 @@ rootProject.name = "words-kmp"
 
 pluginManagement {
     repositories {
-        mavenCentral()
-        gradlePluginPortal()
         google()
+        gradlePluginPortal()
+        mavenCentral()
     }
 }
 

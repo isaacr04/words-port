@@ -15,7 +15,7 @@ import com.words.presentation.GameViewModel
 fun WordsApp(viewModel: GameViewModel) {
     val state by viewModel.state.collectAsState()
 
-    when (state.page) {
+    when (state.currentPage) {
         GamePage.Game -> GameScreen(
             state = state,
             onIntent = viewModel::processIntent

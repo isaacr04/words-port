@@ -83,4 +83,16 @@ sealed class GameIntent {
      * Save game statistics to storage.
      */
     data object SaveStatistics : GameIntent()
+
+    /**
+     * Clear all game statistics.
+     */
+    data object ClearStatistics : GameIntent()
+
+    // Type aliases/helpers for backwards compatibility with screen code
+    companion object {
+        val NavigateToGame = ReturnToGame
+        fun SelectWordList(name: String) = SwitchWordList(name)
+        fun SelectWordLength(length: Int) = SetWordLength(length)
+    }
 }
